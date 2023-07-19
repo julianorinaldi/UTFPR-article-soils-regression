@@ -13,8 +13,8 @@ sess = tf.compat.v1.Session(config=config)
 keras.backend.set_session(sess)
 
 # Carregamento do Dataset
-df_train = pd.read_csv('Dataset256x256-Treino.csv')
-df_test = pd.read_csv('Dataset256x256-Teste.csv')
+df_train = pd.read_csv('dataset/csv/Dataset256x256-Treino.csv')
+df_test = pd.read_csv('dataset/csv/Dataset256x256-Teste.csv')
 
 df_train = df_train.drop(columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"})
 df_test = df_test.drop(columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"})
@@ -24,9 +24,9 @@ imageDimensionX = 256
 imageDimensionY = 256
 
 # Path Dir Treino
-dir_name_train = "treinamento-solo-256x256"
+dir_name_train = "dataset/images/treinamento-solo-256x256"
 # Path Dir Teste
-dir_name_test = "teste-solo-256x256"
+dir_name_test = "dataset/images/teste-solo-256x256"
 
 # Separando apenas nomes dos arquivos
 train_imagefiles = df_train["arquivo"]
@@ -85,19 +85,18 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 
 resnet_model = tf.keras.models.Sequential()
 
-pretrained_model= tf.keras.applications.ResNet50(include_top=False,
+pretrained_model= tf.keras.applications.ResNet50(include_top=True,
                    input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
                    pooling='avg', classes=1,
                    weights='imagenet')
 for layer in pretrained_model.layers:
-        layer.trainable=False
+        layer.trainable=True
 
 resnet_model.add(pretrained_model)
-#resnet_model.add(tf.keras.layers.Flatten())
-#resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
-#resnet_model.add(tf.keras.layers.Dense(256, activation='relu'))
-#resnet_model.add(tf.keras.layers.Dropout(0.5))
-
+resnet_model.add(tf.keras.layers.Flatten())
+resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
+resnet_model.add(tf.keras.layers.Dense(256, activation='relu'))
+resnet_model.add(tf.keras.layers.Dropout(0.5))
 resnet_model.add(tf.keras.layers.Dense(1))
 
 print(resnet_model.summary())
