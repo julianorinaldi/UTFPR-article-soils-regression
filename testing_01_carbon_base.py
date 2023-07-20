@@ -62,7 +62,7 @@ Y_test_carbono = np.array(df_test['teor_carbono'].tolist()[:qtd_imagens])
 print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 
 # Carregando Modelo
-resnet_model = tf.keras.models.load_model('model-layer-369ep.h5')
+resnet_model = tf.keras.models.load_model('last-model.h5')
 print(resnet_model.summary())
 
 ##########################
