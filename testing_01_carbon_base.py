@@ -73,7 +73,7 @@ r2 = r2_score(Y_test_carbono, prediction)
 print(f'R2: {r2}')
 ##########################
 
-for index in [0,10,20,30,50,100,150,300,500,1000,1400,1800,2000,2500,3000,3500]:
+for index in [0,10,100,500,1000,2500,3500]:
     img_path = f'{dir_name_test}/{test_imagefiles[index]}'
     img = tf.keras.preprocessing.image.load_img(img_path, target_size=(256, 256, 3))
     x = tf.keras.preprocessing.image.img_to_array(img)
