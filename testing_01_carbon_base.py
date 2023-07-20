@@ -65,16 +65,12 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 resnet_model = tf.keras.models.load_model('last-model.h5')
 print(resnet_model.summary())
 
-print(f'Score: {round(resnet_model.score(X_test, Y_test_carbono), 4) * 100}%')
-
-##########################
 # Trabalhando com R2
 prediction = resnet_model.predict(X_test)
 
 r2 = r2_score(Y_test_carbono, prediction)
 print(f'R2: {r2}')
 
-##########################
 
 for index in [0,10,100,500,1000,2500,3500]:
     img_path = f'{dir_name_test}/{test_imagefiles[index]}'
