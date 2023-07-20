@@ -65,12 +65,15 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 resnet_model = tf.keras.models.load_model('last-model.h5')
 print(resnet_model.summary())
 
+print(f'Score: {round(resnet_model.score(X_test, Y_test_carbono), 4) * 100}%')
+
 ##########################
 # Trabalhando com R2
 prediction = resnet_model.predict(X_test)
 
 r2 = r2_score(Y_test_carbono, prediction)
 print(f'R2: {r2}')
+
 ##########################
 
 for index in [0,10,20,30,50,100,150,300,500,1000,1400,1800,2000,2500,3000,3500]:
