@@ -15,7 +15,7 @@ sess = tf.compat.v1.Session(config=config)
 keras.backend.set_session(sess)
 
 # Carregamento do Dataset
-df_test = pd.read_csv('Dataset256x256-Teste.csv')
+df_test = pd.read_csv('dataset/csv/Dataset256x256-Teste.csv')
 
 df_test = df_test.drop(columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"})
 
@@ -24,7 +24,7 @@ imageDimensionX = 256
 imageDimensionY = 256
 
 # Path Dir Teste
-dir_name_test = "teste-solo-256x256"
+dir_name_test = "dataset/images/teste-solo-256x256"
 
 # Separando apenas nomes dos arquivos
 test_imagefiles = df_test["arquivo"]
