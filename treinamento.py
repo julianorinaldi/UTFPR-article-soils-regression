@@ -12,10 +12,10 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 import keras # Trabalhar com aprendizado de máquinas
 from coreProcess import image_processing
 
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.allow_growth=True
-sess = tf.compat.v1.Session(config=config)
-keras.backend.set_session(sess)
+#config = tf.compat.v1.ConfigProto()
+#config.gpu_options.allow_growth=True
+#sess = tf.compat.v1.Session(config=config)
+#keras.backend.set_session(sess)
 
 # Carregamento do Dataset
 df_train = pd.read_csv('dataset/csv/Dataset256x256-Treino.csv')
@@ -112,7 +112,7 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 
 resnet_model = tf.keras.models.Sequential()
 
-pretrained_model= tf.keras.applications.ResNet50(include_top=True,
+pretrained_model= tf.keras.applications.ResNet50(include_top=False,
                    input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
                    pooling='avg', classes=1,
                    weights='imagenet')

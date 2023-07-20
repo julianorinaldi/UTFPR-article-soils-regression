@@ -10,7 +10,7 @@ print(f"GPU: {tf.config.list_physical_devices('GPU')}")
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 import keras # Trabalhar com aprendizado de máquinas
-from keras.utils import multi_gpu_model
+
 from coreProcess import image_processing
 
 physical_devices = tf.config.list_physical_devices('GPU')
@@ -111,30 +111,33 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 #Y_test_nitrogenio = np.array(df_test['teor_nitrogenio'].tolist()[:qtd_imagens])
 #print(f'Shape Y_test_nitrogenio: {Y_test_nitrogenio.shape}')
 
-resnet_model = tf.keras.models.Sequential()
+strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1"])
 
-pretrained_model= tf.keras.applications.ResNet50(include_top=False,
+with strategy.scope():
+    resnet_model = tf.keras.models.Sequential()
+
+    pretrained_model= tf.keras.applications.ResNet50(include_top=False,
                    input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
                    pooling='avg', classes=1,
                    weights='imagenet')
-for layer in pretrained_model.layers:
-        layer.trainable=True
+    for layer in pretrained_model.layers:
+            layer.trainable=True
 
-resnet_model.add(pretrained_model)
-resnet_model.add(tf.keras.layers.Flatten())
-resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
-resnet_model.add(tf.keras.layers.Dense(256, activation='relu'))
-resnet_model.add(tf.keras.layers.Dropout(0.5))
+    resnet_model.add(pretrained_model)
+    resnet_model.add(tf.keras.layers.Flatten())
+    resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
+    resnet_model.add(tf.keras.layers.Dense(256, activation='relu'))
+    resnet_model.add(tf.keras.layers.Dropout(0.5))
 
-resnet_model.add(tf.keras.layers.Dense(1))
+    resnet_model.add(tf.keras.layers.Dense(1))
 
-print(resnet_model.summary())
+    print(resnet_model.summary())
 
-opt = tf.keras.optimizers.RMSprop(0.0001)
-resnet_model.compile(optimizer=opt,loss='mse',metrics=['mae', 'mse'])
-parallel_model = multi_gpu_model(resnet_model, gpus=2)
+    opt = tf.keras.optimizers.RMSprop(0.0001)
+    resnet_model.compile(optimizer=opt,loss='mse',metrics=['mae', 'mse'])
 
-history = parallel_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=300, callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=50, restore_best_weights=True)])
+
+history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=300, callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=50, restore_best_weights=True)])
 
 hist = pd.DataFrame(history.history)
 hist['epoch'] = history.epoch
