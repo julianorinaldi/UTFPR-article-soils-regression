@@ -4,13 +4,14 @@ from matplotlib import pyplot as plt # Matplotlib Plot
 from tqdm import tqdm # Facilita visualmente a iteração usado no "for"
 import tensorflow as tf # Trabalhar com aprendizado de máquinas
 
-import keras # Trabalhar com aprendizado de máquinas
 from coreProcess import image_processing
 
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.allow_growth=True
-sess = tf.compat.v1.Session(config=config)
-keras.backend.set_session(sess)
+physical_devices = tf.config.list_physical_devices('GPU')
+print("Número de GPUs disponíveis:", len(physical_devices))
+
+# Caso deseje limitar a alocação de memória da GPU (opcional)
+if physical_devices:
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 # Carregamento do Dataset
 df_train = pd.read_csv('dataset/csv/Dataset256x256-Treino.csv')
