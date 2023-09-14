@@ -33,7 +33,6 @@ oauthlib
 opencv-python
 opt-einsum
 pandas
-Pillow
 pkg_resources
 protobuf
 pyasn1
