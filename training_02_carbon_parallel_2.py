@@ -9,7 +9,7 @@ import keras
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,0"
 
 
 print(f'Versão do tensorflow: {tf.__version__}')
