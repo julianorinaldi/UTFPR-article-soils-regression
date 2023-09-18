@@ -8,8 +8,7 @@ import tensorflow as tf # Trabalhar com aprendizado de máquinas
 import keras
 import os
 
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1,0"
+
 
 
 print(f'Versão do tensorflow: {tf.__version__}')
@@ -21,16 +20,19 @@ from coreProcess import image_processing
 
 physical_devices = tf.config.list_physical_devices('GPU')
 
-if len(physical_devices) == 2:
-    print("Running with 2 GPUS Only")
-    tf.config.set_visible_devices(physical_devices[1], 'GPU')
-    tf.config.experimental.set_memory_growth(physical_devices[1], True)
-    tf.config.set_visible_devices(physical_devices[0], 'GPU')
-    tf.config.experimental.set_memory_growth(physical_devices[0], True)
-elif len(physical_devices) > 0:
-    print(f"Running with {len(physical_devices)} GPUS")
-    tf.config.experimental.set_visible_devices(physical_devices[0], 'GPU')
-    tf.config.experimental.set_memory_growth(physical_devices[0], True)
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
+
+# if len(physical_devices) == 2:
+#     print("Running with 2 GPUS Only")
+#     tf.config.set_visible_devices(physical_devices[1], 'GPU')
+#     tf.config.experimental.set_memory_growth(physical_devices[1], True)
+#     tf.config.set_visible_devices(physical_devices[0], 'GPU')
+#     tf.config.experimental.set_memory_growth(physical_devices[0], True)
+# elif len(physical_devices) > 0:
+#     print(f"Running with {len(physical_devices)} GPUS")
+#     tf.config.experimental.set_visible_devices(physical_devices[0], 'GPU')
+#     tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1"], cross_device_ops = tf.distribute.HierarchicalCopyAllReduce())
 print('Number of devices =====>: {}'.format(strategy.num_replicas_in_sync))
