@@ -120,7 +120,7 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 #Y_test_nitrogenio = np.array(df_test['teor_nitrogenio'].tolist()[:qtd_imagens])
 #print(f'Shape Y_test_nitrogenio: {Y_test_nitrogenio.shape}')
 
-strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1"])
+strategy = tf.distribute.MirroredStrategy()
 print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
 
 with strategy.scope():
@@ -146,11 +146,11 @@ with strategy.scope():
     resnet_model.compile(optimizer=opt,loss='mse',metrics=['mae', 'mse'])
 
 
-history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=300, callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=50, restore_best_weights=True)])
+    history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=300, callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=50, restore_best_weights=True)])
 
-hist = pd.DataFrame(history.history)
-hist['epoch'] = history.epoch
-hist.tail()
+    hist = pd.DataFrame(history.history)
+    hist['epoch'] = history.epoch
+    hist.tail()
 
-resnet_model.save('last-model.h5')
+    resnet_model.save('last-model.h5')
 
