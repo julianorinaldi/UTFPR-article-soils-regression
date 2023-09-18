@@ -46,11 +46,7 @@ with strategy.scope():
     # Removendo coluna arquivo para normalização
     df_test = df_test.drop(columns={"arquivo"})
 
-    # **********************************************
-    # **********************************************
     # Quantidade de imagens usadas para a rede.
-    # Foi constatado que depende da quantidade de imagens o Colab quebra por estouro de memória
-
     qtd_imagens = 10000
     qtd_canal_color = 3
 
@@ -66,7 +62,7 @@ with strategy.scope():
     image_list_test = []
 
     for imageFilePath in tqdm(test_imagefiles.tolist()[:qtd_imagens]):
-        image_list_test.append(image_processing(dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, qtd_canal_color))
+        image_list_test.append(image_processing(dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, True))
         
     # Transformando em array a lista de imagens (Test)
     X_test = np.array(image_list_test)
