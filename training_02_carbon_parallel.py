@@ -5,6 +5,7 @@ import pandas as pd # Trabalhar com análise de dados, importação, etc.
 from matplotlib import pyplot as plt # Matplotlib Plot
 from tqdm import tqdm # Facilita visualmente a iteração usado no "for"
 import tensorflow as tf # Trabalhar com aprendizado de máquinas
+import keras
 
 print(f'Versão do tensorflow: {tf.__version__}')
 print(f'Eager: {tf.executing_eagerly()}')
@@ -119,7 +120,7 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 #Y_test_nitrogenio = np.array(df_test['teor_nitrogenio'].tolist()[:qtd_imagens])
 #print(f'Shape Y_test_nitrogenio: {Y_test_nitrogenio.shape}')
 
-strategy = tf.distribute.MirroredStrategy(devices=["/physical_device:GPU:0", "/physical_device:GPU:1"])
+strategy = tf.distribute.MirroredStrategy()
 
 with strategy.scope():
     resnet_model = tf.keras.models.Sequential()
