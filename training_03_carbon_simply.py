@@ -28,7 +28,8 @@ with strategy.scope():
     df_train = pd.read_csv('dataset/csv/Dataset256x256-Treino.csv')
 
     df_train = df_train.drop(columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"})
-
+    df_train = df_train.sample(frac=1, random_state=1, ignore_index=True)
+    
     # Definindo o tamanho das imagens
     imageDimensionX = 256
     imageDimensionY = 256
