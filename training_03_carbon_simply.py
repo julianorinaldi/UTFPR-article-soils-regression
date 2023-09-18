@@ -89,7 +89,7 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 
 resnet_model = tf.keras.models.Sequential()
 
-pretrained_model= tf.keras.applications.ResNet50(include_top=True,
+pretrained_model= tf.keras.applications.ResNet50(include_top=False,
                    input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
                    pooling='avg',
                    weights='imagenet')
