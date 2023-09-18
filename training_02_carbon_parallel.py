@@ -120,7 +120,7 @@ print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 #Y_test_nitrogenio = np.array(df_test['teor_nitrogenio'].tolist()[:qtd_imagens])
 #print(f'Shape Y_test_nitrogenio: {Y_test_nitrogenio.shape}')
 
-strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1"])
+strategy = tf.distribute.MirroredStrategy(devices=["/gpu:0", "/gpu:1"], cross_device_ops = tf.distribute.HierarchicalCopyAllReduce())
 print('Number of devices =====>: {}'.format(strategy.num_replicas_in_sync))
 
 with strategy.scope():
