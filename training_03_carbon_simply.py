@@ -75,11 +75,12 @@ with strategy.scope():
             layer.trainable=True
 
     resnet_model.add(pretrained_model)
-    resnet_model.add(tf.keras.layers.Flatten())
+    #resnet_model.add(tf.keras.layers.Flatten())
     resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
     resnet_model.add(tf.keras.layers.Dense(256, activation='relu'))
-    resnet_model.add(tf.keras.layers.Dropout(0.5))
-    resnet_model.add(tf.keras.layers.Dense(1))
+    resnet_model.add(tf.keras.layers.Dense(128, activation='relu'))
+    #resnet_model.add(tf.keras.layers.Dropout(0.5))
+    resnet_model.add(tf.keras.layers.Dense(1, activation='relu'))
 
     print(resnet_model.summary())
 
