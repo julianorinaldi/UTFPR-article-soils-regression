@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import tensorflow as tf # Trabalhar com aprendizado de máquinas
 
 # Carregamento de imagem para objeto e tratamento de imagem

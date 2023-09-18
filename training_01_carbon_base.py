@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np # Trabalhar com array
 import pandas as pd # Trabalhar com análise de dados, importação, etc.
 from matplotlib import pyplot as plt # Matplotlib Plot
