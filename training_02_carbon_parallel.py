@@ -18,10 +18,10 @@ physical_devices = tf.config.experimental.list_physical_devices('GPU')
 
 if len(physical_devices) == 2:
     print("Running with 2 GPUS Only")
-    tf.config.experimental.set_visible_devices(physical_devices[0], 'GPU')
-    tf.config.experimental.set_memory_growth(physical_devices[0], True)
     tf.config.experimental.set_visible_devices(physical_devices[1], 'GPU')
     tf.config.experimental.set_memory_growth(physical_devices[1], True)
+    tf.config.experimental.set_visible_devices(physical_devices[0], 'GPU')
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
 elif len(physical_devices) > 0:
     print(f"Running with {len(physical_devices)} GPUS")
     tf.config.experimental.set_visible_devices(physical_devices[0], 'GPU')
