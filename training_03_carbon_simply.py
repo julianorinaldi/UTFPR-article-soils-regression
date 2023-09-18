@@ -54,7 +54,7 @@ with strategy.scope():
     # Quantidade de imagens usadas para a rede.
     # Foi constatado que depende da quantidade de imagens o Colab quebra por estouro de memória
 
-    qtd_imagens = 500
+    qtd_imagens = 10000
     qtd_canal_color = 3
 
     # Normalização Dataset Treinamento
@@ -118,9 +118,9 @@ with strategy.scope():
     resnet_model.compile(optimizer=opt,loss='mse',metrics=['mae', 'mse'])
     history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=400, callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)])
 
-    hist = pd.DataFrame(history.history)
-    hist['epoch'] = history.epoch
-    hist.tail()
+    #hist = pd.DataFrame(history.history)
+    #hist['epoch'] = history.epoch
+    #hist.tail()
 
     resnet_model.save('last-model.h5')
 
