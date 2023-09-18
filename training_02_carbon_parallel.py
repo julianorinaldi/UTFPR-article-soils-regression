@@ -14,7 +14,7 @@ print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('
 
 from coreProcess import image_processing
 
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
+physical_devices = tf.config.list_physical_devices('GPU')
 
 if len(physical_devices) == 2:
     print("Running with 2 GPUS Only")
