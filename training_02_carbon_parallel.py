@@ -9,16 +9,20 @@ import tensorflow as tf # Trabalhar com aprendizado de máquinas
 print(f'Versão do tensorflow: {tf.__version__}')
 print(f'Eager: {tf.executing_eagerly()}')
 print(f"GPU: {tf.config.list_physical_devices('GPU')}")
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-
-import keras # Trabalhar com aprendizado de máquinas
+print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 
 from coreProcess import image_processing
 
-physical_devices = tf.config.list_physical_devices('GPU')
-if len(physical_devices) > 1:
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
+
+if len(physical_devices) == 2:
+    tf.config.experimental.set_visible_devices(physical_devices[0], 'GPU')
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
+    tf.config.experimental.set_visible_devices(physical_devices[1], 'GPU')
     tf.config.experimental.set_memory_growth(physical_devices[1], True)
+elif len(physical_devices) > 0:
+    tf.config.experimental.set_visible_devices(physical_devices[0], 'GPU')
+    tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 # Carregamento do Dataset
 df_train = pd.read_csv('dataset/csv/Dataset256x256-Treino.csv')
