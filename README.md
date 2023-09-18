@@ -24,7 +24,9 @@ Agora vamos instalar os pacotes que estão no arquivo: ```requirements_UTFPR_py3
 ```pip install -r requirements_UTFPR_py3.10.txt```
 
 # Baixar arquivo last-model.h5 via SSH/SCP
-scp -P 2222 jrinaldi@200.134.25.230:"/home/users/jrinaldi/source/UTFPR-article-soils-regression/last-model.h5" /home/julianorinaldi/Documentos/Mestrado/Modelo-Soils-Regression/.
+Da máquina local (sua máquina), execute o comando abaixo:
+
+```scp -P 2222 jrinaldi@200.134.25.230:"/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/last-model.h5" ~/.```
 
 # Modelos realizados:
 - https://drive.google.com/drive/u/0/folders/1Nt7tv9_Dm31BkixAw7MN5qo6D9V3v3sU
