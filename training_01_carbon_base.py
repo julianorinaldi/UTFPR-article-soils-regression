@@ -60,7 +60,7 @@ print(f'Total de imagens no Dataset Teste: {len(test_imagefiles)}\n')
 # Quantidade de imagens usadas para a rede.
 # Foi constatado que depende da quantidade de imagens o Colab quebra por estouro de memória
 
-qtd_imagens = 10000
+qtd_imagens = 500
 qtd_canal_color = 3
 
 # **********************************************
