@@ -42,7 +42,7 @@ df_test = df_test.drop(columns={"arquivo"})
 # Quantidade de imagens usadas para a rede.
 # Foi constatado que depende da quantidade de imagens o Colab quebra por estouro de memória
 
-qtd_imagens = 10000
+qtd_imagens = 500
 qtd_canal_color = 3
 
 # Normalização Dataset Treinamento
@@ -88,7 +88,7 @@ resnet_model = tf.keras.models.Sequential()
 
 pretrained_model= tf.keras.applications.ResNet50(include_top=True,
                    input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
-                   pooling='avg', classes=1,
+                   pooling='avg',
                    weights='imagenet')
 for layer in pretrained_model.layers:
         layer.trainable=True
