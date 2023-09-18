@@ -8,13 +8,14 @@ import tensorflow as tf # Trabalhar com aprendizado de máquinas
 
 from coreProcess import image_processing
 
-physical_devices = tf.config.list_physical_devices('GPU')
+physical_devices = tf.config.experimental.list_physical_devices('GPU')
 print("Número de GPUs disponíveis:", len(physical_devices))
 
 # Caso deseje limitar a alocação de memória da GPU (opcional)
-if physical_devices:
+if len(physical_devices) > 0:
+    tf.config.experimental.set_visible_devices(physical_devices[0], 'GPU')
     tf.config.experimental.set_memory_growth(physical_devices[0], True)
-
+    
 # Carregamento do Dataset
 df_train = pd.read_csv('dataset/csv/Dataset256x256-Treino.csv')
 df_test = pd.read_csv('dataset/csv/Dataset256x256-Teste.csv')
