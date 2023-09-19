@@ -113,7 +113,7 @@ with strategy.scope():
     print(f'====================================================')
     print(f'====================================================')
     
-    for i in [0,10,100,500,1000,2500,3500]:
+    for i in [0,10,50,60,100,200,300,400,500,1000,2000,3000,3500]:
         indexImg = random.randint(i, len(image_list_test))
         img_path = f'{dir_name_test}/{test_imagefiles[indexImg]}'
         img = tf.keras.preprocessing.image.load_img(img_path, target_size=(256, 256, 3))
