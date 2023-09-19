@@ -14,7 +14,7 @@ from tqdm import tqdm # Facilita visualmente a iteração usado no "for"
 from sklearn.metrics import r2_score # Avaliação das Métricas
 from coreProcess import image_processing
 
-tf.get_logger().setLevel(logging.ERROR)
+tf.get_logger().setLevel(logging.FATAL)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--name", help="Nome do arquivo do modelo .h5")
