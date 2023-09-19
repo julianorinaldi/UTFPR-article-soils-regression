@@ -8,13 +8,13 @@ import keras # Trabalhar com aprendizado de máquinas
 import cv2 # Trabalhar com processamento de imagens
 import os
 import random
-import logging
 from matplotlib import pyplot as plt # Matplotlib Plot
 from tqdm import tqdm # Facilita visualmente a iteração usado no "for"
 from sklearn.metrics import r2_score # Avaliação das Métricas
 from coreProcess import image_processing
 
-tf.get_logger().setLevel(logging.FATAL)
+#3 = INFO, WARNING, and ERROR messages are not printed
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--name", help="Nome do arquivo do modelo .h5")
