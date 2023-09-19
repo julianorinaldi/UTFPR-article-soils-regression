@@ -78,9 +78,6 @@ with strategy.scope():
 
     preprocess = True if args.preprocess is None else eval(args.preprocess)
     
-    print(f'=======================+>>>>>Args: {args.preprocess}')
-    print(f'=======================+>>>>>Preprocess: {preprocess}')
-    
     for imageFilePath in tqdm(test_imagefiles.tolist()[:qtd_imagens]):
         image_list_test.append(image_processing(dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, preprocess))
         
@@ -103,7 +100,7 @@ with strategy.scope():
 
     
     for i in [0,10,100,500,1000,2500,3500]:
-        indexImg = random.randint(i, image_list_test.count())
+        indexImg = random.randint(i, len(image_list_test))
         img_path = f'{dir_name_test}/{test_imagefiles[indexImg]}'
         img = tf.keras.preprocessing.image.load_img(img_path, target_size=(256, 256, 3))
         x = tf.keras.preprocessing.image.img_to_array(img)
