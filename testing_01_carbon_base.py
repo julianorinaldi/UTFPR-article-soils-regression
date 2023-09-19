@@ -23,6 +23,10 @@ if not (args.name):
     print("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
     exit(1)
     
+if (args.preprocess) & (args.preprocess != "True") & (args.preprocess != "False"):
+    print("Preprocessar imagem: True para Sim, False para Não")
+    exit(1)
+    
 print(f'Versão do tensorflow: {tf.__version__}')
 print(f'Eager: {tf.executing_eagerly()}')
 print(f"GPU: {tf.config.list_physical_devices('GPU')}")
