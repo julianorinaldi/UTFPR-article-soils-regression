@@ -10,6 +10,7 @@ import os
 from coreProcess import image_processing
 
 parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--debug", help="Para listar os prints de Debug: True para Sim, False para Não (default)") 
 parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5")
 parser.add_argument("-p", "--preprocess", help="Preprocessar imagem: True para Sim (default), False para Não") 
 parser.add_argument("-o", "--pooling", help="Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max]") 
@@ -20,10 +21,29 @@ if not (args.name):
     print("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
     exit(1)
     
-print(f'Versão do tensorflow: {tf.__version__}')
-print(f'Eager: {tf.executing_eagerly()}')
-print(f"GPU: {tf.config.list_physical_devices('GPU')}")
-print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+if (args.preprocess) and (args.preprocess != "True") and (args.preprocess != "False"):
+    print("Preprocessar imagem: True para Sim, False para Não")
+    exit(1)
+else:
+    preprocess = True if args.preprocess is None else eval(args.preprocess)
+
+if (args.debug) and (args.debug != "True") and (args.debug != "False"):
+    print("Para listar os prints de Debug: True para Sim, False para Não (default)")
+    exit(1)
+else:
+    debug = False if args.debug is None else eval(args.debug)
+
+if (args.pooling) and (args.pooling != "none") and (args.pooling != "avg") and (args.pooling != "max"):
+     print("Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max]")
+     exit(1)
+else:
+    pooling = 'avg' if args.pooling is None else args.pooling
+
+if (debug):
+    print(f'Versão do tensorflow: {tf.__version__}')
+    print(f'Eager: {tf.executing_eagerly()}')
+    print(f"GPU: {tf.config.list_physical_devices('GPU')}")
+    print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 
 physical_devices = tf.config.list_physical_devices('GPU')
 
@@ -32,7 +52,8 @@ if len(physical_devices) == 2:
     os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
 
 strategy = tf.distribute.MirroredStrategy(cross_device_ops = tf.distribute.HierarchicalCopyAllReduce())
-print('Number of devices =====>: {}'.format(strategy.num_replicas_in_sync))
+if (debug):
+    print('Number of devices =====>: {}'.format(strategy.num_replicas_in_sync))
 
 with strategy.scope():
 
@@ -67,22 +88,20 @@ with strategy.scope():
     # Array com as imagens a serem carregadas de treino
     image_list_train = []
 
-    preprocess = True if args.preprocess is None else bool(args.preprocess)
-        
     for imageFilePath in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
         image_list_train.append(image_processing(dir_name_train, imageFilePath, imageDimensionX, imageDimensionY, preprocess))
 
     # Transformando em array a lista de imagens (Treino)
     X_train =  np.array(image_list_train)
-    print(f'Shape X_train: {X_train.shape}')
+    if (debug):
+        print(f'Shape X_train: {X_train.shape}')
 
     Y_train_carbono = np.array(df_train['teor_carbono'].tolist()[:qtd_imagens])
-    print(f'Shape Y_train_carbono: {Y_train_carbono.shape}')
+    if (debug):
+        print(f'Shape Y_train_carbono: {Y_train_carbono.shape}')
 
     resnet_model = tf.keras.models.Sequential()
 
-    pooling = 'avg' if args.pooling is None else args.pooling
-    
     pretrained_model= tf.keras.applications.ResNet50(include_top=False,
                    input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
                    pooling=pooling, classes=1,
