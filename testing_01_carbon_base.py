@@ -7,13 +7,15 @@ import tensorflow as tf # Trabalhar com aprendizado de máquinas
 import keras # Trabalhar com aprendizado de máquinas
 import cv2 # Trabalhar com processamento de imagens
 import os
+import random
 from matplotlib import pyplot as plt # Matplotlib Plot
 from tqdm import tqdm # Facilita visualmente a iteração usado no "for"
 from sklearn.metrics import r2_score # Avaliação das Métricas
-from coreProcess import image_processing
+from coreProcess import image_processing, random_number_from_loop
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--name", help="Nome do arquivo do modelo .h5")
+parser.add_argument("-p", "--preprocess", help="Preprocessar imagem: True para Sim (default), False para Não") 
 
 args = parser.parse_args()
 
@@ -64,14 +66,15 @@ with strategy.scope():
     test_stats = test_stats.transpose()
     df_test = (df_test - test_stats['mean']) / test_stats['std']
 
-    # **********************************************
-    # **********************************************
-
     # Array com as imagens a serem carregadas de treino
     image_list_test = []
 
+    preprocess = True if args.preprocess is None else bool(args.preprocess)
+    
+    print(f'=======================+>>>>>Preprocess: {preprocess}')
+    
     for imageFilePath in tqdm(test_imagefiles.tolist()[:qtd_imagens]):
-        image_list_test.append(image_processing(dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, True))
+        image_list_test.append(image_processing(dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, preprocess))
         
     # Transformando em array a lista de imagens (Test)
     X_test = np.array(image_list_test)
@@ -82,31 +85,32 @@ with strategy.scope():
 
     # Carregando Modelo
     resnet_model = tf.keras.models.load_model(args.name)
-    print(resnet_model.summary())
+    #print(resnet_model.summary())
 
     # Trabalhando com R2
     prediction = resnet_model.predict(X_test)
 
     r2 = r2_score(Y_test_carbono, prediction)
-    print(f'R2: {r2}')
+    print(f'============>>>>R2: {r2} <<<<<=========')
 
-
-    for index in [0,10,100,500,1000,2500,3500]:
-        img_path = f'{dir_name_test}/{test_imagefiles[index]}'
+    
+    for i in [0,10,100,500,1000,2500,3500]:
+        indexImg = random.randint(i, image_list_test.count())
+        img_path = f'{dir_name_test}/{test_imagefiles[indexImg]}'
         img = tf.keras.preprocessing.image.load_img(img_path, target_size=(256, 256, 3))
         x = tf.keras.preprocessing.image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         x = tf.keras.applications.resnet50.preprocess_input(x)
 
-        x2 = cv2.imread(f'{dir_name_test}/{test_imagefiles[index]}')
-        x2 = np.expand_dims(x2, axis=0)
+        #x2 = cv2.imread(f'{dir_name_test}/{test_imagefiles[index]}')
+        #x2 = np.expand_dims(x2, axis=0)
 
         ResNet50 = resnet_model.predict(x)
-        CV2 = resnet_model.predict(x2)
-        Real = df_test.teor_carbono[index]
+        #CV2 = resnet_model.predict(x2)
+        Real = df_test.teor_carbono[indexImg]
 
+        #print(f'CV2: {CV2.item(0)} => Diferença: {Real - CV2.item(0)}')
+        print(f'Image: {test_imagefiles[indexImg]} => {df_test.teor_carbono[indexImg]}')
         print(f'ResNet50: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
-        print(f'CV2: {CV2.item(0)} => Diferença: {Real - CV2.item(0)}')
-        print(f'Image: {test_imagefiles[index]} => {df_test.teor_carbono[index]}')
         print("")
 

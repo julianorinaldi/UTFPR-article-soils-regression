@@ -11,6 +11,8 @@ from coreProcess import image_processing
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5")
+parser.add_argument("-p", "--preprocess", help="Preprocessar imagem: True para Sim (default), False para Não") 
+parser.add_argument("-o", "--pooling", help="Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max]") 
 
 args = parser.parse_args()
 
@@ -65,8 +67,10 @@ with strategy.scope():
     # Array com as imagens a serem carregadas de treino
     image_list_train = []
 
+    preprocess = True if args.preprocess is None else bool(args.preprocess)
+        
     for imageFilePath in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
-        image_list_train.append(image_processing(dir_name_train, imageFilePath, imageDimensionX, imageDimensionY, True))
+        image_list_train.append(image_processing(dir_name_train, imageFilePath, imageDimensionX, imageDimensionY, preprocess))
 
     # Transformando em array a lista de imagens (Treino)
     X_train =  np.array(image_list_train)
@@ -77,9 +81,11 @@ with strategy.scope():
 
     resnet_model = tf.keras.models.Sequential()
 
+    pooling = 'avg' if args.pooling is None else args.pooling
+    
     pretrained_model= tf.keras.applications.ResNet50(include_top=False,
                    input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
-                   pooling='avg', classes=1,
+                   pooling=pooling, classes=1,
                    weights='imagenet')
     for layer in pretrained_model.layers:
             layer.trainable=True
