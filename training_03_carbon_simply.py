@@ -54,7 +54,7 @@ with strategy.scope():
     df_train = df_train.drop(columns={"arquivo"})
 
     # Quantidade de imagens usadas para a rede.
-    qtd_imagens = 10000
+    qtd_imagens = 500
     qtd_canal_color = 3
 
     # Normalização Dataset Treinamento
@@ -86,11 +86,11 @@ with strategy.scope():
 
     resnet_model.add(pretrained_model)
     #resnet_model.add(tf.keras.layers.Flatten())
-    resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
-    resnet_model.add(tf.keras.layers.Dense(256, activation='relu'))
+    #resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
+    #resnet_model.add(tf.keras.layers.Dense(256, activation='relu'))
     resnet_model.add(tf.keras.layers.Dense(128, activation='relu'))
     #resnet_model.add(tf.keras.layers.Dropout(0.5))
-    resnet_model.add(tf.keras.layers.Dense(1, activation='relu'))
+    resnet_model.add(tf.keras.layers.Dense(1))
 
     print(resnet_model.summary())
 
