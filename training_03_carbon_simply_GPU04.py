@@ -110,7 +110,7 @@ with strategy.scope():
             layer.trainable=True
 
     resnet_model.add(pretrained_model)
-    #resnet_model.add(tf.keras.layers.Flatten())
+    resnet_model.add(tf.keras.layers.Flatten())
     resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
     #resnet_model.add(tf.keras.layers.Dense(256, activation='relu'))
     #resnet_model.add(tf.keras.layers.Dropout(0.5))
@@ -118,9 +118,9 @@ with strategy.scope():
 
     print(resnet_model.summary())
 
-    opt = tf.keras.optimizers.RMSprop(0.0001)
+    opt = tf.keras.optimizers.RMSprop(0.00001)
     resnet_model.compile(optimizer=opt,loss='mse',metrics=['mae', 'mse'])
-    history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
+    history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=200, callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=50, restore_best_weights=True)])
 
     resnet_model.save(args.name)
 
