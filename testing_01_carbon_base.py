@@ -23,7 +23,7 @@ if not (args.name):
     print("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
     exit(1)
     
-if (args.preprocess) & (args.preprocess != "True") & (args.preprocess != "False"):
+if (args.preprocess) and (args.preprocess != "True") and (args.preprocess != "False"):
     print("Preprocessar imagem: True para Sim, False para Não")
     exit(1)
     
