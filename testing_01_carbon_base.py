@@ -13,7 +13,7 @@ from sklearn.metrics import r2_score # Avaliação das Métricas
 from coreProcess import image_processing
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-n", "--name", help="Nome do arquivo do modelo .h5", required=True)
+parser.add_argument("-n", "--name", help="Nome do arquivo do modelo .h5")
 
 args = parser.parse_args()
 

@@ -10,7 +10,7 @@ import os
 from coreProcess import image_processing
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5", required=True)
+parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5")
 
 args = parser.parse_args()
 
