@@ -11,7 +11,7 @@ import random
 from matplotlib import pyplot as plt # Matplotlib Plot
 from tqdm import tqdm # Facilita visualmente a iteração usado no "for"
 from sklearn.metrics import r2_score # Avaliação das Métricas
-from coreProcess import image_processing, random_number_from_loop
+from coreProcess import image_processing
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-n", "--name", help="Nome do arquivo do modelo .h5")
