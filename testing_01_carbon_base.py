@@ -37,7 +37,7 @@ if (args.debug) and (args.debug != "True") and (args.debug != "False"):
     print("Para listar os prints de Debug: True para Sim, False para Não (default)")
     exit(1)
 else:
-    debug = True if args.debug is None else eval(args.debug)
+    debug = False if args.debug is None else eval(args.debug)
   
 if (debug):  
     print(f'Versão do tensorflow: {tf.__version__}')
@@ -129,7 +129,7 @@ with strategy.scope():
         Real = df_test.teor_carbono[indexImg]
 
         #print(f'CV2: {CV2.item(0)} => Diferença: {Real - CV2.item(0)}')
-        print(f'Image[indexImg]: {test_imagefiles[indexImg]} => {df_test.teor_carbono[indexImg]}')
-        print(f'ResNet50[indexImg]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
+        print(f'Image[{indexImg}]: {test_imagefiles[indexImg]} => {df_test.teor_carbono[indexImg]}')
+        print(f'ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
         print("")
 
