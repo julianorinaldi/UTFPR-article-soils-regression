@@ -71,6 +71,7 @@ with strategy.scope():
 
     preprocess = True if args.preprocess is None else bool(args.preprocess)
     
+    print(f'=======================+>>>>>Args: {args.preprocess}')
     print(f'=======================+>>>>>Preprocess: {preprocess}')
     
     for imageFilePath in tqdm(test_imagefiles.tolist()[:qtd_imagens]):
