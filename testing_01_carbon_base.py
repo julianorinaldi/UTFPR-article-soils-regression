@@ -69,7 +69,7 @@ with strategy.scope():
     # Array com as imagens a serem carregadas de treino
     image_list_test = []
 
-    preprocess = True if args.preprocess is None else bool(args.preprocess)
+    preprocess = True if args.preprocess is None else eval(args.preprocess)
     
     print(f'=======================+>>>>>Args: {args.preprocess}')
     print(f'=======================+>>>>>Preprocess: {preprocess}')
