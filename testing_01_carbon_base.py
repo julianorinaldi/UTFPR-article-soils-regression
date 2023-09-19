@@ -17,6 +17,7 @@ from coreProcess import image_processing
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--debug", help="Para listar os prints de Debug: True para Sim, False para Não (default)") 
 parser.add_argument("-n", "--name", help="Nome do arquivo do modelo .h5")
 parser.add_argument("-p", "--preprocess", help="Preprocessar imagem: True para Sim (default), False para Não") 
 
@@ -25,15 +26,24 @@ args = parser.parse_args()
 if not (args.name):
     print("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
     exit(1)
-    
+
 if (args.preprocess) and (args.preprocess != "True") and (args.preprocess != "False"):
     print("Preprocessar imagem: True para Sim, False para Não")
     exit(1)
+else:
+    preprocess = True if args.preprocess is None else eval(args.preprocess)
     
-print(f'Versão do tensorflow: {tf.__version__}')
-print(f'Eager: {tf.executing_eagerly()}')
-print(f"GPU: {tf.config.list_physical_devices('GPU')}")
-print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+if (args.debug) and (args.debug != "True") and (args.debug != "False"):
+    print("Para listar os prints de Debug: True para Sim, False para Não (default)")
+    exit(1)
+else:
+    debug = True if args.debug is None else eval(args.debug)
+  
+if (debug):  
+    print(f'Versão do tensorflow: {tf.__version__}')
+    print(f'Eager: {tf.executing_eagerly()}')
+    print(f"GPU: {tf.config.list_physical_devices('GPU')}")
+    print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 
 physical_devices = tf.config.list_physical_devices('GPU')
 
@@ -42,7 +52,8 @@ if len(physical_devices) == 2:
     os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
 
 strategy = tf.distribute.MirroredStrategy(cross_device_ops = tf.distribute.HierarchicalCopyAllReduce())
-print('Number of devices =====>: {}'.format(strategy.num_replicas_in_sync))
+if (debug):
+    print('Number of devices =====>: {}'.format(strategy.num_replicas_in_sync))
 
 with strategy.scope():
         
@@ -75,18 +86,18 @@ with strategy.scope():
 
     # Array com as imagens a serem carregadas de treino
     image_list_test = []
-
-    preprocess = True if args.preprocess is None else eval(args.preprocess)
     
     for imageFilePath in tqdm(test_imagefiles.tolist()[:qtd_imagens]):
         image_list_test.append(image_processing(dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, preprocess))
         
     # Transformando em array a lista de imagens (Test)
     X_test = np.array(image_list_test)
-    print(f'Shape X_test: {X_test.shape}')
+    if (debug):
+        print(f'Shape X_test: {X_test.shape}')
 
     Y_test_carbono = np.array(df_test['teor_carbono'].tolist()[:qtd_imagens])
-    print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
+    if (debug):
+        print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
 
     # Carregando Modelo
     resnet_model = tf.keras.models.load_model(args.name)
@@ -118,7 +129,7 @@ with strategy.scope():
         Real = df_test.teor_carbono[indexImg]
 
         #print(f'CV2: {CV2.item(0)} => Diferença: {Real - CV2.item(0)}')
-        print(f'Image: {test_imagefiles[indexImg]} => {df_test.teor_carbono[indexImg]}')
-        print(f'ResNet50: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
+        print(f'Image[indexImg]: {test_imagefiles[indexImg]} => {df_test.teor_carbono[indexImg]}')
+        print(f'ResNet50[indexImg]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
         print("")
 
