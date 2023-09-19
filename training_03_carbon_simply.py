@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import numpy as np # Trabalhar com array
 import pandas as pd # Trabalhar com análise de dados, importação, etc.
 from matplotlib import pyplot as plt # Matplotlib Plot
@@ -8,6 +9,15 @@ import tensorflow as tf # Trabalhar com aprendizado de máquinas
 import os
 from coreProcess import image_processing
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5", required=True)
+
+args = parser.parse_args()
+
+if not (args.name):
+    print("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
+    exit(1)
+    
 print(f'Versão do tensorflow: {tf.__version__}')
 print(f'Eager: {tf.executing_eagerly()}')
 print(f"GPU: {tf.config.list_physical_devices('GPU')}")
@@ -88,5 +98,5 @@ with strategy.scope():
     resnet_model.compile(optimizer=opt,loss='mse',metrics=['mae', 'mse'])
     history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
-    resnet_model.save('last-model.h5')
+    resnet_model.save(args.name)
 

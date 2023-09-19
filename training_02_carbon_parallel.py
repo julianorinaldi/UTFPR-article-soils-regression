@@ -1,18 +1,27 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import numpy as np # Trabalhar com array
 import pandas as pd # Trabalhar com análise de dados, importação, etc.
 from matplotlib import pyplot as plt # Matplotlib Plot
 from tqdm import tqdm # Facilita visualmente a iteração usado no "for"
 import tensorflow as tf # Trabalhar com aprendizado de máquinas
 import os
+from coreProcess import image_processing
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5", required=True)
+
+args = parser.parse_args()
+
+if not (args.name):
+    print("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
+    exit(1)
 
 print(f'Versão do tensorflow: {tf.__version__}')
 print(f'Eager: {tf.executing_eagerly()}')
 print(f"GPU: {tf.config.list_physical_devices('GPU')}")
 print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
-
-from coreProcess import image_processing
 
 physical_devices = tf.config.list_physical_devices('GPU')
 
@@ -103,5 +112,5 @@ with strategy.scope():
     hist['epoch'] = history.epoch
     hist.tail()
 
-    resnet_model.save('last-model.h5')
+    resnet_model.save(args.name)
 
