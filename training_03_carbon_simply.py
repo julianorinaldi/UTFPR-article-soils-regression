@@ -34,7 +34,8 @@ physical_devices = tf.config.list_physical_devices('GPU')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
 
-if (args.gpu):
+if not (args.gpu):
+    print("GPU Caiu aqui", args.gpu)
     if (len(physical_devices) > 0):
         os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 else:
