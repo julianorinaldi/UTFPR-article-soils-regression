@@ -106,6 +106,8 @@ with strategy.scope():
                    input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
                    pooling=pooling, classes=1,
                    weights='imagenet')
+    
+    pretrained_model.trainable = True
     for layer in pretrained_model.layers:
             layer.trainable=True
 
