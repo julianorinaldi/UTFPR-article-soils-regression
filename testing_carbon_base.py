@@ -55,7 +55,7 @@ if (args.debug):
     print(f'{prefix} Amount of GPU Available: {physical_devices}')
 
 # Estratégia para trabalhar com Multi-GPU
-strategy = tf.distribute.MirroredStrategy(devices=['/gpu:0'],
+strategy = tf.distribute.MirroredStrategy(devices=['/gpu:0', '/gpu:1'],
     cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
 
 with strategy.scope():
