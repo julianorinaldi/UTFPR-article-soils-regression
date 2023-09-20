@@ -149,10 +149,9 @@ with strategy.scope():
 
     # Adicionando as finais ao modelo para adequar ao nosso contexto.
     resnet_model.add(pretrained_model)
-    resnet_model.add(tf.keras.layers.Dense(128, activation='relu'))
-    resnet_model.add(tf.keras.layers.Dropout(0.5))
-    resnet_model.add(tf.keras.layers.Dense(64, activation='relu'))
-    resnet_model.add(tf.keras.layers.Dense(1))
+    resnet_model.add(tf.keras.layers.Flatten())
+    resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
+    resnet_model.add(tf.keras.layers.Dense(1, activation='linear'))
 
     print(f'{prefix}')
     print(resnet_model.summary())
@@ -168,7 +167,7 @@ with strategy.scope():
     opt = tf.keras.optimizers.SGD(learning_rate=0.0001, momentum=0.9)
     
     resnet_model.compile(optimizer=opt, loss='mse', metrics=['mae'])
-    history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
-                               tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
+    history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=200, callbacks=[
+                               tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)])
 
     resnet_model.save(args.name)
