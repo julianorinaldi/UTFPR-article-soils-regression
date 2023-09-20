@@ -37,18 +37,12 @@ if not (args.name):
     print(f'{prefix} Há parâmetros faltantes. Utilize -h ou --help para ajuda!')
     exit(1)
 
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
+physical_devices = tf.config.list_physical_devices('GPU')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 
 if not (args.gpu):
     if (len(physical_devices) > 0):
-        os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
-        tf.config.set_visible_devices(physical_devices[1], 'GPU')
-        tf.config.experimental.set_memory_growth(physical_devices[1], True)
-        #tf.config.set_visible_devices(physical_devices[1], 'GPU')
-        #tf.config.experimental.set_memory_growth(physical_devices[1], True)
-        print(f'{prefix} Não respeita')
-        
+        os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 else:
     gpusArray = args.gpu.split(',')
     gpu_count = len(gpusArray)
@@ -61,7 +55,7 @@ if (args.debug):
     print(f'{prefix} Amount of GPU Available: {physical_devices}')
 
 # Estratégia para trabalhar com Multi-GPU
-strategy = tf.distribute.MirroredStrategy(
+strategy = tf.distribute.MirroredStrategy(devices=["GPU:1"],
     cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
 
 with strategy.scope():
