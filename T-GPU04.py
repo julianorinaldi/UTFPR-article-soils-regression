@@ -165,7 +165,7 @@ with strategy.scope():
     #  tf.keras.optimizers.RMSprop(learning_rate=0.0001)
     #  tf.keras.optimizers.SGD(learning_rate=0.0001, momentum=0.9)
     #  tf.keras.optimizers.Nadam(learning_rate=0.0001)
-    opt = tf.keras.optimizers.experimental.Nadam()
+    opt = tf.keras.optimizers.RMSprop(learning_rate=0.00001)
     
     resnet_model.compile(optimizer=opt, loss='mse', metrics=['mae'])
     history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
