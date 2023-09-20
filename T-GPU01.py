@@ -12,6 +12,8 @@ from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
 from coreProcess import image_processing
 
+prefix = ">>>>>>>>>>>>>>>>>"
+
 # Argumentos
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--debug", action="store_true",
@@ -28,19 +30,18 @@ parser.add_argument(
 args = parser.parse_args()
 
 if not (args.name):
-    print("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
+    print(f"{prefix} Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
     exit(1)
 
 if (args.pooling) and (args.pooling != "none") and (args.pooling != "avg") and (args.pooling != "max"):
     print(
-        "Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max]")
+        f"{prefix} Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max]")
     exit(1)
 else:
     pooling = 'avg' if args.pooling is None else args.pooling
 
 physical_devices = tf.config.list_physical_devices('GPU')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
 
 if not (args.gpu):
     if (len(physical_devices) > 0):
@@ -53,9 +54,9 @@ else:
 
 # Infos da GPU e Framework
 if (args.debug):
-    print(f'Tensorflow Version: {tf.__version__}')
-    print(f'Amount of GPU Available: {physical_devices}')
-    print(f'Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
+    print(f'{prefix} Tensorflow Version: {tf.__version__}')
+    print(f'{prefix} Amount of GPU Available: {physical_devices}')
+    print(f'{prefix} Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
 # Estratégia para trabalhar com Multi-GPU
 strategy = tf.distribute.MirroredStrategy(
@@ -98,6 +99,8 @@ with strategy.scope():
     # Array com as imagens a serem carregadas de treino
     image_list_train = []
 
+    if (args.debug):
+        print(f'{prefix} Preprocess: {args.preprocess}')
     for imageFilePath in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
         # Carregamento de imagens Com/Sem Preprocessamento (args.preprocess)
         image_list_train.append(image_processing(
@@ -106,14 +109,17 @@ with strategy.scope():
     # Transformando em array a lista de imagens (Treino)
     X_train = np.array(image_list_train)
     if (args.debug):
-        print(f'Shape X_train: {X_train.shape}')
+        print(f'{prefix} Shape X_train: {X_train.shape}')
 
     # *******************************************************
     # Neste momento apenas trabalhando com valores de Carbono
     # *******************************************************
     Y_train_carbono = np.array(df_train['teor_carbono'].tolist()[:qtd_imagens])
     if (args.debug):
-        print(f'Shape Y_train_carbono: {Y_train_carbono.shape}')
+        print(f'{prefix} Shape Y_train_carbono: {Y_train_carbono.shape}')
+        
+    #Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
+    #print(f'Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}')
 
     resnet_model = tf.keras.models.Sequential()
 
@@ -131,6 +137,8 @@ with strategy.scope():
                                                           imageDimensionX, imageDimensionY, qtd_canal_color),
                                                       pooling=pooling, classes=1,
                                                       weights='imagenet')
+    if (args.debug):
+        print(f'{prefix} Pooling: {pooling}')
 
     # Todas as camadas do modelo pré-treinado como "treináveis".
     # Isto significa que, durante o treinamento, os pesos dessas camadas serão atualizados para se ajustar ao seu conjunto de dados específico.
@@ -139,6 +147,7 @@ with strategy.scope():
     for layer in pretrained_model.layers:
         layer.trainable = True
 
+
     # Adicionando as finais ao modelo para adequar ao nosso contexto.
     resnet_model.add(pretrained_model)
     resnet_model.add(tf.keras.layers.Dense(128, activation='relu'))
@@ -146,9 +155,9 @@ with strategy.scope():
     resnet_model.add(tf.keras.layers.Dense(64, activation='relu'))
     resnet_model.add(tf.keras.layers.Dense(1))
 
-    print("")
+    print(f'{prefix}')
     print(resnet_model.summary())
-    print("")
+    print(f'{prefix}')
 
     # Otimizadores
     # https://keras.io/api/optimizers/

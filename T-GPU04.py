@@ -137,13 +137,15 @@ with strategy.scope():
                                                           imageDimensionX, imageDimensionY, qtd_canal_color),
                                                       pooling=pooling, classes=1,
                                                       weights='imagenet')
-
+    if (args.debug):
+        print(f'{prefix} Pooling: {pooling}')
+        
     # Todas as camadas do modelo pré-treinado como "treináveis".
     # Isto significa que, durante o treinamento, os pesos dessas camadas serão atualizados para se ajustar ao seu conjunto de dados específico.
     # layer.trainable=True => Significa que todas as camadas poderão ser ajustadas durante o treinamento
-    pretrained_model.trainable = True
+    pretrained_model.trainable = False
     for layer in pretrained_model.layers:
-        layer.trainable = True
+        layer.trainable = False
 
     # Adicionando as finais ao modelo para adequar ao nosso contexto.
     resnet_model.add(pretrained_model)

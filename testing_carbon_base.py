@@ -111,7 +111,9 @@ with strategy.scope():
     # Carregando Modelo
     resnet_model = tf.keras.models.load_model(args.name)
     if (args.debug):
+        print(f'{prefix}')
         print(resnet_model.summary())
+        print(f'{prefix}')
 
     # Fazendo a predição sobre os dados de teste
     prediction = resnet_model.predict(X_test)

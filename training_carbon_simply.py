@@ -137,6 +137,8 @@ with strategy.scope():
                                                           imageDimensionX, imageDimensionY, qtd_canal_color),
                                                       pooling=pooling, classes=1,
                                                       weights='imagenet')
+    if (args.debug):
+        print(f'{prefix} Pooling: {pooling}')
 
     # Todas as camadas do modelo pré-treinado como "treináveis".
     # Isto significa que, durante o treinamento, os pesos dessas camadas serão atualizados para se ajustar ao seu conjunto de dados específico.
