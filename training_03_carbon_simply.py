@@ -44,7 +44,8 @@ else:
         if (i < len(gpusArray)):
             gpu = gpu + ","
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu
-    print(f'GPU ========+> {gpu}')
+    print("GPU ========+>", gpu)
+    
 exit(1)
 
 #Infos da GPU e Framework
