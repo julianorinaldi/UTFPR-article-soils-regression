@@ -58,7 +58,6 @@ else:
 if (args.debug):
     print(f'{prefix} Tensorflow Version: {tf.__version__}')
     print(f'{prefix} Amount of GPU Available: {physical_devices}')
-    print(f'{prefix} Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
 # Estratégia para trabalhar com Multi-GPU
 strategy = tf.distribute.MirroredStrategy(
