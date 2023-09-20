@@ -3,7 +3,7 @@
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 
 # Carregamento de imagem para objeto e tratamento de imagem
-def image_processing(dir_name_base, imageFilePath, dimensionX, dimensionY, preprocess=True):
+def image_processing(dir_name_base, imageFilePath, dimensionX, dimensionY, preprocess):
     img_path = f'{dir_name_base}/{imageFilePath}'
     image = tf.keras.preprocessing.image.load_img(
         img_path, target_size=(dimensionX, dimensionY))

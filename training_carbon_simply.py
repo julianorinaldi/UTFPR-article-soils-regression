@@ -99,6 +99,8 @@ with strategy.scope():
 
     for imageFilePath in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
         # Carregamento de imagens Com/Sem Preprocessamento (args.preprocess)
+        if (args.debug):
+            print(f'Preprocess: {args.preprocess}')
         image_list_train.append(image_processing(
             dir_name_train, imageFilePath, imageDimensionX, imageDimensionY, args.preprocess))
 
