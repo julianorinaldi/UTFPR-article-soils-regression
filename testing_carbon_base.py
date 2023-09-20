@@ -42,7 +42,7 @@ os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 
 if not (args.gpu):
     if (len(physical_devices) > 0):
-        os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+        os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 else:
     gpusArray = args.gpu.split(',')
     gpu_count = len(gpusArray)
@@ -53,9 +53,10 @@ else:
 if (args.debug):
     print(f'{prefix} Tensorflow Version: {tf.__version__}')
     print(f'{prefix} Amount of GPU Available: {physical_devices}')
+    print(f'{prefix} Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
 # Estratégia para trabalhar com Multi-GPU
-strategy = tf.distribute.MirroredStrategy(devices=['/gpu:1'])
+strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
 
 with strategy.scope():
 
