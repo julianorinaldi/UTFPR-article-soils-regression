@@ -35,7 +35,6 @@ os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
 
 if not (args.gpu):
-    print("GPU Caiu aqui", args.gpu)
     if (len(physical_devices) > 0):
         os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 else:
@@ -43,23 +42,18 @@ else:
     gpu_count = len(gpusArray)
     gpu = ",".join(str(int(g) + 1) for g in gpusArray)
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu
-    print("GPU ========+>", gpu)
     
-exit(1)
-
 #Infos da GPU e Framework
 if (args.debug):
-    print(f'Versão do tensorflow: {tf.__version__}')
-    print(f'Eager: {tf.executing_eagerly()}')
-    print(f"GPU: {physical_devices}")
-    print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
-
-
+    print(f'Tensorflow Version: {tf.__version__}')
+    print(f'Amount of GPU Available: {physical_devices}')
+    print(f'GPU selecteds {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
 strategy = tf.distribute.MirroredStrategy(cross_device_ops = tf.distribute.HierarchicalCopyAllReduce())
 if (args.debug):
-    print('Number of devices =====>: {}'.format(strategy.num_replicas_in_sync))
+    print(f'Number of devices =====>: {strategy.num_replicas_in_sync}')
 
+exit(1)
 with strategy.scope():
 
     # Carregamento do Dataset
