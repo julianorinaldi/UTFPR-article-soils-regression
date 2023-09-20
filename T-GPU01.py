@@ -141,6 +141,7 @@ with strategy.scope():
 
     # Adicionando as finais ao modelo para adequar ao nosso contexto.
     resnet_model.add(pretrained_model)
+    resnet_model.add(tf.keras.layers.Flatten())
     resnet_model.add(tf.keras.layers.GlobalAveragePooling2D())
     resnet_model.add(tf.keras.layers.Dense(128, activation='relu'))
     resnet_model.add(tf.keras.layers.Dropout(0.5))
