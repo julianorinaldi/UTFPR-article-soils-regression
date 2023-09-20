@@ -93,10 +93,10 @@ with strategy.scope():
     # Array com as imagens a serem carregadas de treino
     image_list_test = []
 
+    if (args.debug):
+        print(f'{prefix} Preprocess: {args.preprocess}')
     for imageFilePath in tqdm(test_imagefiles.tolist()[:qtd_imagens]):
         # Carregamento de imagens Com/Sem Preprocessamento (args.preprocess)
-        if (args.debug):
-            print(f'{prefix} Preprocess: {args.preprocess}')
         image_list_test.append(image_processing(
             dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, args.preprocess))
 
