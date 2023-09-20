@@ -143,9 +143,9 @@ with strategy.scope():
     # Todas as camadas do modelo pré-treinado como "treináveis".
     # Isto significa que, durante o treinamento, os pesos dessas camadas serão atualizados para se ajustar ao seu conjunto de dados específico.
     # layer.trainable=True => Significa que todas as camadas poderão ser ajustadas durante o treinamento
-    pretrained_model.trainable = False
+    pretrained_model.trainable = True
     for layer in pretrained_model.layers:
-        layer.trainable = False
+        layer.trainable = True
 
     # Adicionando as finais ao modelo para adequar ao nosso contexto.
     resnet_model.add(pretrained_model)
