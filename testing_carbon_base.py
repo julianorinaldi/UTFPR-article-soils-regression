@@ -15,6 +15,8 @@ from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
 from coreProcess import image_processing
 
+prefix = ">>>>>>>>>>>>>>>>>"
+
 # 3 = INFO, WARNING, and ERROR messages are not printed
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -32,7 +34,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 if not (args.name):
-    print("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
+    print(f'{prefix} Há parâmetros faltantes. Utilize -h ou --help para ajuda!')
     exit(1)
 
 physical_devices = tf.config.list_physical_devices('GPU')
@@ -49,9 +51,9 @@ else:
 
 # Infos da GPU e Framework
 if (args.debug):
-    print(f'Tensorflow Version: {tf.__version__}')
-    print(f'Amount of GPU Available: {physical_devices}')
-    print(f'Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
+    print(f'{prefix} Tensorflow Version: {tf.__version__}')
+    print(f'{prefix} Amount of GPU Available: {physical_devices}')
+    print(f'{prefix} Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
 # Estratégia para trabalhar com Multi-GPU
 strategy = tf.distribute.MirroredStrategy(
@@ -94,18 +96,18 @@ with strategy.scope():
     for imageFilePath in tqdm(test_imagefiles.tolist()[:qtd_imagens]):
         # Carregamento de imagens Com/Sem Preprocessamento (args.preprocess)
         if (args.debug):
-            print(f'Preprocess: {args.preprocess}')
+            print(f'{prefix} Preprocess: {args.preprocess}')
         image_list_test.append(image_processing(
             dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, args.preprocess))
 
     # Transformando em array a lista de imagens (Test)
     X_test = np.array(image_list_test)
     if (args.debug):
-        print(f'Shape X_test: {X_test.shape}')
+        print(f'{prefix} Shape X_test: {X_test.shape}')
 
     Y_test_carbono = np.array(df_test['teor_carbono'].tolist()[:qtd_imagens])
     if (args.debug):
-        print(f'Shape Y_test_carbono: {Y_test_carbono.shape}')
+        print(f'{prefix} Shape Y_test_carbono: {Y_test_carbono.shape}')
 
     # Carregando Modelo
     resnet_model = tf.keras.models.load_model(args.name)
@@ -143,7 +145,7 @@ with strategy.scope():
 
         # print(f'CV2: {CV2.item(0)} => Diferença: {Real - CV2.item(0)}')
         print(
-            f'Image[{indexImg}]: {test_imagefiles[indexImg]} => {df_test.teor_carbono[indexImg]}')
+            f'{prefix} Image[{indexImg}]: {test_imagefiles[indexImg]} => {df_test.teor_carbono[indexImg]}')
         print(
-            f'ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
+            f'{prefix} ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
         print("")
