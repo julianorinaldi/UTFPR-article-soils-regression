@@ -39,6 +39,7 @@ if (args.gpu):
         os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 else:
     gpusArray = args.gpu.split(',')
+    gpu = ""
     for i in range(len(gpusArray)):
         gpu = gpu + str(int(gpusArray[i])+1)
         if (i < len(gpusArray)):
