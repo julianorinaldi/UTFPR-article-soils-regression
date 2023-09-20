@@ -45,8 +45,8 @@ if not (args.gpu):
         #os.environ["CUDA_VISIBLE_DEVICES"] = "1"
         #tf.config.set_visible_devices(physical_devices[1], 'GPU')
         #tf.config.experimental.set_memory_growth(physical_devices[1], True)
-        tf.config.set_visible_devices(physical_devices[2], 'GPU')
-        tf.config.experimental.set_memory_growth(physical_devices[2], True)        
+        tf.config.set_visible_devices(physical_devices[1], 'GPU')
+        tf.config.experimental.set_memory_growth(physical_devices[1], True)        
         
 else:
     gpusArray = args.gpu.split(',')
