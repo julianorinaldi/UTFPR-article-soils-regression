@@ -40,11 +40,8 @@ if not (args.gpu):
         os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 else:
     gpusArray = args.gpu.split(',')
-    gpu = ""
-    for i in range(len(gpusArray)):
-        gpu = gpu + str(int(gpusArray[i])+1)
-        if (i < len(gpusArray)):
-            gpu = gpu + ","
+    gpu_count = len(gpusArray)
+    gpu = ",".join(str(int(g) + 1) for g in gpusArray)
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu
     print("GPU ========+>", gpu)
     
