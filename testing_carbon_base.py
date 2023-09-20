@@ -38,11 +38,11 @@ if not (args.name):
     exit(1)
 
 physical_devices = tf.config.list_physical_devices('GPU')
-#os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 
 if not (args.gpu):
     if (len(physical_devices) > 0):
-        #os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+        os.environ["CUDA_VISIBLE_DEVICES"] = "1"
         #tf.config.set_visible_devices(physical_devices[1], 'GPU')
         #tf.config.experimental.set_memory_growth(physical_devices[1], True)
         #tf.config.set_visible_devices(physical_devices[1], 'GPU')
