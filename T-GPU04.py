@@ -140,18 +140,18 @@ with strategy.scope():
     if (args.debug):
         print(f'{prefix} Pooling: {pooling}')
 
+    # Adicionando as finais ao modelo para adequar ao nosso contexto.
+    resnet_model.add(pretrained_model)
+    resnet_model.add(tf.keras.layers.GlobalAveragePooling2D()(pretrained_model.output))
+    resnet_model.add(tf.keras.layers.Dense(1))
+
     # Todas as camadas do modelo pré-treinado como "treináveis".
     # Isto significa que, durante o treinamento, os pesos dessas camadas serão atualizados para se ajustar ao seu conjunto de dados específico.
     # layer.trainable=True => Significa que todas as camadas poderão ser ajustadas durante o treinamento
     pretrained_model.trainable = True
     for layer in pretrained_model.layers:
         layer.trainable = True
-
-    # Adicionando as finais ao modelo para adequar ao nosso contexto.
-    resnet_model.add(pretrained_model)
-    resnet_model.add(tf.keras.layers.GlobalAveragePooling2D())
-    resnet_model.add(tf.keras.layers.Dense(1))
-
+        
     print(f'{prefix}')
     print(resnet_model.summary())
     print(f'{prefix}')
