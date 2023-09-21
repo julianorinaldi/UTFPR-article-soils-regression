@@ -56,7 +56,7 @@ else:
 if (args.debug):
     print(f'{prefix} Tensorflow Version: {tf.__version__}')
     print(f'{prefix} Amount of GPU Available: {physical_devices}')
-    print(f'{prefix} Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
+    #print(f'{prefix} Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
 # Estratégia para trabalhar com Multi-GPU
 strategy = tf.distribute.MirroredStrategy(
@@ -124,7 +124,7 @@ with strategy.scope():
     resnet_model = tf.keras.models.Sequential()
 
     # Modelos disponíveis para Transfer-Learning
-    # https://keras.io/api/applications/#usage-examples-for-image-classification-models
+    # https://keras.io/api/applications/
     # ResNet50
     
     # include_top=False => Excluindo as camadas finais (top layers) da rede, que geralmente são usadas para classificação. Vamos adicionar nossas próprias camadas finais
@@ -132,7 +132,7 @@ with strategy.scope():
     # pooling => Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max], passado por parâmetro, mas o default é avg.
     # classes=1 => Apenas uma classe de saída, no caso de regressão precisamos de valor predito para o carbono.
     # weights='imagenet' => Carregamento do modelo inicial com pesos do ImageNet, no qual no treinamento será re-adaptado.
-    pretrained_model = tf.keras.applications.ResNet50(include_top=False,
+    pretrained_model = tf.keras.applications.ResNet152(include_top=False,
                                                       input_shape=(
                                                           imageDimensionX, imageDimensionY, qtd_canal_color),
                                                       pooling=pooling, classes=1,
@@ -146,7 +146,6 @@ with strategy.scope():
     pretrained_model.trainable = True
     for layer in pretrained_model.layers:
         layer.trainable = True
-
 
     # Adicionando as finais ao modelo para adequar ao nosso contexto.
     resnet_model.add(pretrained_model)
@@ -165,10 +164,10 @@ with strategy.scope():
     #  tf.keras.optimizers.RMSprop(learning_rate=0.0001)
     #  tf.keras.optimizers.SGD(learning_rate=0.0001, momentum=0.9)
     #  tf.keras.optimizers.Nadam(learning_rate=0.0001)
-    opt = tf.keras.optimizers.SGD(learning_rate=0.00001, momentum=0.1)
+    opt = tf.keras.optimizers.RMSprop(0.0001)
     
     resnet_model.compile(optimizer=opt, loss='mse', metrics=['mae'])
-    history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=300, callbacks=[
-                               tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=50, restore_best_weights=True)])
+    history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
+                               tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
     resnet_model.save(args.name)

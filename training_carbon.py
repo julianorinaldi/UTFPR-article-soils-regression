@@ -124,7 +124,7 @@ with strategy.scope():
     resnet_model = tf.keras.models.Sequential()
 
     # Modelos disponíveis para Transfer-Learning
-    # https://keras.io/api/applications/#usage-examples-for-image-classification-models
+    # https://keras.io/api/applications
     # ResNet50
     
     # include_top=False => Excluindo as camadas finais (top layers) da rede, que geralmente são usadas para classificação. Vamos adicionar nossas próprias camadas finais
