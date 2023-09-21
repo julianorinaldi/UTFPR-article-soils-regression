@@ -132,7 +132,7 @@ with strategy.scope():
     # pooling => Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max], passado por parâmetro, mas o default é avg.
     # classes=1 => Apenas uma classe de saída, no caso de regressão precisamos de valor predito para o carbono.
     # weights='imagenet' => Carregamento do modelo inicial com pesos do ImageNet, no qual no treinamento será re-adaptado.
-    pretrained_model = tf.keras.applications.ResNet152V2(include_top=False,
+    pretrained_model = tf.keras.applications.EfficientNetB0(include_top=False,
                                                       input_shape=(
                                                           imageDimensionX, imageDimensionY, qtd_canal_color),
                                                       pooling=pooling, classes=1,
@@ -142,8 +142,9 @@ with strategy.scope():
 
     # Adicionando as finais ao modelo para adequar ao nosso contexto.
     resnet_model.add(pretrained_model)
-    resnet_model.add(tf.keras.layers.GlobalAveragePooling2D()(pretrained_model.output))
-    resnet_model.add(tf.keras.layers.Dense(1))
+    resnet_model.add(tf.keras.layers.Flatten())
+    resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
+    resnet_model.add(tf.keras.layers.Dense(1, activation='linear'))
 
     # Todas as camadas do modelo pré-treinado como "treináveis".
     # Isto significa que, durante o treinamento, os pesos dessas camadas serão atualizados para se ajustar ao seu conjunto de dados específico.
