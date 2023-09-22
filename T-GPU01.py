@@ -158,6 +158,7 @@ with strategy.scope():
                                tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
     model.save(args.name)
+    
     print(f"{prefix} Info parameters: ")
     print(f"{prefix}{prefix} -d (--debug): {args.debug}")
     print(f"{prefix}{prefix} -n (--name): {args.name}")

@@ -22,14 +22,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # Argumentos
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--debug", action="store_true",
-                    help="Para listar os prints de Debug")
-parser.add_argument(
-    "-n", "--name", help="Nome do arquivo de saída do modelo .h5")
-parser.add_argument("-p", "--preprocess", action="store_true",
-                    help="Preprocessar imagem 'resnet50.preprocess_input(...)'")
-parser.add_argument(
-    "-g", "--gpu", help="Index da GPU a process. Considere 0 a primeira. Caso use mais uma, ex. para duas: 0,1")
+parser.add_argument("-d", "--debug", action="store_true", help="Para listar os prints de Debug")
+parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5")
+parser.add_argument("-p", "--preprocess", action="store_true", help="Preprocessar imagem 'resnet50.preprocess_input(...)'")
 
 args = parser.parse_args()
 
@@ -40,20 +35,10 @@ if not (args.name):
 physical_devices = tf.config.list_physical_devices('GPU')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 
-if not (args.gpu):
-    if (len(physical_devices) > 0):
-        os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-else:
-    gpusArray = args.gpu.split(',')
-    gpu_count = len(gpusArray)
-    gpu = ",".join(str(int(g) + 1) for g in gpusArray)
-    os.environ["CUDA_VISIBLE_DEVICES"] = gpu
-
 # Infos da GPU e Framework
 if (args.debug):
     print(f'{prefix} Tensorflow Version: {tf.__version__}')
     print(f'{prefix} Amount of GPU Available: {physical_devices}')
-    #print(f'{prefix} Indexes of selected GPUs: {os.environ["CUDA_VISIBLE_DEVICES"]}')
 
 # Estratégia para trabalhar com Multi-GPU
 strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
@@ -115,17 +100,6 @@ with strategy.scope():
         print(resnet_model.summary())
         print(f'{prefix}')
 
-    # Fazendo a predição sobre os dados de teste
-    prediction = resnet_model.predict(X_test)
-
-    # Avaliando com R2
-    r2 = r2_score(Y_test_carbono, prediction)
-    print(f'====================================================')
-    print(f'====================================================')
-    print(f'=========>>>>> R2: {r2} <<<<<=========')
-    print(f'====================================================')
-    print(f'====================================================')
-
     # Trazendo algumas amostras aleatórias ...
     for i in [0, 10, 50, 60, 100, 200, 300, 400, 500, 1000, 2000, 3000, 3500]:
         # Essa linha abaixo garante aleatoriedade
@@ -150,3 +124,21 @@ with strategy.scope():
         print(
             f'{prefix} ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
         print("")
+
+    # Fazendo a predição sobre os dados de teste
+    prediction = resnet_model.predict(X_test)
+
+    # Avaliando com R2
+    r2 = r2_score(Y_test_carbono, prediction)
+    print()
+    print(f'====================================================')
+    print(f'====================================================')
+    print(f'=========>>>>> R2: {r2} <<<<<=========')
+    print(f'====================================================')
+    print(f'====================================================')
+
+    print()
+    print(f"{prefix} Info parameters: ")
+    print(f"{prefix}{prefix} -d (--debug): {args.debug}")
+    print(f"{prefix}{prefix} -n (--name): {args.name}")
+    print(f"{prefix}{prefix} -p (--preprocess): {args.preprocess}")
