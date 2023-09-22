@@ -155,12 +155,14 @@ with strategy.scope():
     model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
 
     # Congela as camadas da ResNet50 para que elas não sejam treinadas novamente
-    # for layer in pretrained_model.layers:
-    #     layer.trainable = False
-        
-    pretrained_model.trainable = True
+    # Modelo 29, 30, 32
     for layer in pretrained_model.layers:
-        layer.trainable = True
+        layer.trainable = False
+
+    # Modelo 31
+    # pretrained_model.trainable = True
+    # for layer in pretrained_model.layers:
+    #     layer.trainable = True
         
     print(f'{prefix}')
     print(model.summary())
