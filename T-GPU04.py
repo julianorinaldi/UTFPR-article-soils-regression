@@ -71,6 +71,12 @@ with strategy.scope():
     df_train = df_train.drop(
         columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"})
 
+    # *********************************
+    # Excluindo Nitrogênio Por Enquanto
+    # *********************************
+    df_train = df_train.drop(columns={"teor_nitrogenio"})
+    # *********************************
+
     # Randomizando
     df_train = df_train.sample(frac=1, random_state=1, ignore_index=True)
 
@@ -121,8 +127,6 @@ with strategy.scope():
     #Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
     #print(f'Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}')
 
-    resnet_model = tf.keras.models.Sequential()
-
     # Modelos disponíveis para Transfer-Learning
     # https://keras.io/api/applications/
     # ResNet50
@@ -132,7 +136,7 @@ with strategy.scope():
     # pooling => Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max], passado por parâmetro, mas o default é avg.
     # classes=1 => Apenas uma classe de saída, no caso de regressão precisamos de valor predito para o carbono.
     # weights='imagenet' => Carregamento do modelo inicial com pesos do ImageNet, no qual no treinamento será re-adaptado.
-    pretrained_model = tf.keras.applications.EfficientNetB7(include_top=False,
+    pretrained_model = tf.keras.applications.ResNet50(include_top=False,
                                                       input_shape=(
                                                           imageDimensionX, imageDimensionY, qtd_canal_color),
                                                       pooling=pooling, classes=1,
@@ -140,21 +144,22 @@ with strategy.scope():
     if (args.debug):
         print(f'{prefix} Pooling: {pooling}')
 
-    # Todas as camadas do modelo pré-treinado como "treináveis".
-    pretrained_model.trainable = False
-    # Isto significa que, durante o treinamento, os pesos dessas camadas serão atualizados para se ajustar ao seu conjunto de dados específico.
-    # layer.trainable=True => Significa que todas as camadas poderão ser ajustadas durante o treinamento
+
+    # Adicionando camadas personalizadas no topo do modelo
+    x = pretrained_model.output
+    x = tf.keras.applications.GlobalAveragePooling2D()(x) # Adiciona uma camada de Global Average Pooling
+    x = tf.keras.applications.Dense(1024, activation='relu')(x) # Adiciona uma camada densa com ativação ReLU
+    predictions = tf.keras.applications.Dense(1, activation='linear')(x) # Camada de saída para regressão
+
+    # Define o novo modelo combinando a ResNet50 com as camadas personalizadas
+    model = tf.keras.applications.Model(inputs=pretrained_model.input, outputs=predictions)
+
+    # Congela as camadas da ResNet50 para que elas não sejam treinadas novamente
     for layer in pretrained_model.layers:
         layer.trainable = False
-
-    # Adicionando as finais ao modelo para adequar ao nosso contexto.
-    resnet_model.add(pretrained_model)
-    resnet_model.add(tf.keras.layers.Flatten())
-    resnet_model.add(tf.keras.layers.Dense(512, activation='relu'))
-    resnet_model.add(tf.keras.layers.Dense(1, activation='linear'))
-
+        
     print(f'{prefix}')
-    print(resnet_model.summary())
+    print(model.summary())
     print(f'{prefix}')
 
     # Otimizadores
@@ -164,10 +169,10 @@ with strategy.scope():
     #  tf.keras.optimizers.RMSprop(learning_rate=0.0001)
     #  tf.keras.optimizers.SGD(learning_rate=0.0001, momentum=0.9)
     #  tf.keras.optimizers.Nadam(learning_rate=0.0001)
-    opt = tf.keras.optimizers.RMSprop(0.0001)
+    opt = tf.keras.optimizers.Adam()
     
-    resnet_model.compile(optimizer=opt, loss='mse', metrics=['mae'])
-    history = resnet_model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
+    model.compile(optimizer=opt, loss='mse', metrics=['mae'])
+    history = model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
                                tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
-    resnet_model.save(args.name)
+    model.save(args.name)
