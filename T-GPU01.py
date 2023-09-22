@@ -23,7 +23,7 @@ parser.add_argument(
 parser.add_argument("-p", "--preprocess", action="store_true",
                     help="Preprocessar imagem 'resnet50.preprocess_input(...)'")
 parser.add_argument(
-    "-t", "--trainable", help="Define se terá as camadas do modelo de transfer-learning treináveis ou não")
+    "-t", "--trainable", action="store_true", help="Define se terá as camadas do modelo de transfer-learning treináveis ou não")
 
 args = parser.parse_args()
 
@@ -126,10 +126,9 @@ with strategy.scope():
     # Modelo novo com GlobalAveragePooling2D
     # Parâmetros: sem o camada pooling, drop column teor_nitrogenio, layer.trainable = False, preproc = True
     # *****************************************************
-
-    pretrained_model.trainable = False
+    pretrained_model.trainable = args.trainable
     for layer in pretrained_model.layers:
-        layer.trainable = False
+        layer.trainable = args.trainable
 
     # Adicionando camadas personalizadas no topo do modelo
     x = pretrained_model.output
@@ -159,3 +158,8 @@ with strategy.scope():
                                tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
     model.save(args.name)
+    print(f"{prefix} Info parameters: ")
+    print(f"{prefix}{prefix} -d (--debug): {args.debug}")
+    print(f"{prefix}{prefix} -n (--name): {args.name}")
+    print(f"{prefix}{prefix} -p (--preprocess): {args.preprocess}")
+    print(f"{prefix}{prefix} -t (--trainable): {args.trainable}")
