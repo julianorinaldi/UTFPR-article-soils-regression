@@ -23,9 +23,7 @@ parser.add_argument(
 parser.add_argument("-p", "--preprocess", action="store_true",
                     help="Preprocessar imagem 'resnet50.preprocess_input(...)'")
 parser.add_argument(
-    "-o", "--pooling", help="Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max]")
-parser.add_argument(
-    "-g", "--gpu", help="Index da GPU a process. Considere 0 a primeira. Caso use mais uma, ex. para duas: 0,1")
+    "-t", "--trainable", action="store_true", help="Define se terá as camadas do modelo de transfer-learning treináveis ou não")
 
 args = parser.parse_args()
 
@@ -33,24 +31,8 @@ if not (args.name):
     print(f"{prefix} Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
     exit(1)
 
-if (args.pooling) and (args.pooling != "none") and (args.pooling != "avg") and (args.pooling != "max"):
-    print(
-        f"{prefix} Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max]")
-    exit(1)
-else:
-    pooling = 'avg' if args.pooling is None else args.pooling
-
 physical_devices = tf.config.list_physical_devices('GPU')
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-
-if not (args.gpu):
-    if (len(physical_devices) > 0):
-        os.environ["CUDA_VISIBLE_DEVICES"] = "1"
-else:
-    gpusArray = args.gpu.split(',')
-    gpu_count = len(gpusArray)
-    gpu = ",".join(str(int(g) + 1) for g in gpusArray)
-    os.environ["CUDA_VISIBLE_DEVICES"] = gpu
 
 # Infos da GPU e Framework
 if (args.debug):
@@ -137,32 +119,26 @@ with strategy.scope():
     # classes=1 => Apenas uma classe de saída, no caso de regressão precisamos de valor predito para o carbono.
     # weights='imagenet' => Carregamento do modelo inicial com pesos do ImageNet, no qual no treinamento será re-adaptado.
     pretrained_model = tf.keras.applications.ResNet50(include_top=False,
-                                                      input_shape=(
-                                                          imageDimensionX, imageDimensionY, qtd_canal_color),
-                                                      classes=1,
-                                                      weights='imagenet')
-    if (args.debug):
-        print(f'{prefix} Pooling: {pooling}')
+                                                      input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
+                                                      classes=1, weights='imagenet')
 
+    # *****************************************************
+    # Modelo novo com GlobalAveragePooling2D
+    # Parâmetros: sem o camada pooling, drop column teor_nitrogenio, layer.trainable = False, preproc = True
+    # *****************************************************
+    pretrained_model.trainable = args.trainable
+    for layer in pretrained_model.layers:
+        layer.trainable = args.trainable
 
     # Adicionando camadas personalizadas no topo do modelo
     x = pretrained_model.output
-    x = tf.keras.layers.GlobalAveragePooling2D()(x) # Adiciona uma camada de Global Average Pooling
-    x = tf.keras.layers.Dense(1024, activation='relu')(x) # Adiciona uma camada densa com ativação ReLU
-    predictions = tf.keras.layers.Dense(1, activation='linear')(x) # Camada de saída para regressão
+    #x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dense(512, activation='relu')(x)
+    predictions = tf.keras.layers.Dense(1, activation='linear')(x)
 
     # Define o novo modelo combinando a ResNet50 com as camadas personalizadas
     model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
-
-    # Congela as camadas da ResNet50 para que elas não sejam treinadas novamente
-    # Modelo 29, 30, 32
-    for layer in pretrained_model.layers:
-        layer.trainable = False
-
-    # Modelo 31
-    # pretrained_model.trainable = True
-    # for layer in pretrained_model.layers:
-    #     layer.trainable = True
         
     print(f'{prefix}')
     print(model.summary())
@@ -175,10 +151,16 @@ with strategy.scope():
     #  tf.keras.optimizers.RMSprop(learning_rate=0.0001)
     #  tf.keras.optimizers.SGD(learning_rate=0.0001, momentum=0.9)
     #  tf.keras.optimizers.Nadam(learning_rate=0.0001)
-    opt = tf.keras.optimizers.Adam()
+    opt = tf.keras.optimizers.SGD()
     
     model.compile(optimizer=opt, loss='mse', metrics=['mae'])
     history = model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
                                tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
     model.save(args.name)
+    
+    print(f"{prefix} Info parameters: ")
+    print(f"{prefix}{prefix} -d (--debug): {args.debug}")
+    print(f"{prefix}{prefix} -n (--name): {args.name}")
+    print(f"{prefix}{prefix} -p (--preprocess): {args.preprocess}")
+    print(f"{prefix}{prefix} -t (--trainable): {args.trainable}")
