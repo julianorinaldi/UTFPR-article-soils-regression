@@ -139,7 +139,7 @@ with strategy.scope():
     pretrained_model = tf.keras.applications.ResNet50(include_top=False,
                                                       input_shape=(
                                                           imageDimensionX, imageDimensionY, qtd_canal_color),
-                                                      pooling=pooling, classes=1,
+                                                      classes=1,
                                                       weights='imagenet')
     if (args.debug):
         print(f'{prefix} Pooling: {pooling}')
