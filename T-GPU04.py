@@ -147,8 +147,8 @@ with strategy.scope():
 
     # Adicionando camadas personalizadas no topo do modelo
     x = pretrained_model.output
-    x = tf.keras.applications.GlobalAveragePooling2D()(x) # Adiciona uma camada de Global Average Pooling
-    x = tf.keras.applications.Dense(1024, activation='relu')(x) # Adiciona uma camada densa com ativação ReLU
+    x = tf.keras.layers.GlobalAveragePooling2D()(x) # Adiciona uma camada de Global Average Pooling
+    x = tf.keras.layers.Dense(1024, activation='relu')(x) # Adiciona uma camada densa com ativação ReLU
     predictions = tf.keras.applications.Dense(1, activation='linear')(x) # Camada de saída para regressão
 
     # Define o novo modelo combinando a ResNet50 com as camadas personalizadas
