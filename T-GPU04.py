@@ -132,7 +132,7 @@ with strategy.scope():
 
     # Adicionando camadas personalizadas no topo do modelo
     x = pretrained_model.output
-    #x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.GlobalAveragePooling2D()(x)
     x = tf.keras.layers.Flatten()(x)
     x = tf.keras.layers.Dense(512, activation='relu')(x)
     predictions = tf.keras.layers.Dense(1, activation='linear')(x)
@@ -151,7 +151,7 @@ with strategy.scope():
     #  tf.keras.optimizers.RMSprop(learning_rate=0.0001)
     #  tf.keras.optimizers.SGD(learning_rate=0.0001, momentum=0.9)
     #  tf.keras.optimizers.Nadam(learning_rate=0.0001)
-    opt = tf.keras.optimizers.SGD()
+    opt = tf.keras.optimizers.RMSprop()
     
     model.compile(optimizer=opt, loss='mse', metrics=['mae'])
     history = model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
