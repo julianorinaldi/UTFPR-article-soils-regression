@@ -11,7 +11,7 @@ from entityModelConfig import ModelConfig
 def image_load(modelConfig : ModelConfig, imagefiles : list, qtd_imagens : int):
         # Array com as imagens a serem carregadas de treino
     imageArray = []    
-    for imageFilePath in tqdm(imagefiles.tolist()[:qtd_imagens]):
+    for imageFilePath in tqdm(imagefiles[:qtd_imagens]):
         imageArray.append(image_processing(modelConfig, imageFilePath))
     
     return imageArray
