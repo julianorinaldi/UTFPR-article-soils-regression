@@ -79,7 +79,8 @@ with strategy.scope():
         # Essa linha abaixo garante aleatoriedade
         indexImg = random.randint(i, len(imageNamesList))
         img_path = f'{imageNamesList[indexImg]}'
-        img = image_processing(modelConfig, img_path)
+        img = image_processing(modelConfig, img_path, test=True)
+
 
         predictValue = resnet_model.predict(img)
         Real = df.teor_carbono[indexImg]
