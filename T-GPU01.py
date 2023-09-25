@@ -80,9 +80,23 @@ with strategy.scope():
     qtd_canal_color = 3
 
     # Normalização Dataset Treinamento
-    # train_stats = df_train.describe()
-    # train_stats = train_stats.transpose()
-    # df_train = (df_train - train_stats['mean']) / train_stats['std']
+    train_stats = df_train.describe()
+    train_stats = train_stats.transpose()
+    df_train = (df_train - train_stats['mean']) / train_stats['std']
+
+    # Modelos disponíveis para Transfer-Learning
+    # https://keras.io/api/applications/
+    # ResNet50
+    
+    # include_top=False => Excluindo as camadas finais (top layers) da rede, que geralmente são usadas para classificação. Vamos adicionar nossas próprias camadas finais
+    # input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color) => Nosso array de imagens tem as dimensões (256, 256, 3)
+    # pooling => Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max], passado por parâmetro, mas o default é avg.
+    # classes=1 => Apenas uma classe de saída, no caso de regressão precisamos de valor predito para o carbono.
+    # weights='imagenet' => Carregamento do modelo inicial com pesos do ImageNet, no qual no treinamento será re-adaptado.
+    pretrained_model = tf.keras.applications.ResNet50(include_top=False,
+                                                      input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
+                                                      classes=1, weights='imagenet')
+
 
     # Array com as imagens a serem carregadas de treino
     image_list_train = []
@@ -91,8 +105,7 @@ with strategy.scope():
         print(f'{prefix} Preprocess: {args.preprocess}')
     for imageFilePath in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
         # Carregamento de imagens Com/Sem Preprocessamento (args.preprocess)
-        image_list_train.append(image_processing(
-            dir_name_train, imageFilePath, imageDimensionX, imageDimensionY, args.preprocess))
+        image_list_train.append(image_processing(pretrained_model, dir_name_train, imageFilePath, imageDimensionX, imageDimensionY, args.preprocess))
 
     # Transformando em array a lista de imagens (Treino)
     X_train = np.array(image_list_train)
@@ -109,18 +122,7 @@ with strategy.scope():
     #Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
     #print(f'Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}')
 
-    # Modelos disponíveis para Transfer-Learning
-    # https://keras.io/api/applications/
-    # ResNet50
-    
-    # include_top=False => Excluindo as camadas finais (top layers) da rede, que geralmente são usadas para classificação. Vamos adicionar nossas próprias camadas finais
-    # input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color) => Nosso array de imagens tem as dimensões (256, 256, 3)
-    # pooling => Modo de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max], passado por parâmetro, mas o default é avg.
-    # classes=1 => Apenas uma classe de saída, no caso de regressão precisamos de valor predito para o carbono.
-    # weights='imagenet' => Carregamento do modelo inicial com pesos do ImageNet, no qual no treinamento será re-adaptado.
-    pretrained_model = tf.keras.applications.ResNet50(include_top=False,
-                                                      input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color),
-                                                      classes=1, weights='imagenet')
+
 
     # *****************************************************
     # Modelo novo com GlobalAveragePooling2D
