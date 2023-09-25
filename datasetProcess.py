@@ -24,7 +24,7 @@ def dataset_process(modeConfig : ModelConfig):
     df = df.sample(frac=1, random_state=1, ignore_index=True)
     
     # Separando apenas nomes dos arquivos
-    imagefiles = df["arquivo"]
+    imagefiles = df["arquivo"].to_list()
     # Removendo coluna arquivo para normalização
     df = df.drop(columns={"arquivo"})
     
@@ -34,4 +34,4 @@ def dataset_process(modeConfig : ModelConfig):
     df = (df - df_stats['mean']) / df_stats['std']
 
     
-    return df, imagefiles.toList()
+    return df, imagefiles
