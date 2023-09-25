@@ -7,8 +7,8 @@ from modelSet import ModelSet
 from entityModelConfig import ModelConfig
 
 # Carregamento de imagem para objeto e tratamento de imagem
-def image_processing(modelConfig : ModelConfig, imageFilePath : str):
-    img_path = f'{modelConfig.dirBaseImg}/{imageFilePath}'
+def image_processing(modelConfig : ModelConfig, imageName : str):
+    img_path = f'{modelConfig.dirBaseImg}/{imageName}'
     image = tf.keras.preprocessing.image.load_img(
         img_path, target_size=(modelConfig.imageDimensionX, modelConfig.imageDimensionY))
     image = tf.keras.preprocessing.image.img_to_array(image)
