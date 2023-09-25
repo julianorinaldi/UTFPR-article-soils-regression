@@ -32,6 +32,8 @@ def image_processing(modelConfig : ModelConfig, imageName : str):
             image = tf.keras.applications.resnet50.preprocess_input(image)
         elif modelConfig.modelSet == ModelSet.ResNet101 or modelConfig.modelSet == ModelSet.ResNet152:
             image = tf.keras.applications.resnet.preprocess_input(image)
+        else:
+            raise Exception('Modelo desconhecido')
 
     return image
 
