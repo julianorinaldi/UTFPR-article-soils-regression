@@ -48,7 +48,7 @@ qtd_canal_color = 3
 dir_base_img = 'dataset/images/teste-solo-256x256'
 pathCsv = 'dataset/csv/Dataset256x256-Test.csv'
 modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
-                          args.name, args.debug, args.trainable, args.preprocess)
+                          args.name, args.debug, False, args.preprocess)
 
 # Estratégia para trabalhar com Multi-GPU
 strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
