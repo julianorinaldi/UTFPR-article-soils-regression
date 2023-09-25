@@ -45,7 +45,7 @@ if (args.debug):
 
 
 # Definindo Modelo de TransferLearning e Configurações
-modelSet = ModelSet.ResNet50
+modelSet = ModelSet.ResNet152
 imageDimensionX = 256
 imageDimensionY = 256
 qtd_canal_color = 3
