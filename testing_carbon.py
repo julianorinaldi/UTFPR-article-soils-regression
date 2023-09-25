@@ -80,7 +80,6 @@ with strategy.scope():
         indexImg = random.randint(i, len(imageNamesList))
         img_path = f'{imageNamesList[indexImg]}'
         img = image_processing(modelConfig, img_path)
-        img = np.expand_dims(img, axis=0)
 
         predictValue = resnet_model.predict(img)
         Real = df.teor_carbono[indexImg]
