@@ -55,7 +55,7 @@ strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.Hierarc
 
 with strategy.scope():
 
-    df, df_imageFilesNames = dataset_process(modelConfig)
+    df, imageNamesList = dataset_process(modelConfig)
 
     # Quantidade de imagens usadas para a rede.
     qtd_imagens = len(df)
@@ -64,7 +64,7 @@ with strategy.scope():
     
     # Array com as imagens a serem carregadas de treino
     image_list = []    
-    for imageName in tqdm(df_imageFilesNames.tolist()[:qtd_imagens]):
+    for imageName in tqdm(imageNamesList[:qtd_imagens]):
         image_list.append(image_processing(modelConfig, imageName))
 
     # Transformando em array a lista de imagens
@@ -99,7 +99,7 @@ with strategy.scope():
         ResNet50 = resnet_model.predict(img)
         Real = df.teor_carbono[indexImg]
 
-        print(f'{prefix} Image[{indexImg}]: {df_imageFilesNames[indexImg]} => {df.teor_carbono[indexImg]}')
+        print(f'{prefix} Image[{indexImg}]: {imageNamesList[indexImg]} => {df.teor_carbono[indexImg]}')
         print(f'{prefix} ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
         print("")
 

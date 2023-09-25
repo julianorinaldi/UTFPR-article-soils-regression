@@ -34,4 +34,4 @@ def dataset_process(modeConfig : ModelConfig):
     df = (df - df_stats['mean']) / df_stats['std']
 
     
-    return df, imagefiles
+    return df, imagefiles.toList()
