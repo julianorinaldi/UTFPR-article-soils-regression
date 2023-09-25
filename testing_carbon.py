@@ -4,16 +4,16 @@ import argparse
 import os
 import random
 
-import cv2  # Trabalhar com processamento de imagens
-import keras  # Trabalhar com aprendizado de máquinas
 import numpy as np  # Trabalhar com array
-import pandas as pd  # Trabalhar com análise de dados, importação, etc.
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
-from matplotlib import pyplot as plt  # Matplotlib Plot
 from sklearn.metrics import r2_score  # Avaliação das Métricas
 from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
-from coreProcess import image_processing
+from imageProcess import image_processing
+from datasetProcess import dataset_process
+from modelSet import ModelSet
+from entityModelConfig import ModelConfig
+from modelTransferLearningProcess import modelTransferLearningProcess
 
 prefix = ">>>>>>>>>>>>>>>>>"
 
@@ -40,62 +40,51 @@ if (args.debug):
     print(f'{prefix} Tensorflow Version: {tf.__version__}')
     print(f'{prefix} Amount of GPU Available: {physical_devices}')
 
+# Definindo Modelo de TransferLearning e Configurações
+modelSet = ModelSet.ResNet152
+imageDimensionX = 256
+imageDimensionY = 256
+qtd_canal_color = 3
+dir_base_img = 'dataset/images/teste-solo-256x256'
+pathCsv = 'dataset/csv/Dataset256x256-Test.csv'
+modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
+                          args.name, args.debug, args.trainable, args.preprocess)
+
 # Estratégia para trabalhar com Multi-GPU
 strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
 
 with strategy.scope():
 
-    # Carregamento do Dataset
-    df_test = pd.read_csv('dataset/csv/Dataset256x256-Teste.csv')
-
-    # Removendo colunas desnecessárias
-    df_test = df_test.drop(
-        columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"})
-
-    # Definindo o tamanho das imagens
-    imageDimensionX = 256
-    imageDimensionY = 256
-
-    # # Path Diretório Teste das Imagens
-    dir_name_test = "dataset/images/teste-solo-256x256"
-
-    # Separando apenas nomes dos arquivos
-    test_imagefiles = df_test["arquivo"]
-
-    # Removendo coluna arquivo para normalização
-    df_test = df_test.drop(columns={"arquivo"})
+    df, imagefiles = dataset_process(modelConfig)
 
     # Quantidade de imagens usadas para a rede.
-    qtd_imagens = 10000
-    qtd_canal_color = 3
-
-    # Normalização Dataset Teste
-    test_stats = df_test.describe()
-    test_stats = test_stats.transpose()
-    df_test = (df_test - test_stats['mean']) / test_stats['std']
-
-    # Array com as imagens a serem carregadas de treino
-    image_list_test = []
-
-    if (args.debug):
+    qtd_imagens = len(df)
+    if (modelConfig.argsDebug):
         print(f'{prefix} Preprocess: {args.preprocess}')
-    for imageFilePath in tqdm(test_imagefiles.tolist()[:qtd_imagens]):
-        # Carregamento de imagens Com/Sem Preprocessamento (args.preprocess)
-        image_list_test.append(image_processing(
-            dir_name_test, imageFilePath, imageDimensionX, imageDimensionY, args.preprocess))
+    
+    # Array com as imagens a serem carregadas de treino
+    image_list = []    
+    for imageFilePath in tqdm(imagefiles.tolist()[:qtd_imagens]):
+        image_list.append(image_processing(modelConfig, imageFilePath))
 
-    # Transformando em array a lista de imagens (Test)
-    X_test = np.array(image_list_test)
-    if (args.debug):
+    # Transformando em array a lista de imagens
+    X_test = np.array(image_list)
+    if (modelConfig.argsDebug):
         print(f'{prefix} Shape X_test: {X_test.shape}')
 
-    Y_test_carbono = np.array(df_test['teor_carbono'].tolist()[:qtd_imagens])
-    if (args.debug):
+    # *******************************************************
+    # Neste momento apenas trabalhando com valores de Carbono
+    # *******************************************************
+    Y_test_carbono = np.array(df['teor_carbono'].tolist()[:qtd_imagens])
+    if (modelConfig.argsDebug):
         print(f'{prefix} Shape Y_test_carbono: {Y_test_carbono.shape}')
+        
+    #Y_test_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
+    #print(f'Shape Y_test_nitrogenio: {Y_test_nitrogenio.shape}')
 
     # Carregando Modelo
-    resnet_model = tf.keras.models.load_model(args.name)
-    if (args.debug):
+    resnet_model = tf.keras.models.load_model(modelConfig.argsNameModel)
+    if (modelConfig.argsDebug):
         print(f'{prefix}')
         print(resnet_model.summary())
         print(f'{prefix}')
@@ -103,26 +92,15 @@ with strategy.scope():
     # Trazendo algumas amostras aleatórias ...
     for i in [0, 10, 50, 60, 100, 200, 300, 400, 500, 1000, 2000, 3000, 3500]:
         # Essa linha abaixo garante aleatoriedade
-        indexImg = random.randint(i, len(image_list_test))
-        img_path = f'{dir_name_test}/{test_imagefiles[indexImg]}'
-        img = tf.keras.preprocessing.image.load_img(
-            img_path, target_size=(256, 256, 3))
-        x = tf.keras.preprocessing.image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
-        x = tf.keras.applications.resnet50.preprocess_input(x)
+        indexImg = random.randint(i, len(image_list))
+        img_path = f'{modelConfig.dirBaseImg}/{image_list[indexImg]}'
+        img = image_processing(modelConfig, img_path)
 
-        # x2 = cv2.imread(f'{dir_name_test}/{test_imagefiles[index]}')
-        # x2 = np.expand_dims(x2, axis=0)
+        ResNet50 = resnet_model.predict(img)
+        Real = df.teor_carbono[indexImg]
 
-        ResNet50 = resnet_model.predict(x)
-        # CV2 = resnet_model.predict(x2)
-        Real = df_test.teor_carbono[indexImg]
-
-        # print(f'CV2: {CV2.item(0)} => Diferença: {Real - CV2.item(0)}')
-        print(
-            f'{prefix} Image[{indexImg}]: {test_imagefiles[indexImg]} => {df_test.teor_carbono[indexImg]}')
-        print(
-            f'{prefix} ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
+        print(f'{prefix} Image[{indexImg}]: {imagefiles[indexImg]} => {df.teor_carbono[indexImg]}')
+        print(f'{prefix} ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
         print("")
 
     # Fazendo a predição sobre os dados de teste

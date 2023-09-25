@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
+import numpy as np
 from modelSet import ModelSet
 
 from entityModelConfig import ModelConfig
@@ -11,6 +12,7 @@ def image_processing(modelConfig : ModelConfig, imageFilePath : str):
     image = tf.keras.preprocessing.image.load_img(
         img_path, target_size=(modelConfig.imageDimensionX, modelConfig.imageDimensionY))
     image = tf.keras.preprocessing.image.img_to_array(image)
+    image = np.expand_dims(image, axis=0)
     if (modelConfig.argsPreprocess):
         # https://keras.io/api/applications/resnet/#resnet50-function
         # Note: each Keras Application expects a specific kind of input preprocessing.

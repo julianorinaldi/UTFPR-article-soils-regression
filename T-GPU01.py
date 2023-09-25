@@ -5,9 +5,7 @@ import argparse
 import os
 
 import numpy as np  # Trabalhar com array
-import pandas as pd  # Trabalhar com análise de dados, importação, etc.
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
-from matplotlib import pyplot as plt  # Matplotlib Plot
 from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
 from imageProcess import image_processing
@@ -61,27 +59,27 @@ strategy = tf.distribute.MirroredStrategy(
 
 with strategy.scope():
 
-    df_train, train_imagefiles = dataset_process(modelConfig)
+    df, imagefiles = dataset_process(modelConfig)
 
     # Quantidade de imagens usadas para a rede.
-    qtd_imagens = len(df_train)
+    qtd_imagens = len(df)
     if (args.debug):
         print(f'{prefix} Preprocess: {args.preprocess}')
     
     # Array com as imagens a serem carregadas de treino
-    image_list_train = []    
-    for imageFilePath in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
-        image_list_train.append(image_processing(modelConfig, imageFilePath))
+    image_list = []    
+    for imageFilePath in tqdm(imagefiles.tolist()[:qtd_imagens]):
+        image_list.append(image_processing(modelConfig, imageFilePath))
 
     # Transformando em array a lista de imagens (Treino)
-    X_train = np.array(image_list_train)
+    X_train = np.array(image_list)
     if (args.debug):
         print(f'{prefix} Shape X_train: {X_train.shape}')
 
     # *******************************************************
     # Neste momento apenas trabalhando com valores de Carbono
     # *******************************************************
-    Y_train_carbono = np.array(df_train['teor_carbono'].tolist()[:qtd_imagens])
+    Y_train_carbono = np.array(df['teor_carbono'].tolist()[:qtd_imagens])
     if (args.debug):
         print(f'{prefix} Shape Y_train_carbono: {Y_train_carbono.shape}')
         
