@@ -47,7 +47,7 @@ imageDimensionY = 256
 qtd_canal_color = 3
 dir_base_img = 'dataset/images/teste-solo-256x256'
 pathCsv = 'dataset/csv/Dataset256x256-Teste.csv'
-modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
+modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img, imageDimensionX, imageDimensionY, qtd_canal_color,
                           args.name, args.debug, False, args.preprocess)
 
 # Estratégia para trabalhar com Multi-GPU
@@ -55,7 +55,7 @@ strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.Hierarc
 
 with strategy.scope():
 
-    df, imagefiles = dataset_process(modelConfig)
+    df, df_imageFilesNames = dataset_process(modelConfig)
 
     # Quantidade de imagens usadas para a rede.
     qtd_imagens = len(df)
@@ -64,8 +64,8 @@ with strategy.scope():
     
     # Array com as imagens a serem carregadas de treino
     image_list = []    
-    for imageFilePath in tqdm(imagefiles.tolist()[:qtd_imagens]):
-        image_list.append(image_processing(modelConfig, imageFilePath))
+    for imageName in tqdm(df_imageFilesNames.tolist()[:qtd_imagens]):
+        image_list.append(image_processing(modelConfig, imageName))
 
     # Transformando em array a lista de imagens
     X_test = np.array(image_list)
@@ -99,7 +99,7 @@ with strategy.scope():
         ResNet50 = resnet_model.predict(img)
         Real = df.teor_carbono[indexImg]
 
-        print(f'{prefix} Image[{indexImg}]: {imagefiles[indexImg]} => {df.teor_carbono[indexImg]}')
+        print(f'{prefix} Image[{indexImg}]: {df_imageFilesNames[indexImg]} => {df.teor_carbono[indexImg]}')
         print(f'{prefix} ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
         print("")
 

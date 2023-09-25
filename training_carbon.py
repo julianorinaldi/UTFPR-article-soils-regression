@@ -68,8 +68,8 @@ with strategy.scope():
     
     # Array com as imagens a serem carregadas de treino
     image_list_train = []    
-    for imageFilePath in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
-        image_list_train.append(image_processing(modelConfig, imageFilePath))
+    for imageName in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
+        image_list_train.append(image_processing(modelConfig, imageName))
 
     # Transformando em array a lista de imagens (Treino)
     X_train = np.array(image_list_train)
