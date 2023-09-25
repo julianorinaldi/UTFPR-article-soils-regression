@@ -3,7 +3,6 @@
 import argparse
 import os
 import random
-import warnings
 
 import numpy as np  # Trabalhar com array
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
@@ -20,8 +19,6 @@ prefix = ">>>>>>>>>>>>>>>>>"
 
 # 3 = INFO, WARNING, and ERROR messages are not printed
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-warnings.filterwarnings('ignore')
-warnings.resetwarnings()
 
 # Argumentos
 parser = argparse.ArgumentParser()
@@ -49,7 +46,7 @@ imageDimensionX = 256
 imageDimensionY = 256
 qtd_canal_color = 3
 dir_base_img = 'dataset/images/teste-solo-256x256'
-pathCsv = 'dataset/csv/Dataset256x256-Test.csv'
+pathCsv = 'dataset/csv/Dataset256x256-Teste.csv'
 modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
                           args.name, args.debug, False, args.preprocess)
 
