@@ -8,7 +8,7 @@ import numpy as np  # Trabalhar com array
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
-from imageProcess import image_processing
+from imageProcess import image_load, image_convert_array
 from datasetProcess import dataset_process
 from modelSet import ModelSet
 from entityModelConfig import ModelConfig
@@ -50,7 +50,7 @@ qtd_canal_color = 3
 dir_base_img = 'dataset/images/treinamento-solo-256x256'
 pathCsv = 'dataset/csv/Dataset256x256-Treino.csv'
 modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
-                          args.name, args.debug, args.trainable, args.preprocess)
+                          args.name, args.debug, args.trainable, args.preprocess, printPrefix = prefix)
 
 
 # Estratégia para trabalhar com Multi-GPU
@@ -59,32 +59,17 @@ strategy = tf.distribute.MirroredStrategy(
 
 with strategy.scope():
 
-    df_train, train_imagefiles = dataset_process(modelConfig)
+    df, imageNamesList = dataset_process(modelConfig)
 
     # Quantidade de imagens usadas para a rede.
-    qtd_imagens = len(df_train)
-    if (args.debug):
-        print(f'{prefix} Preprocess: {args.preprocess}')
+    qtd_imagens = len(df)
+    if (modelConfig.argsDebug):
+        print(f'{prefix} Preprocess: {modelConfig.argsPreprocess}')
     
     # Array com as imagens a serem carregadas de treino
-    image_list_train = []    
-    for imageName in tqdm(train_imagefiles.tolist()[:qtd_imagens]):
-        image_list_train.append(image_processing(modelConfig, imageName))
+    imageArray = image_load(modelConfig, imageNamesList, qtd_imagens)
 
-    # Transformando em array a lista de imagens (Treino)
-    X_train = np.array(image_list_train)
-    if (args.debug):
-        print(f'{prefix} Shape X_train: {X_train.shape}')
-
-    # *******************************************************
-    # Neste momento apenas trabalhando com valores de Carbono
-    # *******************************************************
-    Y_train_carbono = np.array(df_train['teor_carbono'].tolist()[:qtd_imagens])
-    if (args.debug):
-        print(f'{prefix} Shape Y_train_carbono: {Y_train_carbono.shape}')
-        
-    #Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
-    #print(f'Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}')
+    X_, Y_carbono = image_convert_array(modelConfig, imageArray, df, qtd_imagens)
 
     # Faz a chamada da criação do modelo de Transferência
     pretrained_model = modelTransferLearningProcess(modelConfig)
@@ -113,7 +98,7 @@ with strategy.scope():
     opt = tf.keras.optimizers.RMSprop(learning_rate=0.0001)
     
     model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
-    history = model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
+    history = model.fit(X_, Y_carbono, validation_split=0.3, epochs=100, callbacks=[
                                tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
     model.save(args.name)

@@ -9,7 +9,7 @@ import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 from sklearn.metrics import r2_score  # Avaliação das Métricas
 from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
-from imageProcess import image_processing
+from imageProcess import image_load, image_convert_array, image_processing
 from datasetProcess import dataset_process
 from modelSet import ModelSet
 from entityModelConfig import ModelConfig
@@ -63,24 +63,9 @@ with strategy.scope():
         print(f'{prefix} Preprocess: {args.preprocess}')
     
     # Array com as imagens a serem carregadas de treino
-    image_list = []    
-    for imageName in tqdm(imageNamesList[:qtd_imagens]):
-        image_list.append(image_processing(modelConfig, imageName))
+    imageArray = image_load(modelConfig, imageNamesList, qtd_imagens)
 
-    # Transformando em array a lista de imagens
-    X_test = np.array(image_list)
-    if (modelConfig.argsDebug):
-        print(f'{prefix} Shape X_test: {X_test.shape}')
-
-    # *******************************************************
-    # Neste momento apenas trabalhando com valores de Carbono
-    # *******************************************************
-    Y_test_carbono = np.array(df['teor_carbono'].tolist()[:qtd_imagens])
-    if (modelConfig.argsDebug):
-        print(f'{prefix} Shape Y_test_carbono: {Y_test_carbono.shape}')
-        
-    #Y_test_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
-    #print(f'Shape Y_test_nitrogenio: {Y_test_nitrogenio.shape}')
+    X_, Y_carbono = image_convert_array(modelConfig, imageArray, df, qtd_imagens)
 
     # Carregando Modelo
     resnet_model = tf.keras.models.load_model(modelConfig.argsNameModel)
@@ -92,8 +77,8 @@ with strategy.scope():
     # Trazendo algumas amostras aleatórias ...
     for i in [0, 10, 50, 60, 100, 200, 300, 400, 500, 1000, 2000, 3000, 3500]:
         # Essa linha abaixo garante aleatoriedade
-        indexImg = random.randint(i, len(image_list))
-        img_path = f'{modelConfig.dirBaseImg}/{image_list[indexImg]}'
+        indexImg = random.randint(i, len(imageArray))
+        img_path = f'{modelConfig.dirBaseImg}/{imageArray[indexImg]}'
         img = image_processing(modelConfig, img_path)
 
         ResNet50 = resnet_model.predict(img)
@@ -104,10 +89,10 @@ with strategy.scope():
         print("")
 
     # Fazendo a predição sobre os dados de teste
-    prediction = resnet_model.predict(X_test)
+    prediction = resnet_model.predict(X_)
 
     # Avaliando com R2
-    r2 = r2_score(Y_test_carbono, prediction)
+    r2 = r2_score(Y_carbono, prediction)
     print()
     print(f'====================================================')
     print(f'====================================================')

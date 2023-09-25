@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
 
+import pandas as pd
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 import numpy as np
-from modelSet import ModelSet
+from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
+from modelSet import ModelSet
 from entityModelConfig import ModelConfig
 
+def image_load(modelConfig : ModelConfig, imagefiles : list, qtd_imagens : int):
+        # Array com as imagens a serem carregadas de treino
+    imageArray = []    
+    for imageFilePath in tqdm(imagefiles.tolist()[:qtd_imagens]):
+        imageArray.append(image_processing(modelConfig, imageFilePath))
+    
+    return imageArray
+        
 # Carregamento de imagem para objeto e tratamento de imagem
 def image_processing(modelConfig : ModelConfig, imageName : str):
     print(f'modelConfig: {modelConfig.dirBaseImg}')
@@ -26,3 +36,21 @@ def image_processing(modelConfig : ModelConfig, imageName : str):
             image = tf.keras.applications.resnet.preprocess_input(image)
 
     return image
+
+def image_convert_array(modelConfig : ModelConfig, imagesArray : list, df : pd.DataFrame, qtd_imagens : int):
+    # Transformando em array a lista de imagens (Treino)
+    X_ = np.array(imagesArray)
+    if (modelConfig.argsDebug):
+        print(f'{modelConfig.printPrefix} Shape X_: {X_.shape}')
+
+    # *******************************************************
+    # Neste momento apenas trabalhando com valores de Carbono
+    # *******************************************************
+    Y_carbono = np.array(df['teor_carbono'].tolist()[:qtd_imagens])
+    if (modelConfig.argsDebug):
+        print(f'{modelConfig.printPrefix} Shape Y_carbono: {Y_carbono.shape}')
+        
+    #Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
+    #print(f'Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}')
+    
+    return X_, Y_carbono
