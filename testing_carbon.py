@@ -64,6 +64,8 @@ with strategy.scope():
     
     # Array com as imagens a serem carregadas de treino
     imageArray = image_load(modelConfig, imageNamesList, qtd_imagens)
+    print(imageArray)
+    exit(0)
 
     X_, Y_carbono = image_convert_array(modelConfig, imageArray, df, qtd_imagens)
 
