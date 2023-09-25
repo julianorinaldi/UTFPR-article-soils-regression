@@ -77,7 +77,7 @@ with strategy.scope():
     # Trazendo algumas amostras aleatórias ...
     for i in [0, 10, 50, 60, 100, 200, 300, 400, 500, 1000, 2000, 3000, 3500]:
         # Essa linha abaixo garante aleatoriedade
-        indexImg = random.randint(i, len(imageNamesList))
+        indexImg = random.randint(0, i)
         img_path = f'{imageNamesList[indexImg]}'
         img = image_processing(modelConfig, img_path, test=True)
 
