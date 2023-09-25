@@ -18,9 +18,7 @@ def image_load(modelConfig : ModelConfig, imagefiles : list, qtd_imagens : int):
         
 # Carregamento de imagem para objeto e tratamento de imagem
 def image_processing(modelConfig : ModelConfig, imageName : str):
-    print(f'modelConfig: {modelConfig.dirBaseImg}')
     img_path = f'{modelConfig.dirBaseImg}/{imageName}'
-    print(f'Imagem: {img_path}')
     image = tf.keras.preprocessing.image.load_img(
         path = img_path, target_size=(modelConfig.imageDimensionX, modelConfig.imageDimensionY))
     image = tf.keras.preprocessing.image.img_to_array(image)
