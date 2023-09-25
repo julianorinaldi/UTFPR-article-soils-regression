@@ -19,9 +19,7 @@ def image_processing(modelConfig : ModelConfig, imageFilePath : str):
         
         if modelConfig.modelSet == ModelSet.ResNet50:
             image = tf.keras.applications.resnet50.preprocess_input(image)
-        elif modelConfig.modelSet == ModelSet.ResNet101:
-            image = tf.keras.applications.resnet101.preprocess_input(image)
-        elif modelConfig.modelSet == ModelSet.ResNet152:
-            image = tf.keras.applications.resnet152.preprocess_input(image)
+        elif modelConfig.modelSet == ModelSet.ResNet101 or modelConfig.modelSet == ModelSet.ResNet152:
+            image = tf.keras.applications.resnet.preprocess_input(image)
 
     return image
