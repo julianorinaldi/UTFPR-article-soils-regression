@@ -34,4 +34,4 @@ def dataset_process(modeConfig : ModelConfig):
     df_train = (df_train - train_stats['mean']) / train_stats['std']
 
     
-    return df_train, train_imagefiles.tolist()
+    return df_train, train_imagefiles()
