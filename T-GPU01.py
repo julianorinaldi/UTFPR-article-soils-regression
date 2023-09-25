@@ -80,9 +80,9 @@ with strategy.scope():
     qtd_canal_color = 3
 
     # Normalização Dataset Treinamento
-    train_stats = df_train.describe()
-    train_stats = train_stats.transpose()
-    df_train = (df_train - train_stats['mean']) / train_stats['std']
+    # train_stats = df_train.describe()
+    # train_stats = train_stats.transpose()
+    # df_train = (df_train - train_stats['mean']) / train_stats['std']
 
     # Array com as imagens a serem carregadas de treino
     image_list_train = []
