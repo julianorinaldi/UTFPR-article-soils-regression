@@ -3,6 +3,7 @@
 import argparse
 import os
 import random
+import warnings
 
 import numpy as np  # Trabalhar com array
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
@@ -18,9 +19,9 @@ from modelTransferLearningProcess import modelTransferLearningProcess
 prefix = ">>>>>>>>>>>>>>>>>"
 
 # 3 = INFO, WARNING, and ERROR messages are not printed
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '4'
-os.environ['TFLITE_LOG_SILENT'] = '4'
-
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+warnings.filterwarnings('ignore')
+warnings.resetwarnings()
 
 # Argumentos
 parser = argparse.ArgumentParser()
