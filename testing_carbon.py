@@ -74,6 +74,7 @@ with strategy.scope():
         print(resnet_model.summary())
         print(f'{prefix}')
 
+    print(imageNamesList)
     # Trazendo algumas amostras aleatórias ...
     for i in [0, 10, 50, 60, 100, 200, 300, 400, 500, 1000, 2000, 3000, 3500]:
         # Essa linha abaixo garante aleatoriedade
