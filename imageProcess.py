@@ -12,7 +12,6 @@ def image_processing(modelConfig : ModelConfig, imageName : str):
     image = tf.keras.preprocessing.image.load_img(
         img_path, target_size=(modelConfig.imageDimensionX, modelConfig.imageDimensionY))
     image = tf.keras.preprocessing.image.img_to_array(image)
-    image = np.expand_dims(image, axis=0)
     if (modelConfig.argsPreprocess):
         # https://keras.io/api/applications/resnet/#resnet50-function
         # Note: each Keras Application expects a specific kind of input preprocessing.
