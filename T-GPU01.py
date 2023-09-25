@@ -153,9 +153,9 @@ with strategy.scope():
     #  tf.keras.optimizers.RMSprop(learning_rate=0.0001)
     #  tf.keras.optimizers.SGD(learning_rate=0.0001, momentum=0.9)
     #  tf.keras.optimizers.Nadam(learning_rate=0.0001)
-    opt = tf.keras.optimizers.RMSprop()
+    opt = tf.keras.optimizers.RMSprop(learning_rate=0.0001)
     
-    model.compile(optimizer=opt, loss='mse', metrics=['mae'])
+    model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
     history = model.fit(X_train, Y_train_carbono, validation_split=0.3, epochs=100, callbacks=[
                                tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)])
 
