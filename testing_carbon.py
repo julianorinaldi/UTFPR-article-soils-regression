@@ -64,8 +64,6 @@ with strategy.scope():
     
     # Array com as imagens a serem carregadas de treino
     imageArray = image_load(modelConfig, imageNamesList, qtd_imagens)
-    print(imageArray)
-    exit(0)
 
     X_, Y_carbono = image_convert_array(modelConfig, imageArray, df, qtd_imagens)
 
@@ -79,8 +77,8 @@ with strategy.scope():
     # Trazendo algumas amostras aleatórias ...
     for i in [0, 10, 50, 60, 100, 200, 300, 400, 500, 1000, 2000, 3000, 3500]:
         # Essa linha abaixo garante aleatoriedade
-        indexImg = random.randint(i, len(imageArray))
-        img_path = f'{modelConfig.dirBaseImg}/{imageArray[indexImg]}'
+        indexImg = random.randint(i, len(imageNamesList))
+        img_path = f'{modelConfig.dirBaseImg}/{imageNamesList[indexImg]}'
         img = image_processing(modelConfig, img_path)
 
         ResNet50 = resnet_model.predict(img)
