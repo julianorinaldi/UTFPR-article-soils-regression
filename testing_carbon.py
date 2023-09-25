@@ -81,11 +81,11 @@ with strategy.scope():
         img_path = f'{modelConfig.dirBaseImg}/{imageNamesList[indexImg]}'
         img = image_processing(modelConfig, img_path)
 
-        ResNet50 = resnet_model.predict(img)
+        predictValue = resnet_model.predict(img)
         Real = df.teor_carbono[indexImg]
 
-        print(f'{prefix} Image[{indexImg}]: {imageNamesList[indexImg]} => {df.teor_carbono[indexImg]}')
-        print(f'{prefix} ResNet50[{indexImg}]: {ResNet50.item(0)} => Diferença: {Real - ResNet50.item(0)}')
+        print(f'{prefix} Original image[{indexImg}]: {imageNamesList[indexImg]} => {df.teor_carbono[indexImg]}')
+        print(f'{prefix} {modelConfig.modelSet.name}[{indexImg}]: {predictValue.item(0)} => Diff: {Real - predictValue.item(0)}')
         print("")
 
     # Fazendo a predição sobre os dados de teste
