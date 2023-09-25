@@ -27,6 +27,10 @@ def modelTransferLearningProcess(modelConfig : ModelConfig):
         pretrained_model = tf.keras.applications.ResNet152(include_top=False,
                                                         input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
                                                                      modelConfig.channelColors), classes=1, weights='imagenet')
+    elif modelConfig.modelSet == ModelSet.ConvNeXtBase:
+        pretrained_model = tf.keras.applications.ConvNeXtBase(include_top=False,
+                                                        input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
+                                                                     modelConfig.channelColors), classes=1, weights='imagenet')
     else:
         raise Exception('Modelo desconhecido')
 
