@@ -18,7 +18,7 @@ from modelTransferLearningProcess import modelTransferLearningProcess
 prefix = ">>>>>>>>>>>>>>>>>"
 
 # 3 = INFO, WARNING, and ERROR messages are not printed
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '4'
 os.environ['TFLITE_LOG_SILENT'] = '4'
 
 
