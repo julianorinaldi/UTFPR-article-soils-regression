@@ -11,4 +11,8 @@ class ModelSet(Enum):
     ResNet101 = 1
     ResNet152 = 2
     ConvNeXtBase = 3
-    EfficientNetV2S = 4
+    EfficientNetB7 = 4
+    EfficientNetV2S = 5
+    InceptionResNetV2 = 6
+    DenseNet169 = 7
+    VGG19 = 8

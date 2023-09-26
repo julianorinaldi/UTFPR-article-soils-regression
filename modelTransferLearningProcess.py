@@ -31,8 +31,24 @@ def modelTransferLearningProcess(modelConfig : ModelConfig):
         pretrained_model = tf.keras.applications.ConvNeXtBase(include_top=False,
                                                         input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
                                                                      modelConfig.channelColors), classes=1, weights='imagenet')
+    elif modelConfig.modelSet == ModelSet.EfficientNetB7:
+        pretrained_model = tf.keras.applications.EfficientNetB7(include_top=False,
+                                                        input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
+                                                                     modelConfig.channelColors), classes=1, weights='imagenet')
     elif modelConfig.modelSet == ModelSet.EfficientNetV2S:
         pretrained_model = tf.keras.applications.EfficientNetV2S(include_top=False,
+                                                        input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
+                                                                     modelConfig.channelColors), classes=1, weights='imagenet')
+    elif modelConfig.modelSet == ModelSet.InceptionResNetV2:
+        pretrained_model = tf.keras.applications.InceptionResNetV2(include_top=False,
+                                                        input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
+                                                                     modelConfig.channelColors), classes=1, weights='imagenet')
+    elif modelConfig.modelSet == ModelSet.DenseNet169:
+        pretrained_model = tf.keras.applications.DenseNet169(include_top=False,
+                                                        input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
+                                                                     modelConfig.channelColors), classes=1, weights='imagenet')
+    elif modelConfig.modelSet == ModelSet.VGG19:
+        pretrained_model = tf.keras.applications.VGG19(include_top=False,
                                                         input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
                                                                      modelConfig.channelColors), classes=1, weights='imagenet')
     else:
