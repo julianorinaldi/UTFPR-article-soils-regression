@@ -29,15 +29,25 @@ class ModelRegressorProcess:
         self.modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
         self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
         
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino')
         X_, Y_carbono = self._load_images(self.modelConfig)
         
         # Flatten das imagens
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Fazendo reshape')
         X_ = X_.reshape(X_.shape[0], -1)  # RandomForestRegressor aceita apenas 2 dimensões.
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
 
         # Criar o modelo RandomForestRegressor
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
         self.model = RandomForestRegressor(n_estimators=100, random_state=42)
 
         # Treinar o modelo
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Iniciando o treino')
         self.model.fit(X_, Y_carbono)
         
     def test(self):
@@ -45,8 +55,12 @@ class ModelRegressorProcess:
         self.modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
         self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
         
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Carregando imagens para o teste')
         X_, Y_carbono = self._load_images(self.modelConfig)
         
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Iniciando predição...')
         # Fazendo a predição sobre os dados de teste
         prediction = self.model.predict(X_)
 
