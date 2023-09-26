@@ -51,8 +51,6 @@ qtd_canal_color = 3
 pathCsv = ""
 dir_base_img = ""
 
-print(f'{prefix} Valor: {args.epochs} Tipo: {type(args.epochs)}')
-exit(0)
 modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_base_img,
                           imageDimensionX=imageDimensionX, imageDimensionY=imageDimensionY,
                           channelColors=qtd_canal_color, 
