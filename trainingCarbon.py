@@ -56,7 +56,7 @@ class TrainingCarbon:
         history = model.fit(X_, Y_carbono, validation_split=0.3, epochs=1, callbacks=[
                                     tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1, restore_best_weights=True)])
 
-        model.save(filepath=self.modelConfig.argsNameModel, save_format='keras', overwrite=True)
+        model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
 
         print(f"{self.modelConfig.printPrefix} Model Saved!!!")
         print()
