@@ -25,6 +25,7 @@ parser.add_argument("-d", "--debug", action="store_true", help="Para listar os p
 parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5")
 parser.add_argument("-p", "--preprocess", action="store_true", help="Preprocessar imagem 'resnet50.preprocess_input(...)'")
 parser.add_argument("-t", "--trainable", action="store_true", help="Define se terá as camadas do modelo de transfer-learning treináveis ou não")
+parser.add_argument("-T", "--Test", action="store_true", help="Define execução apenas para o teste")
 
 args = parser.parse_args()
 
@@ -49,17 +50,18 @@ qtd_canal_color = 3
 pathCsv = ""
 dir_base_img = ""
 modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
-                          args.name, args.debug, args.trainable, args.preprocess, printPrefix = prefix)
+                          args.name, args.debug, args.trainable, args.preprocess, args.Test, printPrefix = prefix)
 
 
 # Estratégia para trabalhar com Multi-GPU
 strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
 
 with strategy.scope():
-    modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
-    modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
-    training = TrainingCarbon(modelConfig)
-    training.train()
+    if (not modelConfig.argsOnlyTest):
+        modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
+        modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
+        training = TrainingCarbon(modelConfig)
+        training.train()
     
     modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
     modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
