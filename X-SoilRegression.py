@@ -58,12 +58,19 @@ strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.Hierarc
 
 with strategy.scope():
     if (not modelConfig.argsOnlyTest):
+        print()
+        print(f'{modelConfig.printPrefix}')
+        print(f'{modelConfig.printPrefix} Iniciando os Testes')
+        print(f'{modelConfig.printPrefix}')
         modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
         modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
         training = TrainingCarbon(modelConfig)
         training.train()
     else:
+        print()
+        print(f'{modelConfig.printPrefix}')
         print(f'{modelConfig.printPrefix} Somente execução do Teste')
+        print(f'{modelConfig.printPrefix}')
     
     modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
     modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
