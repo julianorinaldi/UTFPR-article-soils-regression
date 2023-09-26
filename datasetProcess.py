@@ -1,5 +1,4 @@
 
-import numpy as np  # Trabalhar com array
 import pandas as pd  # Trabalhar com análise de dados, importação, etc.
 
 from entityModelConfig import ModelConfig

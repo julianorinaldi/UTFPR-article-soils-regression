@@ -9,13 +9,10 @@ import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 
 from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
-from imageProcess import image_load, image_convert_array
-from datasetProcess import dataset_process
 from modelSet import ModelSet
 from entityModelConfig import ModelConfig
 from trainingCarbon import TrainingCarbon
 from testingCarbon import TestCarbon
-from modelTransferLearningProcess import modelTransferLearningProcess
 
 prefix = ">>>>>>>>>>>>>>>>>"
 
@@ -97,5 +94,5 @@ with strategy.scope():
     print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -T (--Test): {modelConfig.argsOnlyTest}")
     print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -e (--epochs): {modelConfig.argsEpochs}")
     print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -P (--patience): {modelConfig.argsPatience}")
-    
+    print()
     print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} Model: {modelConfig.modelSet.name}")

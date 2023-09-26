@@ -1,6 +1,5 @@
 import numpy as np  # Trabalhar com array
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
-import tensorflow_hub as hub
 import random
 
 from sklearn.metrics import r2_score  # Avaliação das Métricas

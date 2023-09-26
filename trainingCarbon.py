@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np  # Trabalhar com array
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 
 from imageProcess import image_load, image_convert_array
 from datasetProcess import dataset_process
-from modelSet import ModelSet
 from entityModelConfig import ModelConfig
 from modelTransferLearningProcess import modelTransferLearningProcess
 
