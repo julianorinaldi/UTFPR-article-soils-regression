@@ -4,6 +4,7 @@ from datasetProcess import dataset_process
 from imageProcess import image_load, image_convert_array
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score  # Avaliação das Métricas
+import xgboost as xgb
 
 class ModelRegressorProcess:
     def __init__(self, modelConfig : ModelConfig):
@@ -43,7 +44,16 @@ class ModelRegressorProcess:
         # Criar o modelo RandomForestRegressor
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
-        self.model = RandomForestRegressor(n_estimators=100, random_state=42)
+        #self.model = RandomForestRegressor(n_estimators=100, random_state=42)
+        
+        self.model = xgb.XGBRegressor(
+                        objective='reg:squarederror',  # Usamos 'reg:squarederror' para problemas de regressão
+                        colsample_bytree=0.3,           # Fração de features a serem consideradas em cada árvore
+                        learning_rate=0.1,              # Taxa de aprendizado
+                        max_depth=5,                    # Profundidade máxima das árvores
+                        alpha=10,                       # Parâmetro de regularização L1
+                        n_estimators=100                # Número de árvores no ensemble
+                    )
 
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
