@@ -23,13 +23,15 @@ parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .t
 parser.add_argument("-p", "--preprocess", action="store_true", default=False, help="Preprocessar imagem 'model.preprocess_input(...)'")
 parser.add_argument("-t", "--trainable", action="store_true", default=False, help="Define se terá as camadas do modelo de transfer-learning treináveis ou não")
 parser.add_argument("-T", "--Test", action="store_true", default=False, help="Define execução apenas para o teste")
-parser.add_argument("-e", "--epochs", action="count", default=100, help="Quantidade de épocas para o treino")
-parser.add_argument("-P", "--patience", action="count", default=5, help="Quantidade de paciência no early stopping")
+parser.add_argument("-e", "--epochs", default=100, help="Quantidade de épocas para o treino")
+parser.add_argument("-P", "--patience", default=5, help="Quantidade de paciência no early stopping")
 
 args = parser.parse_args()
 
 if not (args.name):
-    print(f"{prefix} Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
+    print(f'{prefix}')
+    print(f'{prefix} Há parâmetros faltantes. Utilize -h ou --help para ajuda!')
+    print(f'{prefix}')
     exit(1)
 
 physical_devices = tf.config.list_physical_devices('GPU')
