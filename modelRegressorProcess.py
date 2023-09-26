@@ -32,7 +32,7 @@ class ModelRegressorProcess:
         X_, Y_carbono = self._load_images(self.modelConfig)
         
         # Flatten das imagens
-        #X = X.reshape(X.shape[0], -1)  # Agora X terá forma (número de exemplos, 256*256*3)
+        X_ = X_.reshape(X_.shape[0], -1)  # RandomForestRegressor aceita apenas 2 dimensões.
 
         # Criar o modelo RandomForestRegressor
         self.model = RandomForestRegressor(n_estimators=100, random_state=42)
