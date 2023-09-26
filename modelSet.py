@@ -5,3 +5,4 @@ class ModelSet(Enum):
     ResNet101 = 1
     ResNet152 = 2
     ConvNeXtBase = 100
+    EfficientNetV2S = 300

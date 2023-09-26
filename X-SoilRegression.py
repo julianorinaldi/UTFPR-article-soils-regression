@@ -43,7 +43,7 @@ if (args.debug):
 
 
 # Definindo Modelo de TransferLearning e Configurações
-modelSet = ModelSet.ConvNeXtBase
+modelSet = ModelSet.EfficientNetV2S
 imageDimensionX = 256
 imageDimensionY = 256
 qtd_canal_color = 3

@@ -34,6 +34,8 @@ def image_processing(modelConfig : ModelConfig, imageName : str):
             image = tf.keras.applications.resnet.preprocess_input(image)
         elif modelConfig.modelSet == ModelSet.ConvNeXtBase:
             image = tf.keras.applications.convnext.preprocess_input(image)
+        elif modelConfig.modelSet == ModelSet.EfficientNetV2S:
+            image = tf.keras.applications.efficientnet_v2.preprocess_input(image)
         else:
             raise Exception('Modelo desconhecido')
 
