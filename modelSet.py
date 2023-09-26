@@ -4,7 +4,7 @@ def convertModelSet(modelNumber):
     for enumItem in ModelSet:
         if enumItem.value == modelNumber:
             return enumItem
-    raise ValueError(f"Nenhum membro de {ModelSet} tem o valor {modelNumber}")
+    raise ValueError(f"Nenhum modelo tem o valor {modelNumber}")
 
 class ModelSet(Enum):
     ResNet50 = 0
