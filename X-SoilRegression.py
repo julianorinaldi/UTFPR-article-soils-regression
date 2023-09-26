@@ -2,11 +2,9 @@
 
 # Imports
 import argparse
-import os
 
 from modelSet import convertModelSet
 from entityModelConfig import ModelConfig
-from execProcess import executeProcess
 
 prefix = ">>>>>>>>>>>>>>>>>"
 
@@ -45,5 +43,6 @@ modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_b
                           argsPatience=args.patience,
                           printPrefix = prefix)
 
+from execProcess import executeProcess
 
 executeProcess(modelConfig)
