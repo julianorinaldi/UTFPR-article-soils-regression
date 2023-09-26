@@ -16,3 +16,4 @@ class ModelSet(Enum):
     InceptionResNetV2 = 6
     DenseNet169 = 7
     VGG19 = 8
+    RandomForestRegressor = 100

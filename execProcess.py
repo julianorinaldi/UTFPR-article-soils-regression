@@ -1,8 +1,11 @@
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 from trainingCarbon import TrainingCarbon
 from testingCarbon import TestCarbon
+from entityModelConfig import ModelConfig
+from modelSet import ModelSet
+from modelRegressorProcess import ModelRegressorProcess
 
-def executeProcess(modelConfig):
+def executeProcess(modelConfig : ModelConfig):
     
     physical_devices = tf.config.list_physical_devices('GPU')
 
@@ -14,29 +17,34 @@ def executeProcess(modelConfig):
     strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
 
     with strategy.scope():
-        if (not modelConfig.argsOnlyTest):
+        if (not modelConfig.modelSet == ModelSet.RandomForestRegressor):
+            if (not modelConfig.argsOnlyTest):
+                print()
+                print(f'{modelConfig.printPrefix}')
+                print(f'{modelConfig.printPrefix} Iniciando o Treino')
+                print(f'{modelConfig.printPrefix}')
+                modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
+                modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
+                training = TrainingCarbon(modelConfig)
+                training.train()
+            else:
+                print()
+                print(f'{modelConfig.printPrefix}')
+                print(f'{modelConfig.printPrefix} Somente execução por Teste')
+                print(f'{modelConfig.printPrefix}')
+            
             print()
             print(f'{modelConfig.printPrefix}')
-            print(f'{modelConfig.printPrefix} Iniciando o Treino')
+            print(f'{modelConfig.printPrefix} Iniciando o Teste')
             print(f'{modelConfig.printPrefix}')
-            modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
-            modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
-            training = TrainingCarbon(modelConfig)
-            training.train()
+            modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
+            modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
+            testCarbon = TestCarbon(modelConfig)
+            testCarbon.test()
         else:
-            print()
-            print(f'{modelConfig.printPrefix}')
-            print(f'{modelConfig.printPrefix} Somente execução por Teste')
-            print(f'{modelConfig.printPrefix}')
-        
-        print()
-        print(f'{modelConfig.printPrefix}')
-        print(f'{modelConfig.printPrefix} Iniciando o Teste')
-        print(f'{modelConfig.printPrefix}')
-        modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
-        modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
-        testCarbon = TestCarbon(modelConfig)
-        testCarbon.test()
+            modelRegressorProcess = ModelRegressorProcess(modelConfig)
+            modelRegressorProcess.train()
+            modelRegressorProcess.test()
         
         print()
         print(f"{modelConfig.printPrefix} Info parameters: ")
