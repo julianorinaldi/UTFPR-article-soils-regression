@@ -62,6 +62,8 @@ with strategy.scope():
         modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
         training = TrainingCarbon(modelConfig)
         training.train()
+    else:
+        print(f'{modelConfig.printPrefix} Somente execução do Teste')
     
     modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
     modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')

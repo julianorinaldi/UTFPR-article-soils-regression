@@ -26,8 +26,7 @@ class TestCarbon:
         X_, Y_carbono = image_convert_array(self.modelConfig, imageArray, df, qtd_imagens)
 
         # Carregando Modelo
-        resnet_model = tf.keras.models.load_model(filepath = self.modelConfig.argsNameModel, 
-                                                custom_objects={'KerasLayer':hub.KerasLayer})
+        resnet_model = tf.keras.models.load_model(filepath = self.modelConfig.argsNameModel)
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix}')
             print(resnet_model.summary())
