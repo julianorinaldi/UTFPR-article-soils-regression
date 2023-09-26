@@ -10,7 +10,7 @@ class ModelRegressorProcess:
         self.modelConfig = modelConfig
         self.model = None
 
-    def _load_images(modelConfig):
+    def _load_images(self, modelConfig : ModelConfig):
         df, imageNamesList = dataset_process(modelConfig)
 
         # Quantidade de imagens usadas para a rede.
