@@ -51,8 +51,9 @@ class TrainingCarbon:
         opt = tf.keras.optimizers.RMSprop(learning_rate=0.0001)
 
         model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
-        history = model.fit(X_, Y_carbono, validation_split=0.3, epochs=1, callbacks=[
-                                    tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=1, restore_best_weights=True)])
+        history = model.fit(X_, Y_carbono, validation_split=0.3, epochs=self.modelConfig.argsEpochs, 
+                            callbacks=[tf.keras.callbacks.EarlyStopping
+                                       (monitor='val_loss', patience=self.modelConfig.argsPatience, restore_best_weights=True)])
 
         model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
 
