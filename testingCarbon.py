@@ -1,5 +1,6 @@
 import numpy as np  # Trabalhar com array
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
+import tensorflow_hub as hub
 import random
 
 from sklearn.metrics import r2_score  # Avaliação das Métricas
@@ -25,7 +26,8 @@ class TestCarbon:
         X_, Y_carbono = image_convert_array(self.modelConfig, imageArray, df, qtd_imagens)
 
         # Carregando Modelo
-        resnet_model = tf.keras.models.load_model(self.modelConfig.argsNameModel)
+        resnet_model = tf.keras.models.load_model(filepath = self.modelConfig.argsNameModel, 
+                                                custom_objects={'KerasLayer':hub.KerasLayer})
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix}')
             print(resnet_model.summary())
