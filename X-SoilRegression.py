@@ -46,8 +46,6 @@ modelSet = ModelSet.ResNet152
 imageDimensionX = 256
 imageDimensionY = 256
 qtd_canal_color = 3
-dir_base_img = 'dataset/images/treinamento-solo-256x256'
-pathCsv = 'dataset/csv/Dataset256x256-Treino.csv'
 modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
                           args.name, args.debug, args.trainable, args.preprocess, printPrefix = prefix)
 
@@ -56,13 +54,13 @@ modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, image
 strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
 
 with strategy.scope():
-    modelConfig.dirBaseImg = 'dataset/images/treinamento-solo-256x256'
-    modelConfig.pathCsv = 'dataset/csv/Dataset256x256-Treino.csv'
+    modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
+    modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
     training = TrainingCarbon(modelConfig)
     training.train()
     
-    modelConfig.dirBaseImg = 'dataset/images/teste-solo-256x256'
-    modelConfig.pathCsv = 'dataset/csv/Dataset256x256-Teste.csv'
+    modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
+    modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
     testCarbon = TestCarbon(modelConfig)
     testCarbon.test()
     

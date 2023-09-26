@@ -12,7 +12,6 @@ class TestCarbon:
         self.modelConfig = modelConfig
         
     def test(self):
-        print(f'Model: {self.modelConfig}')
         df, imageNamesList = dataset_process(self.modelConfig)
 
         # Quantidade de imagens usadas para a rede.

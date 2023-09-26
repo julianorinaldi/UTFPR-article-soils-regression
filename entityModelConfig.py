@@ -18,5 +18,12 @@ class ModelConfig:
         self.argsTrainable = argsTrainable
         self.argsPreprocess = argsPreprocess
         self.printPrefix = printPrefix
+    
+    def setPathCSV(self, pathCSV):
+        self.pathCSV = pathCSV
         
+    def setDirBaseImg(self, dir_base_img):
+        self.dirBaseImg = dir_base_img
         
+    def __str__(self):
+        return f"{self.__dict__}"
