@@ -60,7 +60,7 @@ with strategy.scope():
     if (not modelConfig.argsOnlyTest):
         print()
         print(f'{modelConfig.printPrefix}')
-        print(f'{modelConfig.printPrefix} Iniciando os Testes')
+        print(f'{modelConfig.printPrefix} Iniciando o Treino')
         print(f'{modelConfig.printPrefix}')
         modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
         modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
@@ -69,9 +69,13 @@ with strategy.scope():
     else:
         print()
         print(f'{modelConfig.printPrefix}')
-        print(f'{modelConfig.printPrefix} Somente execução do Teste')
+        print(f'{modelConfig.printPrefix} Somente execução por Teste')
         print(f'{modelConfig.printPrefix}')
     
+    print()
+    print(f'{modelConfig.printPrefix}')
+    print(f'{modelConfig.printPrefix} Iniciando o Teste')
+    print(f'{modelConfig.printPrefix}')
     modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
     modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
     testCarbon = TestCarbon(modelConfig)
