@@ -42,10 +42,12 @@ if (args.debug):
 
 
 # Definindo Modelo de TransferLearning e Configurações
-modelSet = ModelSet.ResNet152
+modelSet = ModelSet.ConvNeXtBase
 imageDimensionX = 256
 imageDimensionY = 256
 qtd_canal_color = 3
+pathCsv = ""
+dir_base_img = ""
 modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
                           args.name, args.debug, args.trainable, args.preprocess, printPrefix = prefix)
 

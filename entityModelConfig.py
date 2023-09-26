@@ -11,8 +11,8 @@ class ModelConfig:
         self.imageDimensionX = imageDimensionX
         self.imageDimensionY = imageDimensionY
         self.channelColors = channelColors
-        self.setDirBaseImg(dir_base_img)
-        self.setPathCSV(pathCSV)
+        self.dirBaseImg = dir_base_img
+        self.pathCSV = pathCSV
         self.argsNameModel = argsNameModel
         self.argsDebug = argsDebug
         self.argsTrainable = argsTrainable
