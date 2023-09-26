@@ -27,7 +27,7 @@ parser.add_argument("-p", "--preprocess", nargs=1, action="store_true", default=
 parser.add_argument("-t", "--trainable", nargs=1, action="store_true", default=False, help="Define se terá as camadas do modelo de transfer-learning treináveis ou não")
 parser.add_argument("-T", "--Test", nargs=1, action="store_true", default=False, help="Define execução apenas para o teste")
 parser.add_argument("-e", "--epochs", nargs=1, action="count", default=100, type=int, help="Quantidade de épocas para o treino")
-parser.add_argument("-a", "--patience", nargs=1, action="count", default=5, type=int, help="Quantidade de paciência no early stopping")
+parser.add_argument("-P", "--patience", nargs=1, action="count", default=5, type=int, help="Quantidade de paciência no early stopping")
 
 args = parser.parse_args()
 
@@ -95,4 +95,7 @@ with strategy.scope():
     print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -p (--preprocess): {modelConfig.argsPreprocess}")
     print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -t (--trainable): {modelConfig.argsTrainable}")
     print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -T (--Test): {modelConfig.argsOnlyTest}")
+    print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -e (--epochs): {modelConfig.argsEpochs}")
+    print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -P (--patience): {modelConfig.argsPatience}")
+    
     print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} Model: {modelConfig.modelSet.name}")
