@@ -15,7 +15,7 @@ def executeProcess(modelConfig : ModelConfig):
 
     # Estratégia para trabalhar com Multi-GPU
     strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
-
+    print(f'{modelConfig.printPrefix} Modelo: {modelConfig.modelSet.name}')
     with strategy.scope():
         if (not modelConfig.modelSet == ModelSet.RandomForestRegressor):
             if (not modelConfig.argsOnlyTest):
