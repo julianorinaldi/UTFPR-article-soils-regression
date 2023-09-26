@@ -6,7 +6,8 @@ class ModelConfig:
                 dir_base_img : str = 'dataset/images/treinamento-solo-256x256', 
                 imageDimensionX : int = 256, imageDimensionY : int = 256, channelColors : int = 3,
                 argsNameModel : str = '', argsDebug : bool = False, argsTrainable : bool = False,
-                argsPreprocess : bool = False, argsOnlyTest : bool = False, printPrefix : str = '>>>>>>>>>>>>>>>>>'):
+                argsPreprocess : bool = False, argsOnlyTest : bool = False, argsEpochs : int = 100, 
+                argsPatience : int = 5, printPrefix : str = '>>>>>>>>>>>>>>>>>'):
         self.modelSet = modelSet
         self.imageDimensionX = imageDimensionX
         self.imageDimensionY = imageDimensionY
@@ -18,6 +19,8 @@ class ModelConfig:
         self.argsTrainable = argsTrainable
         self.argsPreprocess = argsPreprocess
         self.argsOnlyTest = argsOnlyTest
+        self.argsEpochs = argsEpochs
+        self.argsPatience = argsPatience
         self.printPrefix = printPrefix
     
     def setPathCSV(self, pathCSV):

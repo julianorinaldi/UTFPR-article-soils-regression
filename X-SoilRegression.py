@@ -21,11 +21,13 @@ prefix = ">>>>>>>>>>>>>>>>>"
 
 # Argumentos
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--debug", action="store_true", help="Para listar os prints de Debug")
-parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .h5")
-parser.add_argument("-p", "--preprocess", action="store_true", help="Preprocessar imagem 'resnet50.preprocess_input(...)'")
-parser.add_argument("-t", "--trainable", action="store_true", help="Define se terá as camadas do modelo de transfer-learning treináveis ou não")
-parser.add_argument("-T", "--Test", action="store_true", help="Define execução apenas para o teste")
+parser.add_argument("-d", "--debug", action="store_true", nargs=1, help="Para listar os prints de Debug")
+parser.add_argument("-n", "--name", nargs=1, help="Nome do arquivo de saída do modelo .tf")
+parser.add_argument("-p", "--preprocess", nargs=1, action="store_true", default=False, help="Preprocessar imagem 'model.preprocess_input(...)'")
+parser.add_argument("-t", "--trainable", nargs=1, action="store_true", default=False, help="Define se terá as camadas do modelo de transfer-learning treináveis ou não")
+parser.add_argument("-T", "--Test", nargs=1, action="store_true", default=False, help="Define execução apenas para o teste")
+parser.add_argument("-e", "--epochs", nargs=1, action="count", default=100, type=int, help="Quantidade de épocas para o treino")
+parser.add_argument("-a", "--patience", nargs=1, action="count", default=5, type=int, help="Quantidade de paciência no early stopping")
 
 args = parser.parse_args()
 
@@ -49,8 +51,13 @@ imageDimensionY = 256
 qtd_canal_color = 3
 pathCsv = ""
 dir_base_img = ""
-modelConfig = ModelConfig(modelSet, pathCsv, dir_base_img,imageDimensionX, imageDimensionY, qtd_canal_color,
-                          args.name, args.debug, args.trainable, args.preprocess, args.Test, printPrefix = prefix)
+modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_base_img,
+                          imageDimensionX=imageDimensionX, imageDimensionY=imageDimensionY,
+                          channelColors=qtd_canal_color, 
+                          argsNameModel=args.name,argsDebug=args.debug, argsTrainable=args.trainable,
+                          argsPreprocess=args.preprocess, argsOnlyTest=args.Test, argsEpochs=args.epochs, 
+                          argsPatience=args.patience,
+                          printPrefix = prefix)
 
 
 # Estratégia para trabalhar com Multi-GPU
