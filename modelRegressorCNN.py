@@ -59,7 +59,7 @@ class ModelRegressorCNN:
                     tf.keras.layers.Flatten(),
                     
                     # Camada totalmente conectada 1
-                    tf.layers.Dense(128, activation='relu'),
+                    tf.keras.layers.Dense(128, activation='relu'),
                     
                     # Camada de saída
                     tf.keras.layers.Dense(1)  # Esta camada possui 1 neurônio para a regressão
