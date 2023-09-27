@@ -44,28 +44,22 @@ class ModelRegressorCNN:
                                                         self.modelConfig.imageDimensionY, 
                                                         self.modelConfig.channelColors)),
                     tf.keras.layers.MaxPooling2D((2, 2)),
+                    tf.keras.layers.Dropout(0.5),
                     
                     # Camada de convolução 2
                     tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
                     tf.keras.layers.MaxPooling2D((2, 2)),
+                    tf.keras.layers.Dropout(0.25),
                     
                     # Camada de convolução 3
                     tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
                     tf.keras.layers.MaxPooling2D((2, 2)),
 
-                    # Camada de convolução 3
-                    tf.keras.layers.Conv2D(256, (3, 3), activation='relu'),
-                    tf.keras.layers.MaxPooling2D((2, 2)),
-
-                    # Camada de convolução 3
-                    tf.keras.layers.Conv2D(512, (3, 3), activation='relu'),
-                    tf.keras.layers.MaxPooling2D((2, 2)),
-                                                            
                     # Transformando os dados em um vetor
                     tf.keras.layers.Flatten(),
                     
                     # Camada totalmente conectada 1
-                    tf.keras.layers.Dense(1024),
+                    tf.layers.Dense(128, activation='relu'),
                     
                     # Camada de saída
                     tf.keras.layers.Dense(1)  # Esta camada possui 1 neurônio para a regressão
