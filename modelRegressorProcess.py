@@ -3,6 +3,7 @@ from entityModelConfig import ModelConfig
 from datasetProcess import dataset_process
 from imageProcess import image_load, image_convert_array
 from sklearn.metrics import r2_score  # Avaliação das Métricas
+from sklearn.model_selection import train_test_split
 import xgboost as xgb
 
 class ModelRegressorProcess:
@@ -33,6 +34,10 @@ class ModelRegressorProcess:
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino')
         X_, Y_carbono = self._load_images(self.modelConfig)
         
+        X_train, X_test, Y_carbono_train, Y_carbono_test = train_test_split(X_, Y_carbono, test_size=0.2, random_state=42)
+        
+        validation = [(X_test, Y_carbono_test)]
+        
         # Flatten das imagens
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Fazendo reshape')
@@ -58,7 +63,7 @@ class ModelRegressorProcess:
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando o treino')
-        self.model.fit(X_, Y_carbono)
+        self.model.fit(X_train, Y_carbono_train, eval_set=validation, verbose=True)
         
     def test(self):
         # Agora entra o Test
