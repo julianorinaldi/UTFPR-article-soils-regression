@@ -18,7 +18,7 @@ def executeProcess(modelConfig : ModelConfig):
     print(f'{modelConfig.printPrefix} Modelo: {modelConfig.modelSet.name}')
     with strategy.scope():
         
-        if (not modelConfig.modelSet == ModelSet.RandomForestRegressor):
+        if (not modelConfig.modelSet == ModelSet.XGBRegressor):
             if (not modelConfig.argsOnlyTest):
                 print()
                 print(f'{modelConfig.printPrefix}')

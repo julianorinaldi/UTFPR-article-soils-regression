@@ -2,7 +2,6 @@
 from entityModelConfig import ModelConfig
 from datasetProcess import dataset_process
 from imageProcess import image_load, image_convert_array
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score  # Avaliação das Métricas
 import xgboost as xgb
 
@@ -44,7 +43,6 @@ class ModelRegressorProcess:
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
 
-        # Criar o modelo RandomForestRegressor
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
         
