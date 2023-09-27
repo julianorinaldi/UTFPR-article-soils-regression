@@ -34,20 +34,18 @@ class ModelRegressorProcess:
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino')
         X_, Y_carbono = self._load_images(self.modelConfig)
         
+        # Flatten das imagens
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Fazendo reshape')
+        # Aceita apenas 2 dimensões.
+        X_ = X_.reshape(X_.shape[0], -1)  
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
+        
         X_train, X_test, Y_carbono_train, Y_carbono_test = train_test_split(X_, Y_carbono, test_size=0.2, random_state=42)
         
         validation = [(X_test, Y_carbono_test)]
         
-        # Flatten das imagens
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Fazendo reshape')
-        
-        # Aceita apenas 2 dimensões.
-        X_ = X_.reshape(X_.shape[0], -1)  
-        
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
-
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
         
