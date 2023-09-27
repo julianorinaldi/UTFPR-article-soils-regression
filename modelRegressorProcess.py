@@ -37,13 +37,17 @@ class ModelRegressorProcess:
         # Flatten das imagens
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Fazendo reshape')
-        X_ = X_.reshape(X_.shape[0], -1)  # RandomForestRegressor aceita apenas 2 dimensões.
+        
+        # RandomForestRegressor aceita apenas 2 dimensões.
+        # X_ = X_.reshape(X_.shape[0], -1)  
+        
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
 
         # Criar o modelo RandomForestRegressor
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
+        
         #self.model = RandomForestRegressor(n_estimators=100, random_state=42)
         
         self.model = xgb.XGBRegressor(
@@ -52,7 +56,7 @@ class ModelRegressorProcess:
                         learning_rate=0.1,              # Taxa de aprendizado
                         max_depth=5,                    # Profundidade máxima das árvores
                         alpha=10,                       # Parâmetro de regularização L1
-                        n_estimators=100                # Número de árvores no ensemble
+                        n_estimators=20                # Número de árvores no ensemble
                     )
 
         # Treinar o modelo
