@@ -39,7 +39,10 @@ class ModelRegressorCNN:
         
         self.model = tf.keras.models.Sequential([
                     # Camada de convolução 1
-                    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(256, 256, 3)),
+                    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', 
+                                           input_shape=(self.modelConfig.imageDimensionX, 
+                                                        self.modelConfig.imageDimensionY, 
+                                                        self.modelConfig.channelColors)),
                     tf.keras.layers.MaxPooling2D((2, 2)),
                     
                     # Camada de convolução 2
@@ -57,10 +60,12 @@ class ModelRegressorCNN:
                     tf.keras.layers.Dense(128, activation='relu'),
                     
                     # Camada de saída
-                    tf.keras.layers.Dense(1)  # Esta camada possui 1 neurônio para a regressão
+                    tf.keras.layers.Dense(1, activation='linear')  # Esta camada possui 1 neurônio para a regressão
                 ])
 
-        self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
+        opt = tf.keras.optimizers.RMSprop(learning_rate=0.0001)
+
+        self.model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
 
         self.model.summary()
         
