@@ -17,3 +17,4 @@ class ModelSet(Enum):
     DenseNet169 = 7
     VGG19 = 8
     XGBRegressor = 100
+    CNN = 200

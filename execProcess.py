@@ -4,6 +4,7 @@ from testingCarbon import TestCarbon
 from entityModelConfig import ModelConfig
 from modelSet import ModelSet
 from modelRegressorProcess import ModelRegressorProcess
+from modelRegressorCNN import ModelRegressorCNN
 
 def executeProcess(modelConfig : ModelConfig):
     
@@ -18,7 +19,15 @@ def executeProcess(modelConfig : ModelConfig):
     print(f'{modelConfig.printPrefix} Modelo: {modelConfig.modelSet.name}')
     with strategy.scope():
         
-        if (not modelConfig.modelSet == ModelSet.XGBRegressor):
+        if (modelConfig.modelSet == ModelSet.XGBRegressor):
+            modelRegressorProcess = ModelRegressorProcess(modelConfig)
+            modelRegressorProcess.train()
+            modelRegressorProcess.test()
+        elif (modelConfig.modelSet == ModelSet.CNN):
+            modelRegressorCNN = ModelRegressorCNN(modelConfig)
+            modelRegressorCNN.train()
+            modelRegressorCNN.test()
+        else:
             if (not modelConfig.argsOnlyTest):
                 print()
                 print(f'{modelConfig.printPrefix}')
@@ -42,10 +51,6 @@ def executeProcess(modelConfig : ModelConfig):
             modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
             testCarbon = TestCarbon(modelConfig)
             testCarbon.test()
-        else:
-            modelRegressorProcess = ModelRegressorProcess(modelConfig)
-            modelRegressorProcess.train()
-            modelRegressorProcess.test()
         
         print()
         print(f"{modelConfig.printPrefix} Info parameters: ")
