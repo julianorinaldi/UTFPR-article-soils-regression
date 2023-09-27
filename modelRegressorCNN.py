@@ -65,10 +65,10 @@ class ModelRegressorCNN:
                     tf.keras.layers.Flatten(),
                     
                     # Camada totalmente conectada 1
-                    tf.keras.layers.Dense(1024, activation='linear'),
+                    tf.keras.layers.Dense(1024),
                     
                     # Camada de saída
-                    tf.keras.layers.Dense(1, activation='linear')  # Esta camada possui 1 neurônio para a regressão
+                    tf.keras.layers.Dense(1)  # Esta camada possui 1 neurônio para a regressão
                 ])
 
         opt = tf.keras.optimizers.RMSprop()
