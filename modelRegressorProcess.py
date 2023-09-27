@@ -74,6 +74,9 @@ class ModelRegressorProcess:
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o teste')
         X_, Y_carbono = self._load_images(self.modelConfig)
         
+        # Aceita apenas 2 dimensões.
+        X_ = X_.reshape(X_.shape[0], -1)  
+        
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando predição...')
         # Fazendo a predição sobre os dados de teste
