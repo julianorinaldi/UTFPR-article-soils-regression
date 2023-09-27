@@ -50,12 +50,12 @@ class ModelRegressorProcess:
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
         
         self.model = xgb.XGBRegressor(
-                        objective='reg:squarederror',  # Usamos 'reg:squarederror' para problemas de regressão
-                        colsample_bytree=0.3,           # Fração de features a serem consideradas em cada árvore
+                        objective='reg:linear',
+                        colsample_bytree=1,           
                         learning_rate=0.1,              # Taxa de aprendizado
-                        max_depth=5,                    # Profundidade máxima das árvores
+                        max_depth=10,                    # Profundidade máxima das árvores
                         alpha=10,                       # Parâmetro de regularização L1
-                        n_estimators=10                # Número de árvores no ensemble
+                        n_estimators=100                # Número de árvores no ensemble
                     )
 
         # Treinar o modelo
