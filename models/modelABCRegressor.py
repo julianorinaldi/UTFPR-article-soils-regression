@@ -41,7 +41,7 @@ class ModelABCRegressor(ABC):
             img_path = f'{imageNamesList[indexImg]}'
             img = image_processing(self.modelConfig, img_path)
             img = np.expand_dims(img, axis=0)
-
+            img = self.reshapeTwoDimensions(img)
             predictValue = model.predict(img)
             Real = df.teor_carbono[indexImg]
 
