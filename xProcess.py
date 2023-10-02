@@ -3,7 +3,7 @@ import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 # Models
 from models.modelCNNRegressor import ModelRegressorCNN
 from models.modelXGBRegressor import ModelXGBRegressor
-from models.modelLinearRegression import ModelLinearRegression
+from models.modelLinearRegressor import ModelLinearRegressor
 from models.modelSVMLinearRegressor import ModelSVMLinearRegressor
 from models.modelSVMRBFRegressor import ModelSVMRBFRegressor
 
@@ -33,9 +33,9 @@ def execute(modelConfig : ModelConfig):
             modelRegressorCNN.train()
             modelRegressorCNN.test()
         elif (modelConfig.modelSet == ModelSet.LinearRegression):
-            modelLinearRegression = ModelLinearRegression(modelConfig)
-            modelLinearRegression.train()
-            modelLinearRegression.test()
+            modelLinearRegressor = ModelLinearRegressor(modelConfig)
+            modelLinearRegressor.train()
+            modelLinearRegressor.test()
         elif (modelConfig.modelSet == ModelSet.SVMLinearRegression):
             modelSVMLinearRegressor = ModelSVMLinearRegressor(modelConfig)
             modelSVMLinearRegressor.train()
