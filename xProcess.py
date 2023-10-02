@@ -69,5 +69,7 @@ def execute(modelConfig : ModelConfig):
         print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -T (--Test): {modelConfig.argsOnlyTest}")
         print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -e (--epochs): {modelConfig.argsEpochs}")
         print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -P (--patience): {modelConfig.argsPatience}")
+        print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -i (--amount_image_train): {modelConfig.amountImagesTrain}")
+        print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -I (--amount_image_test): {modelConfig.amountImagesTest}")
         print(f"{modelConfig.printPrefix}{modelConfig.printPrefix} -m (--model): {modelConfig.modelSet.value} - {modelConfig.modelSet.name}")
         print()

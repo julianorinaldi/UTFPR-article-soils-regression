@@ -16,7 +16,7 @@ class TrainingCarbon:
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
-        if (not qtd_imagens > self.modelConfig.amountImagesTrain):
+        if (qtd_imagens > self.modelConfig.amountImagesTrain):
             qtd_imagens = self.modelConfig.amountImagesTrain
         
         if (self.modelConfig.argsDebug):
