@@ -14,12 +14,12 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         # Adicionando camadas personalizadas no topo do modelo
         x = pretrained_model.output
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
-        x = tf.keras.layers.Flatten()(x)
-        x = tf.keras.layers.Dense(512, activation='relu')(x)
+        #x = tf.keras.layers.Flatten()(x)
+        #x = tf.keras.layers.Dense(512, activation='relu')(x)
         predictions = tf.keras.layers.Dense(1, activation='linear')(x)
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
-        opt = tf.keras.optimizers.RMSprop(learning_rate=0.0001)
+        opt = tf.keras.optimizers.RMSprop()
         _model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
 
         print(f'{self.modelConfig.printPrefix}')
@@ -32,18 +32,20 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         return X
     
     def modelFit(self, model, X_, Y_carbono):
-        model.fit(X_, Y_carbono, validation_split=0.3, epochs=self.modelConfig.argsEpochs, 
-                            callbacks=[tf.keras.callbacks.EarlyStopping
-                                       (monitor='val_loss', patience=self.modelConfig.argsPatience, restore_best_weights=True)])
+        earlyStopping = tf.keras.callbacks.EarlyStopping(
+                monitor='val_loss', patience=self.modelConfig.argsPatience, 
+                    restore_best_weights=True)
+        
+        model.fit(X_, Y_carbono, validation_split=0.3, 
+                    epochs=self.modelConfig.argsEpochs, 
+                            callbacks=[earlyStopping])
 
         model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
-
         print(f"{self.modelConfig.printPrefix} Model Saved!!!")
         
     def _selectTransferLearningModel(self, modelConfig : ModelConfig):
         # Modelos disponíveis para Transfer-Learning
         # https://keras.io/api/applications/
-        # ResNet50
         
         # include_top=False => Excluindo as camadas finais (top layers) da rede, que geralmente são usadas para classificação. Vamos adicionar nossas próprias camadas finais
         # input_shape=(imageDimensionX, imageDimensionY, qtd_canal_color) => Nosso array de imagens tem as dimensões (256, 256, 3)
