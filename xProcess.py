@@ -4,6 +4,7 @@ import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 from models.modelCNNRegressor import ModelRegressorCNN
 from models.modelXGBRegressor import ModelXGBRegressor
 from models.modelLinearRegression import ModelLinearRegression
+from models.modelSVMLinearRegressor import ModelSVMLinearRegressor
 
 from trainingCarbon import TrainingCarbon
 from testingCarbon import TestCarbon
@@ -34,6 +35,10 @@ def execute(modelConfig : ModelConfig):
             modelLinearRegression = ModelLinearRegression(modelConfig)
             modelLinearRegression.train()
             modelLinearRegression.test()
+        elif (modelConfig.modelSet == ModelSet.SVMLinearRegression):
+            modelSVMLinearRegressor = ModelSVMLinearRegressor(modelConfig)
+            modelSVMLinearRegressor.train()
+            modelSVMLinearRegressor.test()
         else:
             # Aqui entra os Modelos de TransferLearning
             if (not modelConfig.argsOnlyTest):

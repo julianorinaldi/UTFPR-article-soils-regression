@@ -19,3 +19,4 @@ class ModelSet(Enum):
     XGBRegressor = 100
     CNN = 200
     LinearRegression = 300
+    SVMLinearRegression = 400
