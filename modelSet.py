@@ -20,3 +20,4 @@ class ModelSet(Enum):
     CNN = 200
     LinearRegression = 300
     SVMLinearRegression = 400
+    SVMRBFRegressor = 401

@@ -5,6 +5,7 @@ from models.modelCNNRegressor import ModelRegressorCNN
 from models.modelXGBRegressor import ModelXGBRegressor
 from models.modelLinearRegression import ModelLinearRegression
 from models.modelSVMLinearRegressor import ModelSVMLinearRegressor
+from models.modelSVMRBFRegressor import ModelSVMRBFRegressor
 
 from trainingCarbon import TrainingCarbon
 from testingCarbon import TestCarbon
@@ -39,6 +40,10 @@ def execute(modelConfig : ModelConfig):
             modelSVMLinearRegressor = ModelSVMLinearRegressor(modelConfig)
             modelSVMLinearRegressor.train()
             modelSVMLinearRegressor.test()
+        elif (modelConfig.modelSet == ModelSet.SVMRBFRegressor):
+            modelSVMRBFRegressor = ModelSVMRBFRegressor(modelConfig)
+            modelSVMRBFRegressor.train()
+            modelSVMRBFRegressor.test()
         else:
             # Aqui entra os Modelos de TransferLearning
             if (not modelConfig.argsOnlyTest):
