@@ -38,7 +38,7 @@ class ModelLinearRegression:
             print(f'{self.modelConfig.printPrefix} Fazendo reshape')
         
         # Aceita apenas 2 dimensões.
-        #X_ = X_.reshape(X_.shape[0], -1)  
+        X_ = X_.reshape(X_.shape[0], -1)  
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
@@ -67,7 +67,7 @@ class ModelLinearRegression:
         X_, Y_carbono = self._load_images(self.modelConfig)
         
         # Aceita apenas 2 dimensões.
-        #X_ = X_.reshape(X_.shape[0], -1)  
+        X_ = X_.reshape(X_.shape[0], -1)  
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando predição...')
