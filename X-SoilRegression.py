@@ -39,8 +39,8 @@ dir_base_img = ""
 
 modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_base_img,
                           imageDimensionX=imageDimensionX, imageDimensionY=imageDimensionY,
-                          channelColors=qtd_canal_color, argsAmountImageTrain=args.amount_image_train,
-                          argsAmountImageTest=args.amount_image_test,
+                          channelColors=qtd_canal_color, amountImagesTrain=args.amount_image_train,
+                          amountImagesTest=args.amount_image_test,
                           argsNameModel=args.name,argsDebug=args.debug, argsTrainable=args.trainable,
                           argsPreprocess=args.preprocess, argsOnlyTest=args.Test, argsEpochs=args.epochs, 
                           argsPatience=args.patience,
