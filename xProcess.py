@@ -6,9 +6,9 @@ from models.modelXGBRegressor import ModelXGBRegressor
 from models.modelLinearRegressor import ModelLinearRegressor
 from models.modelSVMLinearRegressor import ModelSVMLinearRegressor
 from models.modelSVMRBFRegressor import ModelSVMRBFRegressor
+from models.modelTransferLearningRegressor import ModelRegressorTransferLearning
 
-from trainingCarbon import TrainingCarbon
-from testingCarbon import TestCarbon
+
 from entityModelConfig import ModelConfig
 from modelSet import ModelSet
 
@@ -24,51 +24,37 @@ def execute(modelConfig : ModelConfig):
     strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
     print(f'{modelConfig.printPrefix} Modelo: {modelConfig.modelSet.name}')
     with strategy.scope():
-        if (modelConfig.modelSet == ModelSet.XGBRegressor):
-            modelXGBRegressor = ModelXGBRegressor(modelConfig)
-            modelXGBRegressor.train()
-            modelXGBRegressor.test()
+        if (modelConfig.modelSet == ModelSet.ResNet50 or
+            modelConfig.modelSet == ModelSet.ResNet101 or
+            modelConfig.modelSet == ModelSet.ResNet152 or
+            modelConfig.modelSet == ModelSet.EfficientNetB7 or
+            modelConfig.modelSet == ModelSet.EfficientNetV2S or
+            modelConfig.modelSet == ModelSet.ConvNeXtBase or
+            modelConfig.modelSet == ModelSet.DenseNet169 or
+            modelConfig.modelSet == ModelSet.VGG19 or
+            modelConfig.modelSet == ModelSet.InceptionResNetV2):
+            _model = ModelRegressorTransferLearning(modelConfig)
+    
         elif (modelConfig.modelSet == ModelSet.CNN):
-            modelRegressorCNN = ModelRegressorCNN(modelConfig)
-            modelRegressorCNN.train()
-            modelRegressorCNN.test()
+            _model = ModelRegressorCNN(modelConfig)
+    
+        elif (modelConfig.modelSet == ModelSet.XGBRegressor):
+            _model = ModelXGBRegressor(modelConfig)
+
         elif (modelConfig.modelSet == ModelSet.LinearRegression):
-            modelLinearRegressor = ModelLinearRegressor(modelConfig)
-            modelLinearRegressor.train()
-            modelLinearRegressor.test()
+            _model = ModelLinearRegressor(modelConfig)
+
         elif (modelConfig.modelSet == ModelSet.SVMLinearRegression):
-            modelSVMLinearRegressor = ModelSVMLinearRegressor(modelConfig)
-            modelSVMLinearRegressor.train()
-            modelSVMLinearRegressor.test()
+            _model = ModelSVMLinearRegressor(modelConfig)
+
         elif (modelConfig.modelSet == ModelSet.SVMRBFRegressor):
-            modelSVMRBFRegressor = ModelSVMRBFRegressor(modelConfig)
-            modelSVMRBFRegressor.train()
-            modelSVMRBFRegressor.test()
+            _model = ModelSVMRBFRegressor(modelConfig)
+
         else:
-            # Aqui entra os Modelos de TransferLearning
-            if (not modelConfig.argsOnlyTest):
-                print()
-                print(f'{modelConfig.printPrefix}')
-                print(f'{modelConfig.printPrefix} Iniciando o Treino')
-                print(f'{modelConfig.printPrefix}')
-                modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
-                modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
-                training = TrainingCarbon(modelConfig)
-                training.train()
-            else:
-                print()
-                print(f'{modelConfig.printPrefix}')
-                print(f'{modelConfig.printPrefix} Somente execução por Teste')
-                print(f'{modelConfig.printPrefix}')
-            
-            print()
-            print(f'{modelConfig.printPrefix}')
-            print(f'{modelConfig.printPrefix} Iniciando o Teste')
-            print(f'{modelConfig.printPrefix}')
-            modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
-            modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
-            testCarbon = TestCarbon(modelConfig)
-            testCarbon.test()
+            raise Exception('Modelo desconhecido')
+        
+        _model.train()
+        _model.test()
         
         print()
         print(f"{modelConfig.printPrefix} Info parameters: ")
