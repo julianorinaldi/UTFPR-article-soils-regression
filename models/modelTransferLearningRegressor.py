@@ -9,7 +9,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         super().__init__(modelConfig)
         
     def getSpecialistModel(self):
-        pretrained_model = self._selectTransferLearningModel(modelConfig=self.modelConfig)
+        pretrained_model = self._selectTransferLearningModel(self.modelConfig)
 
         # Adicionando camadas personalizadas no topo do modelo
         x = pretrained_model.output
