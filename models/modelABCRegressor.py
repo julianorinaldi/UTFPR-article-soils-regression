@@ -36,6 +36,8 @@ class ModelABCRegressor(ABC):
         for i in [1, 100, 500, 1000, 2000, 3000]:
             # Essa linha abaixo garante aleatoriedade
             indexImg = random.randint(0, i)
+            if (indexImg >= len(imageNamesList)):
+                indexImg = random.randint(0, len(imageNamesList) - 1)
             img_path = f'{imageNamesList[indexImg]}'
             img = image_processing(self.modelConfig, img_path)
             img = np.expand_dims(img, axis=0)
