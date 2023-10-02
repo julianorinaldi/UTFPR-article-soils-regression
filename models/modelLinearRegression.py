@@ -1,6 +1,6 @@
 from sklearn.linear_model import LinearRegression
 from entityModelConfig import ModelConfig
-from modelABCRegressor import ModelABCRegression
+from models.modelABCRegressor import ModelABCRegression
 
 class ModelLinearRegression(ModelABCRegression):
     
