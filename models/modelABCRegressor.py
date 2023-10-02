@@ -8,6 +8,7 @@ class ModelABCRegression(ABC):
     def __init__(self, modelConfig : ModelConfig):
         self.modelConfig = modelConfig
         self.model = None
+        super().__init__()
 
     @abstractmethod
     def getSpecialistModel(self):
