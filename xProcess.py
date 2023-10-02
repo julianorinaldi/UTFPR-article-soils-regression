@@ -21,7 +21,9 @@ def execute(modelConfig : ModelConfig):
         print(f'{modelConfig.printPrefix} Amount of GPU Available: {physical_devices}')
 
     # Estratégia para trabalhar com Multi-GPU
-    strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
+    strategy = tf.distribute.MirroredStrategy(
+        cross_device_ops=tf.distribute.HierarchicalCopyAllReduce(num_packs=2))
+    
     print(f'{modelConfig.printPrefix} Modelo: {modelConfig.modelSet.name}')
     with strategy.scope():
         if (modelConfig.modelSet == ModelSet.ResNet50 or
