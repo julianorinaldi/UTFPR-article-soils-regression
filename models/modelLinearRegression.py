@@ -55,7 +55,7 @@ class ModelLinearRegression:
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando o treino')
-        self.model.fit(X_train, Y_carbono_train, eval_set=validation, verbose=True)
+        self.model.fit(X_train, Y_carbono_train)
         
     def test(self):
         # Agora entra o Test

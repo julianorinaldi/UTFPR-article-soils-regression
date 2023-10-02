@@ -55,10 +55,6 @@ def modelTransferLearningProcess(modelConfig : ModelConfig):
         raise Exception('Modelo desconhecido')
 
 
-    # *****************************************************
-    # Modelo novo com GlobalAveragePooling2D
-    # Parâmetros: sem o camada pooling, drop column teor_nitrogenio, layer.trainable = False, preproc = True
-    # *****************************************************
     pretrained_model.trainable = modelConfig.argsTrainable
     for layer in pretrained_model.layers:
         layer.trainable = modelConfig.argsTrainable
