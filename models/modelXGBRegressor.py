@@ -19,9 +19,6 @@ class ModelXGBRegressor:
         if (qtd_imagens > qtdImagens) and (qtdImagens > 0):
             qtd_imagens = qtdImagens
             
-        if (modelConfig.argsDebug):
-            print(f'{modelConfig.printPrefix} Preprocess: {modelConfig.argsPreprocess}')
-
         # Array com as imagens a serem carregadas de treino
         imageArray = image_load(modelConfig, imageNamesList, qtd_imagens)
 
