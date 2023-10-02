@@ -33,7 +33,7 @@ class ModelABCRegressor(ABC):
     
     def modelPredictTest(self, model, df, imageNamesList):
         # Trazendo algumas amostras aleatórias ...
-        for i in [1, 5, 10, 50, 60, 100, 200, 300, 400, 500, 1000, 2000, 3000, 3500]:
+        for i in [1, 100, 500, 1000, 2000, 3000]:
             # Essa linha abaixo garante aleatoriedade
             indexImg = random.randint(0, i)
             img_path = f'{imageNamesList[indexImg]}'
