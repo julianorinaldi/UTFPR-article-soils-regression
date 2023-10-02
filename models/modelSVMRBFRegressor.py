@@ -9,3 +9,9 @@ class ModelSVMRBFRegressor(ModelABCRegressor):
         
     def getSpecialistModel(self):
         return SVR(kernel='rbf')
+
+    def reshapeTwoDimensions(self, X):
+        return super().reshapeTwoDimensions(X)
+    
+    def modelFit(self, model, X_, Y_carbono):
+         super().modelFit(model, X_, Y_carbono)
