@@ -32,7 +32,7 @@ def image_processing(modelConfig : ModelConfig, imageName : str):
             image = tf.keras.applications.resnet50.preprocess_input(image)
         elif modelConfig.modelSet == ModelSet.ResNet101 or modelConfig.modelSet == ModelSet.ResNet152:
             image = tf.keras.applications.resnet.preprocess_input(image)
-        elif modelConfig.modelSet == ModelSet.ConvNeXtBase:
+        elif modelConfig.modelSet == ModelSet.ConvNeXtBase or modelConfig.modelSet == ModelSet.ConvNeXtXLarge:
             image = tf.keras.applications.convnext.preprocess_input(image)
         elif modelConfig.modelSet == ModelSet.EfficientNetB7:
             image = tf.keras.applications.efficientnet.preprocess_input(image)

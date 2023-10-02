@@ -68,6 +68,10 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             pretrained_model = tf.keras.applications.ConvNeXtBase(include_top=False,
                                                             input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
                                                                         modelConfig.channelColors), classes=1, weights='imagenet')
+        elif modelConfig.modelSet == ModelSet.ConvNeXtXLarge:
+            pretrained_model = tf.keras.applications.ConvNeXtXLarge(include_top=False,
+                                                            input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
+                                                                        modelConfig.channelColors), classes=1, weights='imagenet')
         elif modelConfig.modelSet == ModelSet.EfficientNetB7:
             pretrained_model = tf.keras.applications.EfficientNetB7(include_top=False,
                                                             input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 

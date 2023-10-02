@@ -30,6 +30,7 @@ def execute(modelConfig : ModelConfig):
             modelConfig.modelSet == ModelSet.EfficientNetB7 or
             modelConfig.modelSet == ModelSet.EfficientNetV2S or
             modelConfig.modelSet == ModelSet.ConvNeXtBase or
+            modelConfig.modelSet == ModelSet.ConvNeXtXLarge or
             modelConfig.modelSet == ModelSet.DenseNet169 or
             modelConfig.modelSet == ModelSet.VGG19 or
             modelConfig.modelSet == ModelSet.InceptionResNetV2):

@@ -19,7 +19,8 @@ parser.add_argument("-i", "--amount_image_train", type=int, default=8930, help="
 parser.add_argument("-I", "--amount_image_test", type=int, default=3843, help="Quantidade de imagens para test")
 parser.add_argument("-P", "--patience", type=int, default=5, help="Quantidade de paciência no early stopping - [Modelos TransferLearning/CNN]")
 parser.add_argument("-e", "--epochs", type=int, default=100, help="Quantidade de épocas para o treino - [Modelos TransferLearning/CNN]")
-parser.add_argument("-m", "--model", type=int, default=0, help="Selecione o modelo: 0 - ResNet50, 1 - ResNet101, 2 - ResNet152, 3 - ConvNeXtBase, 4- EfficientNetB7, 5 - EfficientNetV2S, 6 - InceptionResNetV2, 7 - DenseNet169, 8 - VGG19, 100 - XGBRegressor, 200 - CNN, 300 - LinearRegression, 400 - SVMLinearRegression, 401 - SVMRBFRegressor")
+parser.add_argument("-m", "--model", type=int, default=0, 
+                    help="Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge, [20]-EfficientNetB7, [21]-EfficientNetV2S, [30]-InceptionResNetV2, [40]-DenseNet169, [50]-VGG19, [100]-CNN, [500]-XGBRegressor, [510]-LinearRegression, [520]-SVMLinearRegression, [521]-SVMRBFRegressor")
 
 args = parser.parse_args()
 

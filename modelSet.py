@@ -10,14 +10,21 @@ class ModelSet(Enum):
     ResNet50 = 0
     ResNet101 = 1
     ResNet152 = 2
-    ConvNeXtBase = 3
-    EfficientNetB7 = 4
-    EfficientNetV2S = 5
-    InceptionResNetV2 = 6
-    DenseNet169 = 7
-    VGG19 = 8
-    XGBRegressor = 100
-    CNN = 200
-    LinearRegression = 300
-    SVMLinearRegression = 400
-    SVMRBFRegressor = 401
+    
+    ConvNeXtBase = 10
+    ConvNeXtXLarge = 11
+    
+    EfficientNetB7 = 20
+    EfficientNetV2S = 21
+    
+    InceptionResNetV2 = 30
+    
+    DenseNet169 = 40
+    
+    VGG19 = 50
+    CNN = 100
+    
+    XGBRegressor = 500
+    LinearRegression = 510
+    SVMLinearRegression = 520
+    SVMRBFRegressor = 521
