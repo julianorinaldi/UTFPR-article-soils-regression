@@ -63,7 +63,10 @@ class ModelLinearRegression:
         X_, Y_carbono = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
         
         # Aceita apenas 2 dimensões.
-        X_ = X_.reshape(X_.shape[0], -1)  
+        X_ = X_.reshape(X_.shape[0], -1)
+        
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando predição...')

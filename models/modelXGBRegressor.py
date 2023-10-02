@@ -45,10 +45,6 @@ class ModelXGBRegressor:
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
         
-        X_train, X_test, Y_carbono_train, Y_carbono_test = train_test_split(X_, Y_carbono, test_size=0.2, random_state=42)
-        
-        validation = [(X_test, Y_carbono_test)]
-        
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
         
@@ -57,7 +53,8 @@ class ModelXGBRegressor:
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando o treino')
-        self.model.fit(X_train, Y_carbono_train, eval_set=validation, verbose=True)
+            
+        self.model.fit(X_, Y_carbono)
         
     def test(self):
         # Agora entra o Test
@@ -69,7 +66,9 @@ class ModelXGBRegressor:
         X_, Y_carbono = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
         
         # Aceita apenas 2 dimensões.
-        X_ = X_.reshape(X_.shape[0], -1)  
+        X_ = X_.reshape(X_.shape[0], -1)
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando predição...')
