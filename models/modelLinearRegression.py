@@ -14,7 +14,7 @@ class ModelLinearRegression:
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
-        if (qtd_imagens > qtdImagens):
+        if (qtd_imagens > qtdImagens) and (qtdImagens > 0):
             qtd_imagens = qtdImagens
 
         # Array com as imagens a serem carregadas de treino

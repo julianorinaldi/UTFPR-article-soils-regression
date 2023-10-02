@@ -16,7 +16,7 @@ class TestCarbon:
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
-        if (qtd_imagens > self.modelConfig.amountImagesTest):
+        if (qtd_imagens > self.modelConfig.amountImagesTest) and (self.modelConfig.amountImagesTest > 0):
             qtd_imagens = self.modelConfig.amountImagesTest
             
         if (self.modelConfig.argsDebug):
