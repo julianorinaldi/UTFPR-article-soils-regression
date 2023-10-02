@@ -17,7 +17,7 @@ parser.add_argument("-t", "--trainable", action="store_true", default=False, hel
 parser.add_argument("-T", "--Test", action="store_true", default=False, help="Define execução apenas para o teste")
 parser.add_argument("-e", "--epochs", type=int, default=100, help="Quantidade de épocas para o treino")
 parser.add_argument("-P", "--patience", type=int, default=5, help="Quantidade de paciência no early stopping")
-parser.add_argument("-m", "--model", type=int, default=0, help="Selecione o modelo: 0 - ResNet50, 1 - ResNet101, 2 - ResNet152, 3 - ConvNeXtBase, 4- EfficientNetB7, 5 - EfficientNetV2S, 6 - InceptionResNetV2, 7 - DenseNet169, 8 - VGG19, 100 - XGBRegressor, 200 - CNN")
+parser.add_argument("-m", "--model", type=int, default=0, help="Selecione o modelo: 0 - ResNet50, 1 - ResNet101, 2 - ResNet152, 3 - ConvNeXtBase, 4- EfficientNetB7, 5 - EfficientNetV2S, 6 - InceptionResNetV2, 7 - DenseNet169, 8 - VGG19, 100 - XGBRegressor, 200 - CNN, 300 - LinearRegression")
 
 args = parser.parse_args()
 
@@ -43,6 +43,6 @@ modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_b
                           argsPatience=args.patience,
                           printPrefix = prefix)
 
-from execProcess import executeProcess
+from xProcess import execute
 
-executeProcess(modelConfig)
+execute(modelConfig)

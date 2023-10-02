@@ -1,13 +1,17 @@
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
+
+# Models
+from models.modelCNNRegressor import ModelRegressorCNN
+from models.modelXGBRegressor import ModelXGBRegressor
+from models.modelLinearRegression import ModelLinearRegression
+
 from trainingCarbon import TrainingCarbon
 from testingCarbon import TestCarbon
 from entityModelConfig import ModelConfig
 from modelSet import ModelSet
-from modelRegressorProcess import ModelRegressorProcess
-from modelRegressorCNN import ModelRegressorCNN
 
-def executeProcess(modelConfig : ModelConfig):
-    
+
+def execute(modelConfig : ModelConfig):
     physical_devices = tf.config.list_physical_devices('GPU')
 
     # Infos da GPU e Framework
@@ -18,16 +22,20 @@ def executeProcess(modelConfig : ModelConfig):
     strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
     print(f'{modelConfig.printPrefix} Modelo: {modelConfig.modelSet.name}')
     with strategy.scope():
-        
         if (modelConfig.modelSet == ModelSet.XGBRegressor):
-            modelRegressorProcess = ModelRegressorProcess(modelConfig)
-            modelRegressorProcess.train()
-            modelRegressorProcess.test()
+            modelXGBRegressor = ModelXGBRegressor(modelConfig)
+            modelXGBRegressor.train()
+            modelXGBRegressor.test()
         elif (modelConfig.modelSet == ModelSet.CNN):
             modelRegressorCNN = ModelRegressorCNN(modelConfig)
             modelRegressorCNN.train()
             modelRegressorCNN.test()
+        elif (modelConfig.modelSet == ModelSet.LinearRegression):
+            modelLinearRegression = ModelLinearRegression(modelConfig)
+            modelLinearRegression.train()
+            modelLinearRegression.test()
         else:
+            # Aqui entra os Modelos de TransferLearning
             if (not modelConfig.argsOnlyTest):
                 print()
                 print(f'{modelConfig.printPrefix}')

@@ -1,12 +1,11 @@
-
 from entityModelConfig import ModelConfig
 from datasetProcess import dataset_process
 from imageProcess import image_load, image_convert_array
 from sklearn.metrics import r2_score  # Avaliação das Métricas
 from sklearn.model_selection import train_test_split
-import xgboost as xgb
+from sklearn.linear_model import LinearRegression
 
-class ModelRegressorProcess:
+class ModelLinearRegression:
     def __init__(self, modelConfig : ModelConfig):
         self.modelConfig = modelConfig
         self.model = None
@@ -37,8 +36,10 @@ class ModelRegressorProcess:
         # Flatten das imagens
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Fazendo reshape')
+        
         # Aceita apenas 2 dimensões.
-        X_ = X_.reshape(X_.shape[0], -1)  
+        #X_ = X_.reshape(X_.shape[0], -1)  
+        
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
         
@@ -49,7 +50,7 @@ class ModelRegressorProcess:
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
         
-        self.model = xgb.XGBRegressor()
+        self.model = LinearRegression()
 
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
@@ -66,7 +67,7 @@ class ModelRegressorProcess:
         X_, Y_carbono = self._load_images(self.modelConfig)
         
         # Aceita apenas 2 dimensões.
-        X_ = X_.reshape(X_.shape[0], -1)  
+        #X_ = X_.reshape(X_.shape[0], -1)  
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando predição...')
