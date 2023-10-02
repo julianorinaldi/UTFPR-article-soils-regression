@@ -11,11 +11,14 @@ class ModelXGBRegressor:
         self.modelConfig = modelConfig
         self.model = None
 
-    def _load_images(self, modelConfig : ModelConfig):
+    def _load_images(self, modelConfig : ModelConfig, qtdImagens : int):
         df, imageNamesList = dataset_process(modelConfig)
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
+        if (not qtd_imagens > qtdImagens):
+            qtd_imagens = qtdImagens
+            
         if (modelConfig.argsDebug):
             print(f'{modelConfig.printPrefix} Preprocess: {modelConfig.argsPreprocess}')
 
@@ -32,7 +35,7 @@ class ModelXGBRegressor:
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino')
-        X_, Y_carbono = self._load_images(self.modelConfig)
+        X_, Y_carbono = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
         
         # Flatten das imagens
         if (self.modelConfig.argsDebug):
@@ -63,7 +66,7 @@ class ModelXGBRegressor:
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o teste')
-        X_, Y_carbono = self._load_images(self.modelConfig)
+        X_, Y_carbono = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
         
         # Aceita apenas 2 dimensões.
         X_ = X_.reshape(X_.shape[0], -1)  

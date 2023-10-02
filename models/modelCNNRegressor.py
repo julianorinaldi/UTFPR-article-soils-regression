@@ -1,4 +1,3 @@
-
 from entityModelConfig import ModelConfig
 from datasetProcess import dataset_process
 from imageProcess import image_load, image_convert_array
@@ -11,11 +10,14 @@ class ModelRegressorCNN:
         self.modelConfig = modelConfig
         self.model = None
 
-    def _load_images(self, modelConfig : ModelConfig):
+    def _load_images(self, modelConfig : ModelConfig, qtdImagens : int):
         df, imageNamesList = dataset_process(modelConfig)
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
+        if (not qtd_imagens > qtdImagens):
+            qtd_imagens = qtdImagens
+            
         if (modelConfig.argsDebug):
             print(f'{modelConfig.printPrefix} Preprocess: {modelConfig.argsPreprocess}')
 
@@ -32,7 +34,7 @@ class ModelRegressorCNN:
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino')
-        X_, Y_carbono = self._load_images(self.modelConfig)
+        X_, Y_carbono = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
@@ -76,7 +78,8 @@ class ModelRegressorCNN:
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o teste')
-        X_, Y_carbono = self._load_images(self.modelConfig)
+            
+        X_, Y_carbono = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando predição...')
