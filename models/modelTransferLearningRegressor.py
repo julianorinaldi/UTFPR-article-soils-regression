@@ -40,7 +40,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
 
         print(f"{self.modelConfig.printPrefix} Model Saved!!!")
         
-    def _selectTransferLearningModel(modelConfig : ModelConfig):
+    def _selectTransferLearningModel(self, modelConfig : ModelConfig):
         # Modelos disponíveis para Transfer-Learning
         # https://keras.io/api/applications/
         # ResNet50
