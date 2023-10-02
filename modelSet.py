@@ -16,6 +16,7 @@ class ModelSet(Enum):
     
     EfficientNetB7 = 20
     EfficientNetV2S = 21
+    EfficientNetV2L = 22
     
     InceptionResNetV2 = 30
     

@@ -36,7 +36,7 @@ def image_processing(modelConfig : ModelConfig, imageName : str):
             image = tf.keras.applications.convnext.preprocess_input(image)
         elif modelConfig.modelSet == ModelSet.EfficientNetB7:
             image = tf.keras.applications.efficientnet.preprocess_input(image)
-        elif modelConfig.modelSet == ModelSet.EfficientNetV2S:
+        elif modelConfig.modelSet == ModelSet.EfficientNetV2S or modelConfig.modelSet == ModelSet.EfficientNetV2L:
             image = tf.keras.applications.efficientnet_v2.preprocess_input(image)
         elif modelConfig.modelSet == ModelSet.InceptionResNetV2:
             image = tf.keras.applications.inception_resnet_v2.preprocess_input(image)

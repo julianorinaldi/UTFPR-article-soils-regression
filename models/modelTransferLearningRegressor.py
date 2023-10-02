@@ -14,8 +14,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         # Adicionando camadas personalizadas no topo do modelo
         x = pretrained_model.output
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
-        #x = tf.keras.layers.Flatten()(x)
-        #x = tf.keras.layers.Dense(512, activation='relu')(x)
+        x = tf.keras.layers.Flatten()(x)
+        x = tf.keras.layers.Dense(512, activation='relu')(x)
         predictions = tf.keras.layers.Dense(1, activation='linear')(x)
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
@@ -80,6 +80,11 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             pretrained_model = tf.keras.applications.EfficientNetV2S(include_top=False,
                                                             input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
                                                                         modelConfig.channelColors), classes=1, weights='imagenet')
+        elif modelConfig.modelSet == ModelSet.EfficientNetV2L:
+            pretrained_model = tf.keras.applications.EfficientNetV2L(include_top=False,
+                                                            input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
+                                                                        modelConfig.channelColors), classes=1, weights='imagenet')
+            
         elif modelConfig.modelSet == ModelSet.InceptionResNetV2:
             pretrained_model = tf.keras.applications.InceptionResNetV2(include_top=False,
                                                             input_shape=(modelConfig.imageDimensionX, modelConfig.imageDimensionY, 
