@@ -36,10 +36,10 @@ def dataset_process(modeConfig : ModelConfig):
     print(f'{df.head()}')
     print(f'{modeConfig.printPrefix} Normalizando Dataset...')
     
-    x = df['carbono'].values
+    x = df['teor_carbono'].values
     min_max_scaler = preprocessing.MinMaxScaler()
     x_scaled = min_max_scaler.fit_transform(x)
-    df['carbono'] = pd.DataFrame(x_scaled)
+    df['teor_carbono'] = pd.DataFrame(x_scaled)
     print(f'{df.head()}')
     
     return df, imagefiles
