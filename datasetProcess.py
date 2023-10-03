@@ -33,9 +33,7 @@ def dataset_process(modeConfig : ModelConfig):
     # df = (df - df_stats['mean']) / df_stats['std']
 
     # Normalização MinMaxScaler
-    x = df.values
-    min_max_scaler = preprocessing.MinMaxScaler()
-    x_scaled = min_max_scaler.fit_transform(x)
-    df = pd.DataFrame(x_scaled)
+    scaler = preprocessing.MinMaxScaler()
+    df = scaler.fit_transform(df)
     
     return df, imagefiles
