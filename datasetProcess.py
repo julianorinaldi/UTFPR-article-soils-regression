@@ -35,8 +35,11 @@ def dataset_process(modeConfig : ModelConfig):
     # Normalização MinMaxScaler
     print(f'{df.head()}')
     print(f'{modeConfig.printPrefix} Normalizando Dataset...')
-    scaler = preprocessing.MinMaxScaler()
-    df = scaler.fit_transform(df)
+    
+    x = df.values
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    df = pd.DataFrame(x_scaled)
     print(f'{df.head()}')
     
     return df, imagefiles
