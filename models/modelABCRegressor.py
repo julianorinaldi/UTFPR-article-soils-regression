@@ -114,7 +114,7 @@ class ModelABCRegressor(ABC):
             print(f'{self.modelConfig.printPrefix} Iniciando predição completa para o R2...')
         
         # Fazendo a predição sobre os dados de teste
-        prediction = self.model.predict(X_)
+        prediction = self.model.predict(X_, batch_size=50)
 
         # Avaliando com R2
         r2 = r2_score(Y_carbono, prediction)
