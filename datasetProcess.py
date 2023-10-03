@@ -34,7 +34,7 @@ def dataset_process(modeConfig : ModelConfig):
 
     # Normalização MinMaxScaler
     print(f'{df.head()}')
-    print(f'{modeConfig.printPrefix} Normalizando Dataset...')
+    print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
     
     x = df.values
     min_max_scaler = preprocessing.MinMaxScaler()
