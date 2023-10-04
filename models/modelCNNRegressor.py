@@ -35,9 +35,9 @@ class ModelRegressorCNN(ModelABCRegressor):
                 monitor='val_loss', patience=self.modelConfig.argsPatience, 
                     restore_best_weights=True)
         
-        model.fit(X_, Y_carbono, validation_split=0.3, 
+        _modelFit = model.fit(X_, Y_carbono, validation_split=0.3, 
                     epochs=self.modelConfig.argsEpochs, 
                             callbacks=[earlyStopping])
-        
+        return _modelFit
         #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
         #print(f"{self.modelConfig.printPrefix} Model Saved!!!")
