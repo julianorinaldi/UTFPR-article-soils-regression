@@ -36,7 +36,7 @@ class ModelABCRegressor(ABC):
         self._minMaxPredictTest(model, df, imageNamesList)
 
     def _minMaxPredictTest(self, model, df, imageNamesList):
-        df_result = pd.DataFrame(columns=['teor_cabono_real', 'teor_cabono_predict', 'teor_cabono_diff'])
+        result = []
         for indexImg in range(len(imageNamesList)):
             img_path = f'{imageNamesList[indexImg]}'
             img = image_processing(self.modelConfig, img_path)
@@ -48,9 +48,10 @@ class ModelABCRegressor(ABC):
             diff = real - predictValue.item(0)
 
             regLine = {'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff}
-            df_result = pd.concat([df_result, pd.DataFrame(regLine, index=[0])], ignore_index=True)
-
-        df_sorted = df_result.sort_values(by='teor_cabono_diff')
+            result.append(regLine)
+            
+        df_sorted = pd.DataFrame(result)
+        df_sorted = df_sorted.sort_values(by='teor_cabono_diff')
         print()
         print(f'{self.modeConfig.printPrefix} Melhores resultados ...')
         print(f'{df_sorted.head()}')
