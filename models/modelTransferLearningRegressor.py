@@ -40,7 +40,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         
         _modelFit = _modelFit.fit(X_, Y_carbono, validation_split=0.3, 
                     epochs=self.modelConfig.argsEpochs, 
-                            callbacks=[earlyStopping], batch_size=50)
+                            callbacks=[earlyStopping])
         return _modelFit
         #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
         #print(f"{self.modelConfig.printPrefix} Model Saved!!!")
