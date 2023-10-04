@@ -11,9 +11,6 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
     def getSpecialistModel(self):
         pretrained_model = self._selectTransferLearningModel(self.modelConfig)
 
-        # Remover a última camada (classificação original)
-        pretrained_model = tf.keras.models.Sequential(pretrained_model.layers[:-1])
-        
         # Adicionando camadas personalizadas no topo do modelo
         x = pretrained_model.output
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
@@ -105,9 +102,13 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             raise Exception('Modelo desconhecido')
 
 
-        pretrained_model.trainable = modelConfig.argsTrainable
+        #pretrained_model.trainable = modelConfig.argsTrainable
         for layer in pretrained_model.layers:
             layer.trainable = modelConfig.argsTrainable
+        
+        for layer in pretrained_model.layers[-1:-11:-1]:
+            layer.trainable = True
+        
         
         return pretrained_model
             
