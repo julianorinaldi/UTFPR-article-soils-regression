@@ -9,13 +9,10 @@ class ModelLinearRegressor(ModelABCRegressor):
         super().__init__(modelConfig)
         
     def getSpecialistModel(self):
-        # Força que o modelo seja linear positivo
-        return LinearRegression(positive=True)
+        return LinearRegression()
     
     def reshapeTwoDimensions(self, X):
         return super().reshapeTwoDimensions(X)
     
     def modelFit(self, model, X_, Y_carbono):
-        rfe = RFE(model, n_features_to_select=500)
-        _modelFit = rfe.fit(X_, Y_carbono)
-        return _modelFit
+        return super().modelFit(model, X_, Y_carbono)
