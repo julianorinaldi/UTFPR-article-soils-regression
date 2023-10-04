@@ -48,7 +48,7 @@ class ModelABCRegressor(ABC):
             diff = real - predictValue.item(0)
 
             regLine = {'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff}
-            df_result = df_result.append(regLine, ignore_index=True)
+            df_result = pd.concat([df_result, pd.DataFrame(regLine, index=[0])], ignore_index=True)
 
         df_sorted = df_result.sort_values(by='teor_cabono_diff')
         print()
