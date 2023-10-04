@@ -38,10 +38,9 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         
         #_modelFit = tf.keras.layers.Sequential(model.layers[:-1])
         
-        _modelFit = _modelFit.fit(X_, Y_carbono, validation_split=0.3, 
+        model.fit(X_, Y_carbono, validation_split=0.3, 
                     epochs=self.modelConfig.argsEpochs, 
                             callbacks=[earlyStopping])
-        return _modelFit
         #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
         #print(f"{self.modelConfig.printPrefix} Model Saved!!!")
         

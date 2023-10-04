@@ -30,7 +30,6 @@ class ModelABCRegressor(ABC):
     @abstractmethod
     def modelFit(self, model, X_, Y_carbono):
         model.fit(X_, Y_carbono)
-        return model
     
     def modelPredictTest(self, model, df, imageNamesList):
         # Trazendo algumas amostras aleatórias ...
@@ -93,7 +92,7 @@ class ModelABCRegressor(ABC):
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando o treino')
-        self.model = self.modelFit(self.model, X_, Y_carbono)
+        self.modelFit(self.model, X_, Y_carbono)
         
     def test(self):
         # Agora entra o Test

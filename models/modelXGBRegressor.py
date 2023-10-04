@@ -15,4 +15,4 @@ class ModelXGBRegressor(ModelABCRegressor):
         return super().reshapeTwoDimensions(X)
     
     def modelFit(self, model, X_, Y_carbono):
-         return super().modelFit(model, X_, Y_carbono)
+         super().modelFit(model, X_, Y_carbono)
