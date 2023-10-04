@@ -11,11 +11,15 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
     def getSpecialistModel(self):
         pretrained_model = self._selectTransferLearningModel(self.modelConfig)
 
+        # Remover a última camada (classificação original)
+        pretrained_model = tf.keras.models.Sequential(pretrained_model.layers[:-1])
+        
         # Adicionando camadas personalizadas no topo do modelo
         x = pretrained_model.output
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
-        #x = tf.keras.layers.Flatten()(x)
-        #x = tf.keras.layers.Dense(512, activation='relu')(x)
+        x = tf.keras.layers.Flatten()(x)
+        x = tf.keras.layers.Dense(512, activation='relu')(x)
+        x = tf.keras.layers.Dense(64, activation='relu')(x)
         predictions = tf.keras.layers.Dense(1, activation='linear')(x)
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
@@ -36,9 +40,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                 monitor='val_loss', patience=self.modelConfig.argsPatience, 
                     restore_best_weights=True)
         
-        _modelFit = tf.keras.models.Sequential(model.layers[:-1])
-        
-        _modelFit.fit(X_, Y_carbono, validation_split=0.3, 
+      
+        model.fit(X_, Y_carbono, validation_split=0.3, 
                     epochs=self.modelConfig.argsEpochs, 
                             callbacks=[earlyStopping])
         #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
