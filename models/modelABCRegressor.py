@@ -115,6 +115,8 @@ class ModelABCRegressor(ABC):
         
         # Fazendo a predição sobre os dados de teste
         prediction = self.model.predict(X_)
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Shape de prediction: {prediction.shape}')
 
         # Avaliando com R2
         r2 = r2_score(Y_carbono, prediction)

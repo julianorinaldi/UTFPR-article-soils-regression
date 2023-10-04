@@ -30,7 +30,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         return _model
     
     def reshapeTwoDimensions(self, X):
-        return X
+        return super().reshapeTwoDimensions(X)
     
     def modelFit(self, model, X_, Y_carbono):
         earlyStopping = tf.keras.callbacks.EarlyStopping(
