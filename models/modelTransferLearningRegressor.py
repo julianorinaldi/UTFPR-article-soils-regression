@@ -106,7 +106,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         for layer in pretrained_model.layers:
             layer.trainable = modelConfig.argsTrainable
         
-        for layer in pretrained_model.layers[-1:-11:-1]:
+        for layer in pretrained_model.layers[-1:-21:-1]:
             layer.trainable = True
         
         
