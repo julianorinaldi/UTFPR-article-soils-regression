@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np  # Trabalhar com array
 import random
+from tqdm import tqdm
 
 from abc import ABC, abstractmethod
 from entityModelConfig import ModelConfig
@@ -37,7 +38,7 @@ class ModelABCRegressor(ABC):
 
     def _minMaxPredictTest(self, model, df, imageNamesList):
         result = []
-        for indexImg in range(len(imageNamesList)):
+        for indexImg in tqdm(range(len(imageNamesList))):
             img_path = f'{imageNamesList[indexImg]}'
             img = image_processing(self.modelConfig, img_path)
             img = np.expand_dims(img, axis=0)
