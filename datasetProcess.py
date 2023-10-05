@@ -43,15 +43,15 @@ def dataset_process(modeConfig : ModelConfig):
     # x_scaled = scaler.fit_transform(x)
     
     #RobustScaler
-    print(f'{modeConfig.printPrefix} Normalizando Dataset com RobustScaler...')
-    scaler = preprocessing.RobustScaler()
-    x_scaled = scaler.fit_transform(x)
+    # print(f'{modeConfig.printPrefix} Normalizando Dataset com RobustScaler...')
+    # scaler = preprocessing.RobustScaler()
+    # x_scaled = scaler.fit_transform(x)
     
     # print(f'{modeConfig.printPrefix} Normalizando Dataset com StandardScaler...')
     # scaler = preprocessing.StandardScaler()
     # x_scaled = scaler.fit_transform(x)
     
-    df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
-    print(f'{df.describe()}')
+    # df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
+    # print(f'{df.describe()}')
     
     return df, imageFileNames

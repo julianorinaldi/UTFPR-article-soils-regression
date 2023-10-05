@@ -106,8 +106,13 @@ class ModelABCRegressor(ABC):
         
     def test(self):
         # Agora entra o Test
-        self.modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
-        self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
+        #self.modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
+        #self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
+        
+        # Força fazer o teste com o dataset do próprio treino
+        # Objetiva verificar quais amostras estão ruim.
+        self.modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
+        self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o teste')
