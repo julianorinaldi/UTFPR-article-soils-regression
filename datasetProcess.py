@@ -42,9 +42,9 @@ def dataset_process(modeConfig : ModelConfig):
     # scaler = preprocessing.MinMaxScaler()
     # x_scaled = scaler.fit_transform(x)
     
-    #Normalizer
-    print(f'{modeConfig.printPrefix} Normalizando Dataset com Normalizer...')
-    scaler = preprocessing.Normalizer()
+    #RobustScaler
+    print(f'{modeConfig.printPrefix} Normalizando Dataset com RobustScaler...')
+    scaler = preprocessing.RobustScaler()
     x_scaled = scaler.fit_transform(x)
     
     # print(f'{modeConfig.printPrefix} Normalizando Dataset com StandardScaler...')
