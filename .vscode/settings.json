@@ -1,9 +1,9 @@
 {
     "[python]": {
-        "editor.defaultFormatter": "ms-python.autopep8"
+        
     },
-    "python.formatting.provider": "none",
     "python.analysis.extraPaths": [
         "./lib/python3.10/site-packages"
-    ]
+    ],
+    "python.languageServer": "Default"
 }
