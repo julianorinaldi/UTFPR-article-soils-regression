@@ -49,7 +49,7 @@ class ModelABCRegressor(ABC):
             result.append(regLine)
             
         df_sorted = pd.DataFrame(result)
-        df_sorted = df_sorted.sort_values(by='teor_cabono_diff')
+        df_sorted = df_sorted.sort_values(by='error(%)')
         print(f'{df_sorted.to_string(index=False)}')
         print()
         print(f'{self.modelConfig.printPrefix} Melhores resultados ...')
