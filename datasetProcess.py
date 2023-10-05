@@ -38,13 +38,13 @@ def dataset_process(modeConfig : ModelConfig):
     x = df.values
     
     # MinMaxScaler
-    # print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
-    # scaler = preprocessing.MinMaxScaler()
-    # x_scaled = scaler.fit_transform(x)
-    
-    print(f'{modeConfig.printPrefix} Normalizando Dataset com StandardScaler...')
-    scaler = preprocessing.StandardScaler()
+    print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
+    scaler = preprocessing.MinMaxScaler()
     x_scaled = scaler.fit_transform(x)
+    
+    # print(f'{modeConfig.printPrefix} Normalizando Dataset com StandardScaler...')
+    # scaler = preprocessing.StandardScaler()
+    # x_scaled = scaler.fit_transform(x)
     
     df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
     print(f'{df.describe()}')
