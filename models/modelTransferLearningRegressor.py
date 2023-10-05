@@ -102,12 +102,13 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             raise Exception('Modelo desconhecido')
 
 
-        #pretrained_model.trainable = modelConfig.argsTrainable
+        pretrained_model.trainable = modelConfig.argsTrainable
         for layer in pretrained_model.layers:
             layer.trainable = modelConfig.argsTrainable
         
-        for layer in pretrained_model.layers[-1:-21:-1]:
-            layer.trainable = True
+        # Faz com que o modelo seja treinado nos últimos 20 camadas
+        # for layer in pretrained_model.layers[-1:-21:-1]:
+        #     layer.trainable = True
         
         
         return pretrained_model
