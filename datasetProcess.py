@@ -47,6 +47,6 @@ def dataset_process(modeConfig : ModelConfig):
     x_scaled = scaler.fit_transform(x)
     
     df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
-    print(f'{df.head()}')
+    print(f'{df.describe()}')
     
     return df, imageFileNames
