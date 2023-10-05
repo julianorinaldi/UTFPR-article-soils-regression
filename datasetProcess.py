@@ -38,8 +38,13 @@ def dataset_process(modeConfig : ModelConfig):
     x = df.values
     
     # MinMaxScaler
-    print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
-    scaler = preprocessing.MinMaxScaler()
+    # print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
+    # scaler = preprocessing.MinMaxScaler()
+    # x_scaled = scaler.fit_transform(x)
+    
+    #Normalizer
+    print(f'{modeConfig.printPrefix} Normalizando Dataset com Normalizer...')
+    scaler = preprocessing.Normalizer()
     x_scaled = scaler.fit_transform(x)
     
     # print(f'{modeConfig.printPrefix} Normalizando Dataset com StandardScaler...')
