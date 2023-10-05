@@ -39,7 +39,7 @@ class ModelABCRegressor(ABC):
     def _minMaxPredictTest(self, carbonoImageArray, cabonoRealArray, carbonoPredictionArray):
         result = []
         for i in tqdm(range(len(cabonoRealArray))):
-            predictValue = carbonoPredictionArray[i]]
+            predictValue = carbonoPredictionArray[i]
             real = cabonoRealArray[i]
             diff = abs(real - predictValue)
 
@@ -49,10 +49,10 @@ class ModelABCRegressor(ABC):
         df_sorted = pd.DataFrame(result)
         df_sorted = df_sorted.sort_values(by='teor_cabono_diff')
         print()
-        print(f'{self.modeConfig.printPrefix} Melhores resultados ...')
+        print(f'{self.modelConfig.printPrefix} Melhores resultados ...')
         print(f'{df_sorted.head()}')
         print()
-        print(f'{self.modeConfig.printPrefix} Piores resultados ...')
+        print(f'{self.modelConfig.printPrefix} Piores resultados ...')
         print(f'{df_sorted.tail()}')
         print()
             
@@ -138,7 +138,7 @@ class ModelABCRegressor(ABC):
             print(f'{self.modelConfig.printPrefix} Iniciando predição completa para o R2...')
         
         # Fazendo a predição sobre os dados de teste
-        prediction = self.model.predict(X_)
+        prediction = self.model.predict(X_) # type: ignore
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Shape de prediction: {prediction.shape}')
 
