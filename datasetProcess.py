@@ -7,7 +7,7 @@ from entityModelConfig import ModelConfig
 # Retorna dataset limpo, lista de nomes dos arquivos
 def dataset_process(modeConfig : ModelConfig):
     # Carregamento do Dataset
-    df = pd.read_csv(modeConfig.pathCSV)
+    df : pd.DataFrame = pd.read_csv(modeConfig.pathCSV)
 
     # Removendo colunas desnecessárias
     df = df.drop(
@@ -16,7 +16,7 @@ def dataset_process(modeConfig : ModelConfig):
     # *********************************
     # Excluindo Nitrogênio Por Enquanto
     # *********************************
-    df = df.drop(columns={"teor_nitrogenio"})
+    df = df.drop(columns={"teor_nitrogenio"}) # type: ignore
     # *********************************
 
     # Randomizando
@@ -25,34 +25,28 @@ def dataset_process(modeConfig : ModelConfig):
     # Separando apenas nomes dos arquivos
     imageFileNames = df["arquivo"].to_list()
     # Removendo coluna arquivo para normalização
-    df = df.drop(columns={"arquivo"})
+    df = df.drop(columns={"arquivo"}) # type: ignore
     
     # Normalização Dataset Treinamento
     # df_stats = df.describe()
     # df_stats = df_stats.transpose()
     # df = (df - df_stats['mean']) / df_stats['std']
 
-    # Normalização MinMaxScaler
-    print(f'{modeConfig.printPrefix} Dataset início ...')
-    print(f'{df.head()}')
-    print(f'{modeConfig.printPrefix} Dataset fim ...')
-    print(f'{df.tail()}')
-    print(f'{modeConfig.printPrefix} Sem apĺicar normalização no Dataset')
+    print(f'{modeConfig.printPrefix} Dados do Dataset sem normalização ...')
+    print(f'{df.describe()}')
 
-    print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
     x = df.values
     
     # MinMaxScaler
+    # print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
     # scaler = preprocessing.MinMaxScaler()
     # x_scaled = scaler.fit_transform(x)
     
+    print(f'{modeConfig.printPrefix} Normalizando Dataset com StandardScaler...')
     scaler = preprocessing.StandardScaler()
     x_scaled = scaler.fit_transform(x)
     
     df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
     print(f'{df.head()}')
-    
-    
-    
     
     return df, imageFileNames
