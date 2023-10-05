@@ -33,17 +33,18 @@ class ModelABCRegressor(ABC):
     def modelFit(self, model, X_, Y_carbono):
         model.fit(X_, Y_carbono)
     
-    def _showPredictSamples(self, carbonoImageArray, cabonoRealArray, carbonoPredictionArray):
-        self._minMaxPredictTest(carbonoImageArray, cabonoRealArray, carbonoPredictionArray)
+    def _showPredictSamples(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
+        self._minMaxPredictTest(carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray)
 
-    def _minMaxPredictTest(self, carbonoImageArray, cabonoRealArray, carbonoPredictionArray):
+    def _minMaxPredictTest(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
         result = []
         for i in tqdm(range(len(cabonoRealArray))):
             predictValue = carbonoPredictionArray[i]
             real = cabonoRealArray[i]
             diff = abs(real - predictValue)
+            amostra = imgFileNames[i]
 
-            regLine = {'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff}
+            regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff}
             result.append(regLine)
             
         df_sorted = pd.DataFrame(result)
@@ -56,26 +57,9 @@ class ModelABCRegressor(ABC):
         print(f'{df_sorted.tail()}')
         print()
             
-    def _aleatoryPredictTest(self, model, df, imageNamesList, X, prediction) -> None:
-        # Trazendo algumas amostras aleatórias ...
-        for i in [1, 100, 500, 1000, 2000, 3000]:
-            # Essa linha abaixo garante aleatoriedade
-            indexImg = random.randint(0, i)
-            if (indexImg >= len(imageNamesList)):
-                indexImg = random.randint(0, len(imageNamesList) - 1)
-            img_path = f'{imageNamesList[indexImg]}'
-            img = image_processing(self.modelConfig, img_path)
-            img = np.expand_dims(img, axis=0)
-            img = self.reshapeTwoDimensions(img)
-            predictValue = model.predict(img)
-            Real = df.teor_carbono[indexImg]
-
-            print(f'{self.modelConfig.printPrefix} Original image[{indexImg}]: {imageNamesList[indexImg]} => {df.teor_carbono[indexImg]}')
-            print(f'{self.modelConfig.printPrefix} {self.modelConfig.modelSet.name}[{indexImg}]: {predictValue.item(0)} => Diff: {Real - predictValue.item(0)}')
-            print("")
-    
+   
     def _load_images(self, modelConfig : ModelConfig, qtdImagens : int):
-        df, imageNamesList = dataset_process(modelConfig)
+        df, imgFileNames = dataset_process(modelConfig)
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
@@ -83,12 +67,12 @@ class ModelABCRegressor(ABC):
             qtd_imagens = qtdImagens
 
         # Array com as imagens a serem carregadas de treino
-        imageArray = image_load(modelConfig, imageNamesList, qtd_imagens)
+        imageArray = image_load(modelConfig, imgFileNames, qtd_imagens)
 
         X_, Y_carbono = image_convert_array(modelConfig, imageArray, df, qtd_imagens)
         
         # Retorno X_ e Y_carbono, DataFrame, e Lista de Imagens
-        return X_, Y_carbono, df, imageNamesList
+        return X_, Y_carbono, df, imgFileNames
         
     def train(self):
         self.modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
@@ -96,7 +80,7 @@ class ModelABCRegressor(ABC):
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino')
-        X_, Y_carbono, df, imageNamesList  = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
+        X_, Y_carbono, df, imgFileNames  = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
         
         # Flatten das imagens
         if (self.modelConfig.argsDebug):
@@ -126,7 +110,7 @@ class ModelABCRegressor(ABC):
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o teste')
             
-        X_, Y_carbono, df, imageNamesList = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
+        X_, Y_carbono, df, imgFileNames = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
         
         # Aceita apenas 2 dimensões.
         X_ = self.reshapeTwoDimensions(X_)
@@ -154,4 +138,4 @@ class ModelABCRegressor(ABC):
 
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
-        self._showPredictSamples(X_, Y_carbono, prediction)
+        self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)

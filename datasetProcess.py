@@ -11,7 +11,7 @@ def dataset_process(modeConfig : ModelConfig):
 
     # Removendo colunas desnecessárias
     df = df.drop(
-        columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"})
+        columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"}) # type: ignore
 
     # *********************************
     # Excluindo Nitrogênio Por Enquanto
@@ -23,7 +23,7 @@ def dataset_process(modeConfig : ModelConfig):
     df = df.sample(frac=1, random_state=1, ignore_index=True)
     
     # Separando apenas nomes dos arquivos
-    imagefiles = df["arquivo"].to_list()
+    imageFileNames = df["arquivo"].to_list()
     # Removendo coluna arquivo para normalização
     df = df.drop(columns={"arquivo"})
     
@@ -46,4 +46,4 @@ def dataset_process(modeConfig : ModelConfig):
     df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
     print(f'{df.head()}')
     
-    return df, imagefiles
+    return df, imageFileNames
