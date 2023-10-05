@@ -41,9 +41,18 @@ def dataset_process(modeConfig : ModelConfig):
 
     print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
     x = df.values
-    min_max_scaler = preprocessing.MinMaxScaler()
-    x_scaled = min_max_scaler.fit_transform(x)
+    
+    # MinMaxScaler
+    # scaler = preprocessing.MinMaxScaler()
+    # x_scaled = scaler.fit_transform(x)
+    
+    scaler = preprocessing.StandardScaler()
+    x_scaled = scaler.fit_transform(x)
+    
     df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
     print(f'{df.head()}')
+    
+    
+    
     
     return df, imageFileNames
