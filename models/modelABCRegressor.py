@@ -33,20 +33,15 @@ class ModelABCRegressor(ABC):
     def modelFit(self, model, X_, Y_carbono):
         model.fit(X_, Y_carbono)
     
-    def modelPredictTest(self, model, df, imageNamesList):
-        self._minMaxPredictTest(model, df, imageNamesList)
+    def _showPredictSamples(self, carbonoImageArray, cabonoRealArray, carbonoPredictionArray):
+        self._minMaxPredictTest(carbonoImageArray, cabonoRealArray, carbonoPredictionArray)
 
-    def _minMaxPredictTest(self, model, df, imageNamesList):
+    def _minMaxPredictTest(self, carbonoImageArray, cabonoRealArray, carbonoPredictionArray):
         result = []
-        for indexImg in tqdm(range(len(imageNamesList))):
-            img_path = f'{imageNamesList[indexImg]}'
-            img = image_processing(self.modelConfig, img_path)
-            img = np.expand_dims(img, axis=0)
-            img = self.reshapeTwoDimensions(img)
-            
-            predictValue = model.predict(img)
-            real = df.teor_carbono[indexImg]
-            diff = real - predictValue.item(0)
+        for i in tqdm(range(len(cabonoRealArray))):
+            predictValue = carbonoPredictionArray[i]]
+            real = cabonoRealArray[i]
+            diff = abs(real - predictValue)
 
             regLine = {'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff}
             result.append(regLine)
@@ -61,7 +56,7 @@ class ModelABCRegressor(ABC):
         print(f'{df_sorted.tail()}')
         print()
             
-    def _aleatoryPredictTest(self, model, df, imageNamesList):
+    def _aleatoryPredictTest(self, model, df, imageNamesList, X, prediction) -> None:
         # Trazendo algumas amostras aleatórias ...
         for i in [1, 100, 500, 1000, 2000, 3000]:
             # Essa linha abaixo garante aleatoriedade
@@ -156,8 +151,7 @@ class ModelABCRegressor(ABC):
         print(f'====================================================')
         print(f'====================================================')
         print()
-        
+
         if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições...')
-        self.modelPredictTest(self.model, df, imageNamesList)
-        
+            print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
+        self._showPredictSamples(X_, Y_carbono, prediction)
