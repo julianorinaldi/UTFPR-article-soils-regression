@@ -43,7 +43,7 @@ class ModelABCRegressor(ABC):
             real = cabonoRealArray[i]
             diff = abs(real - predictValue)
             amostra = imgFileNames[i]
-            erro = (1-(diff/abs(real)))*100
+            erro = abs(diff)/abs(real)*100
 
             regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff, 'error(%)' : erro}
             result.append(regLine)
