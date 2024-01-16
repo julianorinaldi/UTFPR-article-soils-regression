@@ -38,7 +38,60 @@ O arquivo main ```X-SoilRegression.py``` serve para rodar o treinamento e teste 
 
 **Para conhecer os parâmetros basta executar o comando ```python3 X-SoilRegression.py -h```.**
 
+```python
+usage: X-SoilRegression.py [-h] [-d] [-n NAME] [-p] [-t] [-T] [-i AMOUNT_IMAGE_TRAIN] [-I AMOUNT_IMAGE_TEST] [-P PATIENCE]
+                           [-e EPOCHS] [-m MODEL]
 
+options:
+  -h, --help            show this help message and exit
+  -d, --debug           Para listar os prints de Debug
+  -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
+  -p, --preprocess      Preprocessar imagem 'model.preprocess_input(...)' - [Modelos TransferLearning]
+  -t, --trainable       Define se terá as camadas do modelo de transfer-learning treináveis ou não - [Modelos
+                        TransferLearning]
+  -T, --Test            Define execução apenas para o teste - [Modelos TransferLearning]
+  -i AMOUNT_IMAGE_TRAIN, --amount_image_train AMOUNT_IMAGE_TRAIN
+                        Quantidade de imagens para treino
+  -I AMOUNT_IMAGE_TEST, --amount_image_test AMOUNT_IMAGE_TEST
+                        Quantidade de imagens para test
+  -P PATIENCE, --patience PATIENCE
+                        Quantidade de paciência no early stopping - [Modelos TransferLearning/CNN]
+  -e EPOCHS, --epochs EPOCHS
+                        Quantidade de épocas para o treino - [Modelos TransferLearning/CNN]
+  -m MODEL, --model MODEL
+                        Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge,
+                        [20]-EfficientNetB7, [21]-EfficientNetV2S, [22]-EfficientNetV2L, [30]-InceptionResNetV2,
+                        [40]-DenseNet169, [50]-VGG19, [100]-CNN, [500]-XGBRegressor, [510]-LinearRegression,
+                        [520]-SVMLinearRegression, [521]-SVMRBFRegressor
+
+```
+
+## Exemplo de como rodar um modelo treinamento + teste
+
+O padrão de execução sempre é treinamento + teste, porém você pode escolher apenas testar se desejar, veja o tópico a seguir.
+
+```python3 X-SoilRegression.py -n NomeDoMolo.tf -d -m 40 -p -P 2```
+
+ - -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
+ - -d, --debug           Para listar os prints de Debug
+ - -m MODEL, --model MODEL
+            Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge,
+            [20]-EfficientNetB7, [21]-EfficientNetV2S, [22]-EfficientNetV2L, [30]-InceptionResNetV2,
+            [40]-DenseNet169, [50]-VGG19, [100]-CNN, [500]-XGBRegressor, [510]-LinearRegression,
+            [520]-SVMLinearRegression, [521]-SVMRBFRegressor
+ - -p, --preprocess      Preprocessar imagem 'model.preprocess_input(...)' - [Modelos TransferLearning]
+ - -P PATIENCE, --patience PATIENCE
+            Quantidade de paciência no early stopping - [Modelos TransferLearning/CNN]
+
+## Exemplo de como rodar um modelo apenas de teste
+
+O código abaixo irá procurar o modelo já gerado com o nome **NomeDoMolo.tf**, e executar o teste.
+
+```python3 X-SoilRegression.py -n NomeDoMolo.tf -d -T```
+
+ - -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
+ - -d, --debug           Para listar os prints de Debug
+ - -T, --Test            Define execução apenas para o teste - [Modelos TransferLearning]
 
 # Baixar arquivo last-model.h5 via SSH/SCP
 SCP refere-se ao "Secure Copy Protocol" ou "Secure Copy", que é um protocolo de transferência de arquivos seguro. O SCP permite transferir arquivos entre computadores de maneira segura através de uma conexão SSH (Secure Shell).

@@ -11,7 +11,7 @@ prefix = ">>>>>>>>>>>>>>>>>"
 # Argumentos
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--debug", action="store_true", help="Para listar os prints de Debug")
-parser.add_argument("-n", "--name", help="Nome do arquivo de saída do modelo .tf")
+parser.add_argument("-n", "--name", help="Nome do arquivo/diretório de saída do modelo .tf")
 parser.add_argument("-p", "--preprocess", action="store_true", default=False, help="Preprocessar imagem 'model.preprocess_input(...)' - [Modelos TransferLearning]")
 parser.add_argument("-t", "--trainable", action="store_true", default=False, help="Define se terá as camadas do modelo de transfer-learning treináveis ou não - [Modelos TransferLearning]")
 parser.add_argument("-T", "--Test", action="store_true", default=False, help="Define execução apenas para o teste - [Modelos TransferLearning]")
