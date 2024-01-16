@@ -50,8 +50,9 @@ class ModelABCRegressor(ABC):
             
         df_sorted = pd.DataFrame(result)
         df_sorted = df_sorted.sort_values(by='error(%)')
-        print(f'{df_sorted.to_string(index=False)}')
-        print()
+        df_sorted.to_csv('resultado.csv', index=False)
+        #print(f'{df_sorted.to_string(index=False)}')
+        #print()
         print(f'{self.modelConfig.printPrefix} Melhores resultados ...')
         print(f'{df_sorted.head()}')
         print()
@@ -143,6 +144,11 @@ class ModelABCRegressor(ABC):
 
         # Avaliando com R2
         r2 = r2_score(Y_carbono, prediction)
+
+        if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
+            self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
+        
         print()
         print(f'====================================================')
         print(f'====================================================')
@@ -150,7 +156,3 @@ class ModelABCRegressor(ABC):
         print(f'====================================================')
         print(f'====================================================')
         print()
-
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
-        self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
