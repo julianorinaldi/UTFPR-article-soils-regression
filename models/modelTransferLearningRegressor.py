@@ -14,9 +14,9 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         # Adicionando camadas personalizadas no topo do modelo
         x = pretrained_model.output
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
-        #x = tf.keras.layers.Flatten()(x)
-        #x = tf.keras.layers.Dense(512, activation='relu')(x)
-        #x = tf.keras.layers.Dense(64, activation='relu')(x)
+        x = tf.keras.layers.Flatten()(x)
+        x = tf.keras.layers.Dense(512, activation='relu')(x)
+        x = tf.keras.layers.Dense(64, activation='relu')(x)
         predictions = tf.keras.layers.Dense(1, activation='linear')(x)
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
