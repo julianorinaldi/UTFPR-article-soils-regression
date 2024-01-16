@@ -68,13 +68,16 @@ class ModelABCRegressor(ABC):
         if (qtd_imagens > qtdImagens) and (qtdImagens > 0):
             qtd_imagens = qtdImagens
 
+        if (modelConfig.argsDebug):
+            print(f'{modelConfig.printPrefix} Dados de validação do Treino')
         # Array com as imagens a serem carregadas para validação do treino
         imageArrayValidate = image_load(modelConfig, imgFileNamesValidate, qtd_imagens)
         X_validate, Y_carbono_validate = image_convert_array(modelConfig, imageArrayValidate, df_validate, qtd_imagens)
 
+        if (modelConfig.argsDebug):
+            print(f'{modelConfig.printPrefix} Dados do Treino')
         # Array com as imagens a serem carregadas de treino
         imageArray = image_load(modelConfig, imgFileNames, qtd_imagens)
-
         X_, Y_carbono = image_convert_array(modelConfig, imageArray, df, qtd_imagens)
         
         # Retorno X_ e Y_carbono, DataFrame, e Lista de Imagens
@@ -86,7 +89,7 @@ class ModelABCRegressor(ABC):
         self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
         
         if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino')
+            print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino/validação')
         X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate  = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
         
         # Flatten das imagens
@@ -94,9 +97,11 @@ class ModelABCRegressor(ABC):
             print(f'{self.modelConfig.printPrefix} Fazendo reshape')
         
         # Aceita apenas 2 dimensões.
+        X_validate = self.reshapeTwoDimensions(X_validate)
         X_ = self.reshapeTwoDimensions(X_)
         
         if (self.modelConfig.argsDebug):
+            print(f'{self.modelConfig.printPrefix} Novo shape de X_validate: {X_validate.shape}')
             print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
         
         if (self.modelConfig.argsDebug):
