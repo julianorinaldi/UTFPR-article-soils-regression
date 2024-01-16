@@ -20,7 +20,7 @@ def dataset_process(modeConfig : ModelConfig):
     df = pd.merge(df, df_validate, how='outer', indicator=True).query('_merge == "left_only"').drop('_merge', axis=1)
     
     # Itens a remover
-    itensRemover = ~df['ID'].isin(['C51', 'L12'])
+    itensRemover = ~df['amostra'].isin(['C51', 'L12'])
     df = df[itensRemover]
 
     # Removendo colunas desnecessárias do DataFrame de Validação
