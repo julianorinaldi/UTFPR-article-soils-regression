@@ -14,10 +14,14 @@ def dataset_process(modeConfig : ModelConfig):
     # _______________________________________________________________
    
     # Amostras aleatórias para compor o DataFrame de Validação (apenas no de teste).
-    df_validate = df[df['amostra'].isin(['C2', 'C11', 'C18','C28', 'C35','C51', 'L3', 'L6','L13', 'L16', 'L22', 'L31', 'L39'])]
-
+    df_validate = df[df['amostra'].isin(['C2', 'C11', 'C18','C28', 'C35','C47', 'L3', 'L6','L13', 'L16', 'L22', 'L31', 'L39'])]
+    
     # Merge para remover amostras do DataFrame de Validação para o Principal.
     df = pd.merge(df, df_validate, how='outer', indicator=True).query('_merge == "left_only"').drop('_merge', axis=1)
+    
+    # Itens a remover
+    itensRemover = ~df['ID'].isin(['C51'])
+    df = df[itensRemover]
 
     # Removendo colunas desnecessárias do DataFrame de Validação
     df_validate = df_validate.drop(
