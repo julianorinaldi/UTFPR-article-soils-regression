@@ -119,10 +119,8 @@ class ModelABCRegressor(ABC):
             
         X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
         
-        # Verificar se deu boa a soma de itens, como não precisa separar em teste e validação agora é ter um único.
-        X_ = X_ + X_validate
-        Y_carbono = Y_carbono + Y_carbono_validate
-        imgFileNames = imgFileNames + imgFileNamesValidate
+        # No teste por ignorar estes dados, eles devem estar vazios.
+        # X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate
         
         # Aceita apenas 2 dimensões.
         X_ = self.reshapeTwoDimensions(X_)
