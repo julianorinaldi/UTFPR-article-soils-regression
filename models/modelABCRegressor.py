@@ -30,8 +30,8 @@ class ModelABCRegressor(ABC):
     
     # Re-implemente se desejar fazer um fit diferente, por exempĺo para CNN
     @abstractmethod
-    def modelFit(self, model, X_, Y_carbono):
-        model.fit(X_, Y_carbono)
+    def modelFit(self, model, X_, Y_carbono, X_validate, Y_carbono_validate):
+        model.fit(X_, Y_carbono, X_validate, Y_carbono_validate)
     
     def _showPredictSamples(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
         self._minMaxPredictTest(carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray)
@@ -61,12 +61,16 @@ class ModelABCRegressor(ABC):
             
    
     def _load_images(self, modelConfig : ModelConfig, qtdImagens : int):
-        df, imgFileNames = dataset_process(modelConfig)
+        df, imgFileNames, df_validate, imgFileNamesValidate = dataset_process(modelConfig)
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
         if (qtd_imagens > qtdImagens) and (qtdImagens > 0):
             qtd_imagens = qtdImagens
+
+        # Array com as imagens a serem carregadas para validação do treino
+        imageArrayValidate = image_load(modelConfig, imgFileNamesValidate, qtd_imagens)
+        X_validate, Y_carbono_validate = image_convert_array(modelConfig, imageArrayValidate, df_validate, qtd_imagens)
 
         # Array com as imagens a serem carregadas de treino
         imageArray = image_load(modelConfig, imgFileNames, qtd_imagens)
@@ -74,7 +78,8 @@ class ModelABCRegressor(ABC):
         X_, Y_carbono = image_convert_array(modelConfig, imageArray, df, qtd_imagens)
         
         # Retorno X_ e Y_carbono, DataFrame, e Lista de Imagens
-        return X_, Y_carbono, df, imgFileNames
+        # X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate relaciona do Validate do Treino
+        return X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate
         
     def train(self):
         self.modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
@@ -82,7 +87,7 @@ class ModelABCRegressor(ABC):
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino')
-        X_, Y_carbono, df, imgFileNames  = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
+        X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate  = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
         
         # Flatten das imagens
         if (self.modelConfig.argsDebug):
@@ -102,7 +107,7 @@ class ModelABCRegressor(ABC):
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando o treino')
-        self.modelFit(self.model, X_, Y_carbono)
+        self.modelFit(self.model, X_, Y_carbono, X_validate, Y_carbono_validate)
         
     def test(self):
         # Agora entra o Test
@@ -112,7 +117,12 @@ class ModelABCRegressor(ABC):
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Carregando imagens para o teste')
             
-        X_, Y_carbono, df, imgFileNames = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
+        X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
+        
+        # Verificar se deu boa a soma de itens, como não precisa separar em teste e validação agora é ter um único.
+        X_ = X_ + X_validate
+        Y_carbono = Y_carbono + Y_carbono_validate
+        imgFileNames = imgFileNames + imgFileNamesValidate
         
         # Aceita apenas 2 dimensões.
         X_ = self.reshapeTwoDimensions(X_)

@@ -9,6 +9,27 @@ def dataset_process(modeConfig : ModelConfig):
     # Carregamento do Dataset
     df : pd.DataFrame = pd.read_csv(modeConfig.pathCSV)
 
+
+    # Estratégia (1) separando dados de validação.
+    # _______________________________________________________________
+   
+    # Amostras aleatórias para compor o DataFrame de Validação.
+    df_validate = df[df['amostra'].isin(['C2', 'C11', 'C18','C28', 'C35','C47', 'L3', 'L6','L13', 'L16', 'L22', 'L31', 'L39'])]
+
+    # Merge para remover amostras do DataFrame de Validação para o Principal.
+    df = pd.merge(df, df_validate, how='outer', indicator=True).query('_merge == "left_only"').drop('_merge', axis=1)
+
+    # Removendo colunas desnecessárias do DataFrame de Validação
+    df_validate = df_validate.drop(
+        columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho", "teor_nitrogenio"}) # type: ignore    
+
+    # Randomizando DataFrame de Validação
+    df_validate = df_validate.sample(frac=1, random_state=1, ignore_index=True)
+
+    imageFileNamesValidate = df_validate["arquivo"].to_list()
+    df_validate = df_validate.drop(columns={"arquivo"}) # type: ignore
+    # _______________________________________________________________
+    
     # Removendo colunas desnecessárias
     df = df.drop(
         columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"}) # type: ignore
@@ -54,4 +75,4 @@ def dataset_process(modeConfig : ModelConfig):
     # df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
     # print(f'{df.describe()}')
     
-    return df, imageFileNames
+    return df, imageFileNames, df_validate, imageFileNamesValidate

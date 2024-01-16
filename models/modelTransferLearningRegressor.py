@@ -32,15 +32,20 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
     def reshapeTwoDimensions(self, X):
         return X
     
-    def modelFit(self, model, X_, Y_carbono):
+    def modelFit(self, model, X_, Y_carbono, X_validate, Y_carbono_validate):
         earlyStopping = tf.keras.callbacks.EarlyStopping(
                 monitor='val_loss', patience=self.modelConfig.argsPatience, 
                     restore_best_weights=True)
         
-      
-        model.fit(X_, Y_carbono, validation_split=0.3, 
+        # Padrão sem separação entre validação e treino      
+        # model.fit(X_, Y_carbono, validation_split=0.3, 
+        #             epochs=self.modelConfig.argsEpochs, 
+        #                     callbacks=[earlyStopping])
+        
+        model.fit(X_, Y_carbono, validation_data=(X_validate, Y_carbono_validate),
                     epochs=self.modelConfig.argsEpochs, 
                             callbacks=[earlyStopping])
+        
         #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
         #print(f"{self.modelConfig.printPrefix} Model Saved!!!")
         

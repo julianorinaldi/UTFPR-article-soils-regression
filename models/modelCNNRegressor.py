@@ -30,7 +30,7 @@ class ModelRegressorCNN(ModelABCRegressor):
     def reshapeTwoDimensions(self, X):
         return X
     
-    def modelFit(self, model, X_, Y_carbono):
+    def modelFit(self, model, X_, Y_carbono, X_validate, Y_carbono_validate):
         earlyStopping = tf.keras.callbacks.EarlyStopping(
                 monitor='val_loss', patience=self.modelConfig.argsPatience, 
                     restore_best_weights=True)

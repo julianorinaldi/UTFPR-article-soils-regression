@@ -14,5 +14,5 @@ class ModelLinearRegressor(ModelABCRegressor):
     def reshapeTwoDimensions(self, X):
         return super().reshapeTwoDimensions(X)
     
-    def modelFit(self, model, X_, Y_carbono):
-        super().modelFit(model, X_, Y_carbono)
+    def modelFit(self, model, X_, Y_carbono, X_validate, Y_carbono_validate):
+        super().modelFit(model, X_, Y_carbono, X_validate, Y_carbono_validate)
