@@ -121,3 +121,40 @@ Diante da sua máquina local (sua máquina), execute o comando abaixo:
 - Summary:
     - Stop 141 Epoch
     - R2: 0.5658956203990312
+
+# Novas estratégias para buscar melhores resultados:
+
+## 1) Separar dados de validação do treinamento.
+Ou seja, diante do dataset de treino, separar ainda uma parte para validação, garantindo que essas amostras não se encontrem no dataset de treino.
+
+## 2) Estratégia de usar DataArgumentation para melhorar quantidade de imagens.
+Implementar diversas formas de DataArgumentarion para aumentar quantidade de imagens para as amostras.
+
+## 3) Método de Ensamble para regressão.
+Após fazer a predição do resultado, verificar a média da porcentagem de carbono de todas as imagens de mesmas amostras (de um mesmo grupo, da imagem original), verificar se esta média se aproxima mais do valor real.
+
+## 4) Aprimorar conhecimento sobre regularização L1 (Lasso), L2 (Ridge), Dropout
+- Regularização L1 (Lasso):
+    A regularização L1 adiciona um termo à função de perda do modelo, proporcional à soma dos valores absolutos dos coeficientes.
+    É representada pela fórmula: L1 = λ * Σ|wi|, onde wi são os coeficientes do modelo e λ é o parâmetro de regularização.
+    A regularização L1 tende a gerar modelos esparsos, ou seja, alguns coeficientes tornam-se exatamente zero, o que implica na seleção automática de características relevantes.
+
+- Regularização L2 (Ridge):
+    A regularização L2 adiciona um termo à função de perda do modelo, proporcional à soma dos quadrados dos coeficientes.
+    É representada pela fórmula: L2 = λ * Σwi^2, onde wi são os coeficientes do modelo e λ é o parâmetro de regularização.
+    A regularização L2 tende a penalizar coeficientes grandes, ajudando a evitar overfitting e a melhorar a estabilidade do modelo.
+
+- Dropout:
+    O Dropout é uma técnica utilizada principalmente em redes neurais, mas pode ser adaptada para outras abordagens de regressão.
+    Durante o treinamento, aleatoriamente, alguns neurônios (ou coeficientes, no contexto de regressão) são "desligados" (ou seja, seus valores são definidos como zero).
+    Essa técnica ajuda a prevenir o overfitting, pois força o modelo a não depender excessivamente de nenhum conjunto específico de características durante o treinamento.
+
+## 5) Aplicar alguma estratégia de seleção de atributos no modelo.
+
+- Adição de Regularização:
+    Adicione técnicas de regularização, como L1 ou L2, às camadas personalizadas para evitar overfitting.
+
+```python
+from tensorflow.keras.regularizers import l2
+x = Dense(256, activation='relu', kernel_regularizer=l2(0.01))(x)
+```
