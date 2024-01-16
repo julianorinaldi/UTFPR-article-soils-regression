@@ -48,6 +48,6 @@ modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_b
                           printPrefix = prefix)
 
 # Estratégia de importar a execução, para não carregar o TensorFlow antes de acetar parâmetros de entrada.
-from xProcess import execute
+from XExecute import execute
 
 execute(modelConfig)

@@ -105,15 +105,6 @@ class ModelABCRegressor(ABC):
         self.modelFit(self.model, X_, Y_carbono)
         
     def test(self):
-        # Pensado em 06/10/2023 - Em estudo a DSA
-        # 1) Talvez separar os dados de validação seja uma oportunidade de melhora no algoritmo.
-        # 2) Outra estratégia é usar DataArgumentation para melhorar quantidade de imagens.
-        # 3) Método de Ensamble - Talvez fazendo a predição do resultado de teste, seria interessante verificar a média
-        # do % de carbono, entre o resultado de teste de todas a amostras em comum (de um mesmo grupo, da imagem original).
-        # 4) Entender melhor sobre regularização L1, regularização Lasso, dropout
-        # Pensado em 24/10/2023 - Voltar a estudo de attributes selection
-        # 5) Analisar se é possível aplicar uma estratégia de seleção de atributos
-        
         # Agora entra o Test
         #self.modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
         #self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
