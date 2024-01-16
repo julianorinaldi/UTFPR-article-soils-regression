@@ -15,10 +15,10 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         x = pretrained_model.output
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
         x = tf.keras.layers.Flatten()(x)
-        x = tf.keras.layers.Dense(512, activation='relu')(x)
-        x = tf.keras.layers.Dense(64, activation='relu')(x)
+        #x = tf.keras.layers.Dense(512, activation='relu')(x)
+        #x = tf.keras.layers.Dense(64, activation='relu')(x)
         #predictions = tf.keras.layers.Dense(1, activation='linear')(x)
-        predictions = tf.keras.layers.Dense(1, activation='softmax')(x)
+        predictions = tf.keras.layers.Dense(1, activation='sigmoid')(x)
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
         opt = tf.keras.optimizers.RMSprop()
