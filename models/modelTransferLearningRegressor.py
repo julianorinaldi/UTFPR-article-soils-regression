@@ -26,7 +26,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                 x = tf.keras.layers.Dense(units=hp_units, activation='relu')(x)
                 x = tf.keras.layers.Dropout(hp_dropout)(x)
                 
-            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['linear', 'sigmoid']))(x)
+            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['linear', None]))(x)
             
         else:
             x = tf.keras.layers.Dense(160, activation='relu')(x)
