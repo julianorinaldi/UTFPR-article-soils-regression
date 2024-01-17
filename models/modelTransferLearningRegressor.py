@@ -18,15 +18,14 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         x = tf.keras.layers.Flatten()(x)
          
         if self.modelConfig.argsGridSearch:
-            hp_units = hp.Int('num_dense_units', min_value=64, max_value=256, step=64)
-            hp_layers = hp.Int('num_dense_layers', min_value=1, max_value=2)
-            hp_dropout = hp.Float('dropuot_rate', min_value=0.2, max_value=0.5, step=0.1)
-
-            for _ in range(hp_layers):
-                x = tf.keras.layers.Dense(units=hp_units, activation='relu')(x)
-                x = tf.keras.layers.Dropout(hp_dropout)(x)
+            hp_units1 = hp.Int('num_dense_units_1', min_value=512, max_value=768, step=64)
+            x = tf.keras.layers.Dense(units=hp_units1, activation='relu')(x)
+            hp_units2 = hp.Int('num_dense_units_2', min_value=64, max_value=256, step=64)
+            x = tf.keras.layers.Dense(units=hp_units2, activation='relu')(x)
+            hp_dropout = hp.Float('dropuot_rate', min_value=0.3, max_value=0.7, step=0.2)
+            x = tf.keras.layers.Dropout(hp_dropout)(x)
                 
-            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['linear']))(x)
+            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['','linear']))(x)
             
         else:
             x = tf.keras.layers.Dense(160, activation='relu')(x)
@@ -37,7 +36,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
         if self.modelConfig.argsGridSearch:
-            opt = tf.keras.optimizers.RMSprop(learning_rate=hp.Choice('learning_rate', values=[0.0001, 0.001, 0.01]),
+            opt = tf.keras.optimizers.RMSprop(learning_rate=hp.Choice('learning_rate', values=[0.0001, 0.001]),
                                               weight_decay=hp.Choice('weight_decay', values=[0.00001, 0.0001, 0.001]))
         else:
             opt = tf.keras.optimizers.RMSprop()
