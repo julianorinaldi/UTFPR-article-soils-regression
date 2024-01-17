@@ -38,8 +38,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
         if self.modelConfig.argsGridSearch:
-            opt = tf.keras.optimizers.RMSprop(learning_rate=hp.Choice('learning_rate', values=[0.0001,0.001,0.01]),
-                                              weight_decay=hp.Choice('weight_decay', values=[1e-6, 1e-5, 1e-4, 1e-3]))
+            opt = tf.keras.optimizers.RMSprop(learning_rate=hp.Choice('learning_rate', values=[0.0001, 0.001, 0.01]),
+                                              weight_decay=hp.Choice('weight_decay', values=[0.00001, 0.0001, 0.001]))
         else:
             opt = tf.keras.optimizers.RMSprop()
         
