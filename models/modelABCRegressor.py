@@ -1,13 +1,14 @@
 import pandas as pd
-import numpy as np  # Trabalhar com array
-import random
-from tqdm import tqdm
+import tensorflow as tf
 
+from tqdm import tqdm
 from abc import ABC, abstractmethod
 from entityModelConfig import ModelConfig
 from datasetProcess import dataset_process
 from imageProcess import image_load, image_convert_array
 from sklearn.metrics import r2_score
+from keras_tuner.tuners import RandomSearch
+from sklearn.model_selection import GridSearchCV
 from imageProcess import image_processing
 
 class ModelABCRegressor(ABC):
@@ -18,7 +19,7 @@ class ModelABCRegressor(ABC):
 
     # Implemente para cada modelo de algoritmo de machine learn
     @abstractmethod
-    def getSpecialistModel(self):
+    def getSpecialistModel(self, hp):
         pass
     
     # Implemente se não desejar converter em 2 dimensões
@@ -114,12 +115,35 @@ class ModelABCRegressor(ABC):
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
         
-        self.model = self.getSpecialistModel()
-
+        
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando o treino')
-        self.modelFit(self.model, X_, Y_carbono, X_validate, Y_carbono_validate)
+            
+        if (not self.modelConfig.argsGridSearch):
+            self.model = self.getSpecialistModel(hp = None)
+            self.modelFit(self.model, X_, Y_carbono, X_validate, Y_carbono_validate)
+        else:
+            earlyStopping = tf.keras.callbacks.EarlyStopping(
+                    monitor='val_loss', patience=self.modelConfig.argsPatience, 
+                        restore_best_weights=True)
+            tuner = RandomSearch(
+                self.getSpecialistModel,
+                objective='val_loss',
+                max_trials=10,  # ajuste conforme necessário
+                directory='my_tuner_dir',  # diretório para armazenar os resultados
+                project_name='resnet_tuning'                
+            )
+            # Execute a busca de hiperparâmetros
+            tuner.search(X_, Y_carbono, epochs=self.modelConfig.argsEpochs, 
+                         validation_data=(X_validate, Y_carbono_validate),
+                         callbacks=[earlyStopping])
+
+            # Obtenha os melhores hiperparâmetros
+            best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
+
+            # Imprima os melhores hiperparâmetros encontrados
+            print("Best Hyperparameters:", best_hps.values)
         
     def test(self):
         # Agora entra o Test

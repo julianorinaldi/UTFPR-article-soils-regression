@@ -8,7 +8,7 @@ class ModelRegressorCNN(ModelABCRegressor):
     def __init__(self, modelConfig : ModelConfig):
         super().__init__(modelConfig)
         
-    def getSpecialistModel(self):
+    def getSpecialistModel(self, hp):
         _model = tf.keras.models.Sequential([
                     # Camada de convolução 1
                     tf.keras.layers.Conv2D(32, (3, 3), activation='relu', 

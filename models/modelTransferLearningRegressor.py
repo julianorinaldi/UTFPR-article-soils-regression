@@ -9,15 +9,23 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
     def __init__(self, modelConfig : ModelConfig):
         super().__init__(modelConfig)
         
-    def getSpecialistModel(self):
+    def getSpecialistModel(self, hp):
         pretrained_model = self._selectTransferLearningModel(self.modelConfig)
 
         # Adicionando camadas personalizadas no topo do modelo
         x = pretrained_model.output
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
         x = tf.keras.layers.Flatten()(x)
-        x = tf.keras.layers.Dense(512, activation='relu')(x)
-        x = tf.keras.layers.Dense(64, activation='relu')(x)
+         
+        if self.modelConfig.argsGridSearch:
+            hp_units1 = hp.Int('units', min_value=64, max_value=512, step=32)
+            x = tf.keras.layers.Dense(units=hp_units1, activation='relu')(x)
+            hp_units2 = hp.Int('units', min_value=10, max_value=64, step=10)
+            x = tf.keras.layers.Dense(units=hp_units2, activation='relu')(x)
+        else:
+            x = tf.keras.layers.Dense(512, activation='relu')(x)
+            x = tf.keras.layers.Dense(64, activation='relu')(x)
+        
         predictions = tf.keras.layers.Dense(1, activation='linear')(x)
         #predictions = tf.keras.layers.Dense(1)(x)
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)

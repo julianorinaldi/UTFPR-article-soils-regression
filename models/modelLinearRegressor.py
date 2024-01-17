@@ -8,7 +8,7 @@ class ModelLinearRegressor(ModelABCRegressor):
     def __init__(self, modelConfig : ModelConfig):
         super().__init__(modelConfig)
         
-    def getSpecialistModel(self):
+    def getSpecialistModel(self, hp):
         return LinearRegression()
     
     def reshapeTwoDimensions(self, X):

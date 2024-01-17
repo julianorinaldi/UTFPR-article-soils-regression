@@ -7,7 +7,7 @@ class ModelSVMLinearRegressor(ModelABCRegressor):
     def __init__(self, modelConfig : ModelConfig):
         super().__init__(modelConfig)
         
-    def getSpecialistModel(self):
+    def getSpecialistModel(self, hp):
         return SVR(kernel='linear')
 
     def reshapeTwoDimensions(self, X):

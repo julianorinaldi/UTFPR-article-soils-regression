@@ -8,7 +8,7 @@ class ModelXGBRegressor(ModelABCRegressor):
     def __init__(self, modelConfig : ModelConfig):
         super().__init__(modelConfig)
         
-    def getSpecialistModel(self):
+    def getSpecialistModel(self, hp):
         return xgb.XGBRegressor()
 
     def reshapeTwoDimensions(self, X):
