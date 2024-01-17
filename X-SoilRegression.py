@@ -14,6 +14,7 @@ parser.add_argument("-d", "--debug", action="store_true", help="Para listar os p
 parser.add_argument("-n", "--name", help="Nome do arquivo/diretório de saída do modelo .tf")
 parser.add_argument("-p", "--preprocess", action="store_true", default=False, help="Preprocessar imagem 'model.preprocess_input(...)' - [Modelos TransferLearning]")
 parser.add_argument("-t", "--trainable", action="store_true", default=False, help="Define se terá as camadas do modelo de transfer-learning treináveis ou não - [Modelos TransferLearning]")
+parser.add_argument("-S", "--separed", action="store_true", default=False, help="Separar dados de treino e validação - [Modelos TransferLearning, CNN]")
 parser.add_argument("-T", "--Test", action="store_true", default=False, help="Define execução apenas para o teste - [Modelos TransferLearning]")
 parser.add_argument("-i", "--amount_image_train", type=int, default=8930, help="Quantidade de imagens para treino")
 parser.add_argument("-I", "--amount_image_test", type=int, default=3843, help="Quantidade de imagens para test")
@@ -43,8 +44,8 @@ modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_b
                           channelColors=qtd_canal_color, amountImagesTrain=args.amount_image_train,
                           amountImagesTest=args.amount_image_test,
                           argsNameModel=args.name,argsDebug=args.debug, argsTrainable=args.trainable,
-                          argsPreprocess=args.preprocess, argsOnlyTest=args.Test, argsEpochs=args.epochs, 
-                          argsPatience=args.patience,
+                          argsSepared=args.separed, argsPreprocess=args.preprocess, argsOnlyTest=args.Test, 
+                          argsEpochs=args.epochs, argsPatience=args.patience,
                           printPrefix = prefix)
 
 # Estratégia de importar a execução, para não carregar o TensorFlow antes de acetar parâmetros de entrada.

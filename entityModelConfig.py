@@ -7,8 +7,9 @@ class ModelConfig:
                 imageDimensionX : int = 256, imageDimensionY : int = 256, channelColors : int = 3,
                 amountImagesTrain : int = 8930, amountImagesTest : int = 3843,
                 argsNameModel : str = '', argsDebug : bool = False, argsTrainable : bool = False,
-                argsPreprocess : bool = False, argsOnlyTest : bool = False, argsEpochs : int = 100, 
-                argsPatience : int = 5, printPrefix : str = '>>>>>>>>>>>>>>>>>'):
+                argsSepared : bool = False, argsPreprocess : bool = False, argsOnlyTest : bool = False, 
+                argsEpochs : int = 100, argsPatience : int = 5, 
+                printPrefix : str = '>>>>>>>>>>>>>>>>>'):
         self.modelSet = modelSet
         self.imageDimensionX = imageDimensionX
         self.imageDimensionY = imageDimensionY
@@ -20,6 +21,7 @@ class ModelConfig:
         self.argsNameModel = argsNameModel
         self.argsDebug = argsDebug
         self.argsTrainable = argsTrainable
+        self.argsSepared = argsSepared
         self.argsPreprocess = argsPreprocess
         self.argsOnlyTest = argsOnlyTest
         self.argsEpochs = argsEpochs

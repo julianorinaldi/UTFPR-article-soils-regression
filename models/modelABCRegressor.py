@@ -31,7 +31,13 @@ class ModelABCRegressor(ABC):
     # Re-implemente se desejar fazer um fit diferente, por exempĺo para CNN
     @abstractmethod
     def modelFit(self, model, X_, Y_carbono, X_validate, Y_carbono_validate):
-        model.fit(X_, Y_carbono, X_validate, Y_carbono_validate)
+        # Juntando os dados de validação com treino no SUPER.
+        X_ = pd.concat([X_, X_validate], axis=0)
+        X_ = X_.reset_index(drop=True)
+        Y_carbono = pd.concat([Y_carbono, Y_carbono_validate], axis=0)
+        Y_carbono = Y_carbono.reset_index(drop=True)
+        
+        model.fit(X_, Y_carbono)
     
     def _showPredictSamples(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
         self._minMaxPredictTest(carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray)

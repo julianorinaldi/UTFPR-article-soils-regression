@@ -1,5 +1,6 @@
 from entityModelConfig import ModelConfig
 from models.modelABCRegressor import ModelABCRegressor
+import pandas as pd
 import tensorflow as tf
 
 class ModelRegressorCNN(ModelABCRegressor):
@@ -35,9 +36,18 @@ class ModelRegressorCNN(ModelABCRegressor):
                 monitor='val_loss', patience=self.modelConfig.argsPatience, 
                     restore_best_weights=True)
         
-        model.fit(X_, Y_carbono, validation_split=0.3, 
-                    epochs=self.modelConfig.argsEpochs, 
+        if (not self.modelConfig.argsSepared):
+            # Padrão sem separação entre validação e treino      
+            X_ = pd.concat([X_, X_validate], axis=0)
+            X_ = X_.reset_index(drop=True)
+            Y_carbono = pd.concat([Y_carbono, Y_carbono_validate], axis=0)
+            Y_carbono = Y_carbono.reset_index(drop=True)
+            
+            model.fit(X_, Y_carbono, validation_split=0.3, epochs=self.modelConfig.argsEpochs, 
                             callbacks=[earlyStopping])
-
+        else:
+            model.fit(X_, Y_carbono, validation_data=(X_validate, Y_carbono_validate),
+                    epochs=self.modelConfig.argsEpochs, callbacks=[earlyStopping])
+            
         #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
         #print(f"{self.modelConfig.printPrefix} Model Saved!!!")
