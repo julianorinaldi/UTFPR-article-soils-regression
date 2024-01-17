@@ -132,7 +132,7 @@ class ModelABCRegressor(ABC):
                 objective='val_loss',
                 max_trials=3,  # Quantas tentativas de hiperparâmetros serão executadas
                 directory='_GridSearchTuning',  # diretório para armazenar os resultados
-                project_name='RandomSearchTuning'                
+                project_name='RandomSearchTuning'
             )
             # Execute a busca de hiperparâmetros
             tuner.search(X_, Y_carbono, epochs=self.modelConfig.argsEpochs, 
