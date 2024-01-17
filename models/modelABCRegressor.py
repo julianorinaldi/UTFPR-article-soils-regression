@@ -130,7 +130,7 @@ class ModelABCRegressor(ABC):
             tuner = RandomSearch(
                 self.getSpecialistModel,
                 objective='val_loss',
-                max_trials=3,  # Quantas tentativas de hiperparâmetros serão executadas
+                max_trials=10,  # Quantas tentativas de hiperparâmetros serão executadas
                 directory='_GridSearchTuning',  # diretório para armazenar os resultados
                 project_name='RandomSearchTuning'
             )

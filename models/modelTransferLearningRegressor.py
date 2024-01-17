@@ -34,7 +34,6 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             predictions = tf.keras.layers.Dense(1, activation='linear')(x)
             #predictions = tf.keras.layers.Dense(1)(x)
             
-            
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
         if self.modelConfig.argsGridSearch:
