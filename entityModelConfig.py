@@ -9,6 +9,7 @@ class ModelConfig:
                 argsNameModel : str = '', argsDebug : bool = False, argsTrainable : bool = False,
                 argsSepared : bool = False, argsPreprocess : bool = False, argsOnlyTest : bool = False, 
                 argsEpochs : int = 100, argsPatience : int = 5, argsGridSearch : bool = False, 
+                argsShowModel : bool = False,
                 printPrefix : str = '>>>>>>>>>>>>>>>>>'):
         self.modelSet = modelSet
         self.imageDimensionX = imageDimensionX
@@ -27,6 +28,7 @@ class ModelConfig:
         self.argsEpochs = argsEpochs
         self.argsPatience = argsPatience
         self.argsGridSearch = argsGridSearch
+        self.argsShowModel = argsShowModel
         self.printPrefix = printPrefix
     
     def setPathCSV(self, pathCSV):

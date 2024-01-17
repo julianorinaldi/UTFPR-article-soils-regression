@@ -33,9 +33,10 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         opt = tf.keras.optimizers.RMSprop()
         _model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
 
-        print(f'{self.modelConfig.printPrefix}')
-        print(_model.summary())
-        print(f'{self.modelConfig.printPrefix}')
+        if (self.modelConfig.argsShowModel):
+            print(f'{self.modelConfig.printPrefix}')
+            print(_model.summary())
+            print(f'{self.modelConfig.printPrefix}')
         
         return _model
     
