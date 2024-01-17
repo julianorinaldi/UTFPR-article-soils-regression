@@ -130,20 +130,25 @@ class ModelABCRegressor(ABC):
             tuner = RandomSearch(
                 self.getSpecialistModel,
                 objective='val_loss',
-                max_trials=10,  # ajuste conforme necessário
-                directory='my_tuner_dir',  # diretório para armazenar os resultados
-                project_name='resnet_tuning'                
+                max_trials=3,  # Quantas tentativas de hiperparâmetros serão executadas
+                directory='_GridSearchTuning',  # diretório para armazenar os resultados
+                project_name='RandomSearchTuning'                
             )
             # Execute a busca de hiperparâmetros
             tuner.search(X_, Y_carbono, epochs=self.modelConfig.argsEpochs, 
                          validation_data=(X_validate, Y_carbono_validate),
                          callbacks=[earlyStopping])
 
-            # Obtenha os melhores hiperparâmetros
             best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
-
+            
             # Imprima os melhores hiperparâmetros encontrados
-            print("Best Hyperparameters:", best_hps.values)
+            print("Melhores Hyperparameters:", best_hps.values)
+            
+            # Obtenha a melhor tentativa
+            best_trial = tuner.oracle.get_best_trials(num_trials=1)[0]
+
+            # Obtenha o modelo com os melhores hiperparâmetros
+            self.model = tuner.load_model(best_trial)
         
     def test(self):
         # Agora entra o Test
