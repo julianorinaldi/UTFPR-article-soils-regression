@@ -124,16 +124,16 @@ class ModelABCRegressor(ABC):
         X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate  = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
         
         # Flatten das imagens
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Fazendo reshape')
+        # if (self.modelConfig.argsDebug):
+        #     print(f'{self.modelConfig.printPrefix} Fazendo reshape')
         
         # Aceita apenas 2 dimensões.
         X_validate = self.reshapeTwoDimensions(X_validate)
         X_ = self.reshapeTwoDimensions(X_)
         
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Novo shape de X_validate: {X_validate.shape}')
-            print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
+        # if (self.modelConfig.argsDebug):
+        #     print(f'{self.modelConfig.printPrefix} Novo shape de X_validate: {X_validate.shape}')
+        #     print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
         
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')

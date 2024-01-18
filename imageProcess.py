@@ -52,15 +52,15 @@ def image_processing(modelConfig : ModelConfig, imageName : str):
 def image_convert_array(modelConfig : ModelConfig, imagesArray : list, df : pd.DataFrame, qtd_imagens : int):
     # Transformando em array a lista de imagens (Treino)
     X_ = np.array(imagesArray)
-    if (modelConfig.argsDebug):
-        print(f'{modelConfig.printPrefix} Shape X: {X_.shape}')
+    # if (modelConfig.argsDebug):
+    #     print(f'{modelConfig.printPrefix} Shape X: {X_.shape}')
 
     # *******************************************************
     # Neste momento apenas trabalhando com valores de Carbono
     # *******************************************************
     Y_carbono = np.array(df['teor_carbono'].tolist()[:qtd_imagens])
-    if (modelConfig.argsDebug):
-        print(f'{modelConfig.printPrefix} Shape Y: {Y_carbono.shape}')
+    # if (modelConfig.argsDebug):
+    #     print(f'{modelConfig.printPrefix} Shape Y: {Y_carbono.shape}')
         
     #Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
     #print(f'Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}')
