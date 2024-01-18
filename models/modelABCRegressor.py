@@ -15,7 +15,7 @@ from imageProcess import image_processing
 class ModelABCRegressor(ABC):
     def __init__(self, modelConfig : ModelConfig):
         self.modelConfig = modelConfig
-        self.model = None
+        self.models = []
         super().__init__()
 
     # Implemente para cada modelo de algoritmo de machine learn
@@ -32,14 +32,13 @@ class ModelABCRegressor(ABC):
     
     # Re-implemente se desejar fazer um fit diferente, por exempĺo para CNN
     @abstractmethod
-    def modelFit(self, model, X_, Y_carbono, X_validate, Y_carbono_validate):
+    def modelFit(self, models, X_, Y_carbono, X_validate, Y_carbono_validate):
         # Juntando os dados de validação com treino no SUPER.
-        X_ = pd.concat([X_, X_validate], axis=0)
-        X_ = X_.reset_index(drop=True)
-        Y_carbono = pd.concat([Y_carbono, Y_carbono_validate], axis=0)
-        Y_carbono = Y_carbono.reset_index(drop=True)
+        X_ = np.concatenate((X_, X_validate), axis=0)
+        Y_carbono = np.concatenate((Y_carbono, Y_carbono_validate), axis=0)
         
-        model.fit(X_, Y_carbono)
+        for model in models:
+            model.fit(X_, Y_carbono)
     
     def _showPredictSamples(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
         self._minMaxPredictTest(carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray)
@@ -116,18 +115,16 @@ class ModelABCRegressor(ABC):
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
         
-        
         # Treinar o modelo
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando o treino')
             
         if (not self.modelConfig.argsGridSearch):
-            self.model = self.getSpecialistModel(hp = None)
-            self.modelFit(self.model, X_, Y_carbono, X_validate, Y_carbono_validate)
+            self.models = { self.getSpecialistModel(hp = None) }
+            self.modelFit(self.models, X_, Y_carbono, X_validate, Y_carbono_validate)
         else:
-            earlyStopping = tf.keras.callbacks.EarlyStopping(
-                    monitor='val_loss', patience=self.modelConfig.argsPatience, 
-                        restore_best_weights=True)
+            earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
+                            patience=self.modelConfig.argsPatience, restore_best_weights=True)
             tuner = RandomSearch(
                 self.getSpecialistModel,
                 objective='val_loss',
@@ -154,10 +151,11 @@ class ModelABCRegressor(ABC):
             print("Melhores Hyperparameters:", best_hps.values)
             
             # Obtenha a melhor tentativa
-            best_trial = tuner.oracle.get_best_trials(num_trials=1)[0]
-
-            # Obtenha o modelo com os melhores hiperparâmetros
-            self.model = tuner.load_model(best_trial)
+            best_trial = tuner.oracle.get_best_trials()
+            _models = []
+            for trial in best_trial:
+                _models.append(tuner.load_model(trial))    
+            self.models = _models
         
     def test(self):
         # Agora entra o Test
@@ -176,27 +174,23 @@ class ModelABCRegressor(ABC):
         X_ = self.reshapeTwoDimensions(X_)
         
         if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
-        
-        if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando predição completa para o R2...')
         
-        # Fazendo a predição sobre os dados de teste
-        prediction = self.model.predict(X_) # type: ignore
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Shape de prediction: {prediction.shape}')
+        for model in self.models:
+            # Fazendo a predição sobre os dados de teste
+            prediction = model.predict(X_) # type: ignore
 
-        # Avaliando com R2
-        r2 = r2_score(Y_carbono, prediction)
+            # Avaliando com R2
+            r2 = r2_score(Y_carbono, prediction)
 
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
-            self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
-        
-        print()
-        print(f'====================================================')
-        print(f'====================================================')
-        print(f'=========>>>>> R2: {r2} <<<<<=========')
-        print(f'====================================================')
-        print(f'====================================================')
-        print()
+            if (self.modelConfig.argsDebug):
+                print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
+                self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
+            
+            print()
+            print(f'====================================================')
+            print(f'====================================================')
+            print(f'=========>>>>> R2: {r2} <<<<<=========')
+            print(f'====================================================')
+            print(f'====================================================')
+            print()

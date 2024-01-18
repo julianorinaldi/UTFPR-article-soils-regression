@@ -13,5 +13,5 @@ class ModelSVMLinearRegressor(ModelABCRegressor):
     def reshapeTwoDimensions(self, X):
         return super().reshapeTwoDimensions(X)
     
-    def modelFit(self, model, X_, Y_carbono, X_validate, Y_carbono_validate):
-         super().modelFit(model, X_, Y_carbono, X_validate, Y_carbono_validate)
+    def modelFit(self, models, X_, Y_carbono, X_validate, Y_carbono_validate):
+         super().modelFit(models, X_, Y_carbono, X_validate, Y_carbono_validate)
