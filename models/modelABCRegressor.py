@@ -197,10 +197,6 @@ class ModelABCRegressor(ABC):
             # Avaliando com R2
             r2 = r2_score(Y_carbono, prediction)
 
-            if (self.modelConfig.argsDebug):
-                print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
-                self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
-            
             print()
             print(f'====================================================')
             print(f'====================================================')
@@ -208,3 +204,9 @@ class ModelABCRegressor(ABC):
             print(f'====================================================')
             print(f'====================================================')
             print()
+            
+            if (self.modelConfig.argsDebug):
+                print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
+                self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
+            
+
