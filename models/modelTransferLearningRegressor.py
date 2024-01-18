@@ -25,7 +25,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             hp_dropout = hp.Float('dropuot_rate', min_value=0.3, max_value=0.7, step=0.2)
             x = tf.keras.layers.Dropout(hp_dropout)(x)
                 
-            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['','linear']))(x)
+            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['linear', 'relu']))(x)
             
         else:
             x = tf.keras.layers.Dense(160, activation='relu')(x)
