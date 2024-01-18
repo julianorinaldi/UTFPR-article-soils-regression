@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import tensorflow as tf
 
 from tqdm import tqdm
@@ -134,10 +135,18 @@ class ModelABCRegressor(ABC):
                 directory='_GridSearchTuning',  # diretório para armazenar os resultados
                 project_name='RandomSearchTuning'
             )
-            # Execute a busca de hiperparâmetros
-            tuner.search(X_, Y_carbono, epochs=self.modelConfig.argsEpochs, 
-                         validation_data=(X_validate, Y_carbono_validate),
-                         callbacks=[earlyStopping])
+            
+            if (not self.modelConfig.argsSepared):
+                # Padrão sem separação entre validação e treino      
+                X_ = np.concatenate((X_, X_validate), axis=0)
+                Y_carbono = np.concatenate((Y_carbono, Y_carbono_validate), axis=0)
+                tuner.search(X_, Y_carbono, epochs=self.modelConfig.argsEpochs, 
+                            validation_split=0.2, callbacks=[earlyStopping])
+            else:
+                # Execute a busca de hiperparâmetros
+                tuner.search(X_, Y_carbono, epochs=self.modelConfig.argsEpochs, 
+                            validation_data=(X_validate, Y_carbono_validate),
+                            callbacks=[earlyStopping])
 
             best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
             

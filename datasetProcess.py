@@ -21,7 +21,8 @@ def dataset_process(modeConfig : ModelConfig):
     
     # Itens a remover
     #itensRemover = ~df['amostra'].isin(['C51', 'L12', 'L5'])
-    #df = df[itensRemover]
+    itensRemover = ~df['amostra'].isin(['C51'])
+    df = df[itensRemover]
 
     # Removendo colunas desnecessárias do DataFrame de Validação
     df_validate = df_validate.drop(

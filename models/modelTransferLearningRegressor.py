@@ -60,7 +60,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             # Padrão sem separação entre validação e treino      
             X_ = np.concatenate((X_, X_validate), axis=0)
             Y_carbono = np.concatenate((Y_carbono, Y_carbono_validate), axis=0)
-            model.fit(X_, Y_carbono, validation_split=0.3, epochs=self.modelConfig.argsEpochs, 
+            model.fit(X_, Y_carbono, validation_split=0.2, epochs=self.modelConfig.argsEpochs, 
                             callbacks=[earlyStopping])
         else:
             model.fit(X_, Y_carbono, validation_data=(X_validate, Y_carbono_validate),
