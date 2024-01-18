@@ -142,7 +142,7 @@ class ModelABCRegressor(ABC):
             tuner = RandomSearch(
                 self.getSpecialistModel,
                 objective='val_loss',
-                max_trials=2,  # Quantas tentativas de hiperparâmetros serão executadas
+                max_trials=3,  # Quantas tentativas de hiperparâmetros serão executadas
                 directory='_GridSearchTuning',  # diretório para armazenar os resultados
                 project_name='RandomSearchTuning'
             )
@@ -165,11 +165,12 @@ class ModelABCRegressor(ABC):
             print("Melhores Hyperparameters:", best_hps.values)
             
             # Obtenha a melhor tentativa
-            best_trial = tuner.oracle.get_best_trials()
+            best_trial = tuner.oracle.get_best_trials(num_trials=3)
             _models = []
             for trial in best_trial:
                 _models.append(tuner.load_model(trial))    
             self.models = _models
+            del tuner
         
     def test(self):
         # Agora entra o Test
@@ -208,5 +209,8 @@ class ModelABCRegressor(ABC):
             if (self.modelConfig.argsDebug):
                 print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
                 self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
+                
+            del model
+        del self.models
             
 
