@@ -1,7 +1,7 @@
 from entityModelConfig import ModelConfig
 from models.modelABCRegressor import ModelABCRegressor
 from modelSet import ModelSet
-import pandas as pd
+import numpy as np
 import tensorflow as tf
 
 class ModelRegressorTransferLearning(ModelABCRegressor):
@@ -58,8 +58,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         
         if (not self.modelConfig.argsSepared):
             # Padrão sem separação entre validação e treino      
-            X_ = pd.concat([X_, X_validate], axis=0, ignore_index=True)
-            Y_carbono = pd.concat([Y_carbono, Y_carbono_validate], axis=0)
+            X_ = np.concatenate((X_, X_validate), axis=0)
+            Y_carbono = np.concatenate((Y_carbono, Y_carbono_validate), axis=0)
             model.fit(X_, Y_carbono, validation_split=0.3, epochs=self.modelConfig.argsEpochs, 
                             callbacks=[earlyStopping])
         else:

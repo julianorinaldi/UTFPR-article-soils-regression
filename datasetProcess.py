@@ -60,7 +60,7 @@ def dataset_process(modeConfig : ModelConfig):
     print(f'{modeConfig.printPrefix} Dados do Dataset sem normalização ...')
     print(f'{df.describe()}')
 
-    x = df.values
+    #x = df.values
     
     # MinMaxScaler
     # print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
