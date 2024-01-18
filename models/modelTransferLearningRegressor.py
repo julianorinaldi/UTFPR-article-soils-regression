@@ -58,10 +58,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         
         if (not self.modelConfig.argsSepared):
             # Padrão sem separação entre validação e treino      
-            X_ = pd.concat([X_, X_validate], axis=0)
-            X_ = X_.reset_index(drop=True)
+            X_ = pd.concat([X_, X_validate], axis=0, ignore_index=True)
             Y_carbono = pd.concat([Y_carbono, Y_carbono_validate], axis=0)
-            Y_carbono = Y_carbono.reset_index(drop=True)
             model.fit(X_, Y_carbono, validation_split=0.3, epochs=self.modelConfig.argsEpochs, 
                             callbacks=[earlyStopping])
         else:
