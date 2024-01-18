@@ -61,15 +61,6 @@ class ModelABCRegressor(ABC):
         #print(f'{df_sorted.to_string(index=False)}')
         #print()
         
-        if not pd.api.types.is_numeric_dtype(df_sorted["teor_cabono_predict"]):
-            df_sorted["teor_cabono_predict"] = pd.to_numeric(df_sorted["teor_cabono_predict"].str.replace(r'[\[\]]', ''))
-
-        if not pd.api.types.is_numeric_dtype(df_sorted["teor_cabono_diff"]):
-            df_sorted["teor_cabono_diff"] = pd.to_numeric(df_sorted["teor_cabono_diff"].str.replace(r'[\[\]]', ''))
-
-        if not pd.api.types.is_numeric_dtype(df_sorted["error(%)"]):
-            df_sorted["error(%)"] = pd.to_numeric(df_sorted["error(%)"].str.replace(r'[\[\]]', ''))
-
         df_sorted['grupo'] = df_sorted['amostra'].str.extract(r'([A-Z]+\d+)')[0]
         
         print(f'{self.modelConfig.printPrefix} Melhores resultados ...')

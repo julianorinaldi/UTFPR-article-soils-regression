@@ -59,6 +59,9 @@ def dataset_process(modeConfig : ModelConfig):
 
     print(f'{modeConfig.printPrefix} Dados do Dataset sem normalização ...')
     print(f'{df.describe()}')
+    print(f'{modeConfig.printPrefix}')
+    print(f'{df_validate.describe()}')
+    
 
     #x = df.values
     
