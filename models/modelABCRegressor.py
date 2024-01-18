@@ -57,14 +57,37 @@ class ModelABCRegressor(ABC):
             
         df_sorted = pd.DataFrame(result)
         df_sorted = df_sorted.sort_values(by='error(%)')
-        df_sorted.to_csv('resultado.csv', index=False)
+        #df_sorted.to_csv('resultado.csv', index=False)
         #print(f'{df_sorted.to_string(index=False)}')
         #print()
+        
+        if not pd.api.types.is_numeric_dtype(df_sorted["teor_cabono_predict"]):
+            df_sorted["teor_cabono_predict"] = pd.to_numeric(df_sorted["teor_cabono_predict"].str.replace('[\\[\\]]', ''))
+
+        if not pd.api.types.is_numeric_dtype(df_sorted["teor_cabono_diff"]):
+            df_sorted["teor_cabono_diff"] = pd.to_numeric(df_sorted["teor_cabono_diff"].str.replace('[\\[\\]]', ''))
+
+        if not pd.api.types.is_numeric_dtype(df_sorted["error(%)"]):
+            df_sorted["error(%)"] = pd.to_numeric(df_sorted["error(%)"].str.replace('[\\[\\]]', ''))
+
+        df_sorted['grupo'] = df_sorted['amostra'].str.extract(r'([A-Z]+\d+)')[0]
+        
         print(f'{self.modelConfig.printPrefix} Melhores resultados ...')
         print(f'{df_sorted.head()}')
         print()
         print(f'{self.modelConfig.printPrefix} Piores resultados ...')
         print(f'{df_sorted.tail()}')
+        print()
+        
+        df_media = df_sorted.groupby('grupo').agg({'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
+        r2 = r2_score(df_media['teor_cabono_real'], df_media['teor_cabono_predict'])
+        print(f'{self.modelConfig.printPrefix} R2 sobre a média de predição:')
+        print()
+        print(f'====================================================')
+        print(f'====================================================')
+        print(f'=========>>>>> R2: {r2} <<<<<=========')
+        print(f'====================================================')
+        print(f'====================================================')
         print()
             
    
