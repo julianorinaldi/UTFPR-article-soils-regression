@@ -47,13 +47,13 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             print(f'{self.modelConfig.printPrefix}')
             print(_model.summary())
             print(f'{self.modelConfig.printPrefix}')
-        else:
-            print(f'{self.modelConfig.printPrefix} Mostrado as últimas 5 camadas.')
-            print(f'{self.modelConfig.printPrefix}')
-            last_layers_model = tf.keras.models.Sequential(layers=_model.layers[-5:])
-            last_layers_model.build(input_shape=_model.layers[0].input_shape)
-            last_layers_model.summary()
-            print(f'{self.modelConfig.printPrefix}')
+        # else:
+        #     print(f'{self.modelConfig.printPrefix} Mostrado as últimas 5 camadas.')
+        #     print(f'{self.modelConfig.printPrefix}')
+        #     last_layers_model = tf.keras.models.Sequential(layers=_model.layers[-5:])
+        #     last_layers_model.build(input_shape=_model.layers[0].input_shape)
+        #     last_layers_model.summary()
+        #     print(f'{self.modelConfig.printPrefix}')
         
         return _model
     
