@@ -39,49 +39,46 @@ O arquivo main ```main.py``` serve para rodar o treinamento e teste do modelo, c
 **Para conhecer os parâmetros basta executar o comando ```python3 main.py -h```.**
 
 ```python
-usage: main.py [-h] [-d] [-n NAME] [-p] [-t] [-T] [-i AMOUNT_IMAGE_TRAIN] [-I AMOUNT_IMAGE_TEST] [-P PATIENCE]
-                           [-e EPOCHS] [-m MODEL]
+usage: main.py [-h] [-e EPOCHS] [-G GRID_SEARCH_TRIALS] [-i AMOUNT_IMAGE_TRAIN] [-I AMOUNT_IMAGE_TEST] [-L LOG_LEVEL] [-m MODEL] [-M] [-n NAME] [-p] [-P PATIENCE] [-S] [-t] [-T]
 
 options:
   -h, --help            show this help message and exit
-  -d, --debug           Para listar os prints de Debug
-  -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
-  -p, --preprocess      Preprocessar imagem 'model.preprocess_input(...)' - [Modelos TransferLearning]
-  -t, --trainable       Define se terá as camadas do modelo de transfer-learning treináveis ou não - [Modelos
-                        TransferLearning]
-  -T, --Test            Define execução apenas para o teste - [Modelos TransferLearning]
+  -e EPOCHS, --epochs EPOCHS
+                        Quantidade de épocas para o treino - [Modelos TransferLearning/CNN]
+  -G GRID_SEARCH_TRIALS, --grid_search_trials GRID_SEARCH_TRIALS
+                        Treinar modelos com diversos hyperparametros (setar > 0 para rodar) - [Modelos TransferLearning/CNN hardcoded]
   -i AMOUNT_IMAGE_TRAIN, --amount_image_train AMOUNT_IMAGE_TRAIN
                         Quantidade de imagens para treino
   -I AMOUNT_IMAGE_TEST, --amount_image_test AMOUNT_IMAGE_TEST
                         Quantidade de imagens para test
+  -L LOG_LEVEL, --log_level LOG_LEVEL
+                        Log Level: [0]-DEBUG, [1]-INFO - DEFAULT
+  -m MODEL, --model MODEL
+                        Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge, [20]-EfficientNetB7, [21]-EfficientNetV2S, [22]-EfficientNetV2L, [30]-InceptionResNetV2, [40]-DenseNet169, [50]-VGG19, [100]-CNN,
+                        [500]-XGBRegressor, [510]-LinearRegression, [520]-SVMLinearRegression, [521]-SVMRBFRegressor
+  -M, --show_model      Mostra na tela os layers do modelo - [Modelos TransferLearning/CNN]
+  -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
+  -p, --preprocess      Preprocessar imagem 'model.preprocess_input(...)' - [Modelos TransferLearning]
   -P PATIENCE, --patience PATIENCE
                         Quantidade de paciência no early stopping - [Modelos TransferLearning/CNN]
-  -e EPOCHS, --epochs EPOCHS
-                        Quantidade de épocas para o treino - [Modelos TransferLearning/CNN]
-  -m MODEL, --model MODEL
-                        Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge,
-                        [20]-EfficientNetB7, [21]-EfficientNetV2S, [22]-EfficientNetV2L, [30]-InceptionResNetV2,
-                        [40]-DenseNet169, [50]-VGG19, [100]-CNN, [500]-XGBRegressor, [510]-LinearRegression,
-                        [520]-SVMLinearRegression, [521]-SVMRBFRegressor
-
+  -S, --separed         Separar dados de treino e validação - [Modelos TransferLearning, CNN]
+  -t, --trainable       Define se terá as camadas do modelo de transfer-learning treináveis ou não - [Modelos TransferLearning]
+  -T, --Test            Define execução apenas para o teste - [Modelos TransferLearning]
 ```
 
 ## Exemplo de como rodar um modelo treinamento + teste
 
 O padrão de execução sempre é treinamento + teste, porém você pode escolher apenas testar se desejar, veja o tópico a seguir.
 
-```python3 main.py -n NomeDoMolo.tf -d -m 40 -p -P 2```
+```python3 main.py -n NomeDoMolo.tf -m 40 -p -P 2```
 
- - -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
- - -d, --debug           Para listar os prints de Debug
- - -m MODEL, --model MODEL
-            Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge,
-            [20]-EfficientNetB7, [21]-EfficientNetV2S, [22]-EfficientNetV2L, [30]-InceptionResNetV2,
-            [40]-DenseNet169, [50]-VGG19, [100]-CNN, [500]-XGBRegressor, [510]-LinearRegression,
-            [520]-SVMLinearRegression, [521]-SVMRBFRegressor
- - -p, --preprocess      Preprocessar imagem 'model.preprocess_input(...)' - [Modelos TransferLearning]
- - -P PATIENCE, --patience PATIENCE
-            Quantidade de paciência no early stopping - [Modelos TransferLearning/CNN]
+
+...
+...
+...
+...
+...
+
 
 ## Exemplo de como rodar um modelo apenas de teste
 

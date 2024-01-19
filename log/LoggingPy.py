@@ -5,6 +5,7 @@ class LoggingPy:
     LOGNAME = "Default"
     def __init__(self, nameModel : str = "emptyNameModel", prefix : str = ">>>>>>>>>>>>>>>>>", log_level : int = 1):
         # Configurar o nível de log (pode ser logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, ou logging.CRITICAL)
+        self.logger : logging.Logger
         
         if log_level == 0:
             logLevel=logging.DEBUG
@@ -42,14 +43,12 @@ class LoggingPy:
         file_handler.setFormatter(formatter)
 
         # Criar e configurar o logger
-        logger = logging.getLogger(LoggingPy.LOGNAME)
-        logger.addHandler(console_handler)
-        logger.addHandler(file_handler)
+        self.logger = logging.getLogger(LoggingPy.LOGNAME)
+        self.logger.addHandler(console_handler)
+        self.logger.addHandler(file_handler)
 
     def logDebug(self, message):
-        logger = logging.getLogger(LoggingPy.LOGNAME)
-        logger.debug(message)
+        self.logger.debug(message)
         
     def logInfo(self, message):
-        logger = logging.getLogger(LoggingPy.LOGNAME)
-        logger.info(message)
+        self.logger.info(message)
