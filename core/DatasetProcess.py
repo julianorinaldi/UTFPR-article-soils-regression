@@ -1,7 +1,7 @@
 
 import pandas as pd  # Trabalhar com análise de dados, importação, etc.
 from sklearn import preprocessing
-from ModelConfig import ModelConfig
+from core.ModelConfig import ModelConfig
 
 class DatasetProcess:
     def __init__(self, config : ModelConfig):

@@ -5,8 +5,8 @@ import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 import numpy as np
 from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
-from ModelSetEnum import ModelSetEnum
-from ModelConfig import ModelConfig
+from core.ModelSetEnum import ModelSetEnum
+from core.ModelConfig import ModelConfig
 
 class ImageProcess:
     def __init__(self, config : ModelConfig):
