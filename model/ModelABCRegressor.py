@@ -138,12 +138,13 @@ class ModelABCRegressor(ABC):
             self.config.logger.logInfo(f"Executando com o GridSearch")
             earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                             patience=self.config.argsPatience, restore_best_weights=True)
+            
             tuner = RandomSearch(
                 self.getSpecialistModel,
                 objective='val_loss',
                 max_trials=self.config.argsGridSearch,  # Quantas tentativas de hiperparâmetros serão executadas
-                directory='_GridSearchTuning',  # diretório para armazenar os resultados
-                project_name='RandomSearchTuning'
+                directory='_gridSearchResults',  # diretório para armazenar os resultados
+                project_name=self.config.argsNameModel
             )
             
             if (not self.config.argsSepared):

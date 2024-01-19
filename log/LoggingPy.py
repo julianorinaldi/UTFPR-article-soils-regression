@@ -25,7 +25,7 @@ class LoggingPy:
         self.logger.setLevel(logLevel)
 
         tz_utc_minus3 = timezone(timedelta(hours=-3))
-        timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M")
         os.makedirs('logs', exist_ok=True)
         log_filename = f'logs/log_{nameModel}_{timestamp}.log'
 
