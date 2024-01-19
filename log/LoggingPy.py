@@ -45,7 +45,7 @@ class LoggingPy:
 
         # Criar e configurar o logger
         self.logger = logging.getLogger(LoggingPy.LOGNAME)
-        self.logger.addHandler(console_handler)
+        #self.logger.addHandler(console_handler)
         self.logger.addHandler(file_handler)
 
     def logDebug(self, message):

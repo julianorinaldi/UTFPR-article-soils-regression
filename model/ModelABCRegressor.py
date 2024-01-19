@@ -203,9 +203,10 @@ class ModelABCRegressor(ABC):
             self.config.logger.logInfo(f"====================================================")
             self.config.logger.logInfo(f"")
 
-            self.config.logger.logInfo(f"Hiperparâmetros deste modelo:")
-            self.config.logger.logInfo(f"{self.hyperparameters[index].values}")
-            self.config.logger.logInfo(f"")
+            if self.config.argsGridSearch > 0:
+                self.config.logger.logInfo(f"Hiperparâmetros deste modelo:")
+                self.config.logger.logInfo(f"{self.hyperparameters[index].values}")
+                self.config.logger.logInfo(f"")
             
             self.config.logger.logInfo(f"Alguns exemplos de predições ...")
             self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
