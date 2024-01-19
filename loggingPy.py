@@ -1,21 +1,27 @@
 import logging
 from entityModelConfig import ModelConfig
+from datetime import datetime, timezone, timedelta
 
 class loggingPy:
     LOGNAME = "Default"
     def __init__(self, config : ModelConfig):
         # Configurar o nível de log (pode ser logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, ou logging.CRITICAL)
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.INFO)
 
         # Configurar um manipulador de console
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
+        console_handler.setLevel(logging.INFO)
         formatter = logging.Formatter(f'%(asctime)s - %(levelname)s {config.printPrefix} %(message)s')
+
+        # Configurar o fuso horário para UTC-3
+        tz_utc_minus3 = timezone(timedelta(hours=-3))
+        formatter.converter = lambda *args: datetime.now(tz=tz_utc_minus3).timetuple()
+
         console_handler.setFormatter(formatter)
 
         # Configurar um manipulador de arquivo
         file_handler = logging.FileHandler('logfile.log')
-        file_handler.setLevel(logging.DEBUG)
+        file_handler.setLevel(logging.INFO)
         file_handler.setFormatter(formatter)
 
         # Criar e configurar o logger
