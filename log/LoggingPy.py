@@ -5,6 +5,7 @@ class LoggingPy:
     LOGNAME = "Default"
     def __init__(self, nameModel : str = "emptyNameModel", prefix : str = ">>>>>>>>>>>>>>>>>", log_level : int = 1):
         # Configurar o nível de log (pode ser logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, ou logging.CRITICAL)
+        print(f"********************** Instanciou Log uma vez {nameModel} **********************")
         self.logger : logging.Logger
         
         if log_level == 0:
@@ -44,9 +45,8 @@ class LoggingPy:
 
         # Criar e configurar o logger
         self.logger = logging.getLogger(LoggingPy.LOGNAME)
-        #self.logger.addHandler(console_handler)
+        self.logger.addHandler(console_handler)
         self.logger.addHandler(file_handler)
-        print(f"********************** Instanciou Log uma vez {nameModel} **********************")
 
     def logDebug(self, message):
         self.logger.debug(message)
