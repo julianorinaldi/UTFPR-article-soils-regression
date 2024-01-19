@@ -6,11 +6,11 @@ class loggingPy:
     LOGNAME = "Default"
     def __init__(self, config : ModelConfig):
         # Configurar o nível de log (pode ser logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, ou logging.CRITICAL)
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.CRITICAL)
 
         # Configurar um manipulador de console
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
+        console_handler.setLevel(logging.CRITICAL)
         formatter = logging.Formatter(f'%(asctime)s - %(levelname)s {config.printPrefix} %(message)s')
 
         # Configurar o fuso horário para UTC-3
@@ -21,7 +21,7 @@ class loggingPy:
 
         # Configurar um manipulador de arquivo
         file_handler = logging.FileHandler('logfile.log')
-        file_handler.setLevel(logging.INFO)
+        file_handler.setLevel(logging.CRITICAL)
         file_handler.setFormatter(formatter)
 
         # Criar e configurar o logger
@@ -35,4 +35,4 @@ class loggingPy:
         
     def logInfo(self, message):
         logger = logging.getLogger(loggingPy.LOGNAME)
-        logger.info(message)
+        logger.critical(message)
