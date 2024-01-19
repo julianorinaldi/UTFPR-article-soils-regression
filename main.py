@@ -43,7 +43,7 @@ qtd_canal_color = 3
 pathCsv = ""
 dir_base_img = ""
 
-modelConfig = ModelConfig(modelSetEnum=modelSetEnum, pathCSV=pathCsv, dir_base_img=dir_base_img,
+config = ModelConfig(modelSetEnum=modelSetEnum, pathCSV=pathCsv, dir_base_img=dir_base_img,
                           imageDimensionX=imageDimensionX, imageDimensionY=imageDimensionY,
                           channelColors=qtd_canal_color, amountImagesTrain=args.amount_image_train,
                           amountImagesTest=args.amount_image_test, log_level=args.log_level,
@@ -51,10 +51,10 @@ modelConfig = ModelConfig(modelSetEnum=modelSetEnum, pathCSV=pathCsv, dir_base_i
                           argsSepared=args.separed, argsPreprocess=args.preprocess, argsOnlyTest=args.Test, 
                           argsEpochs=args.epochs, argsPatience=args.patience, argsGridSearch=args.grid_search_trials,
                           argsShowModel=args.show_model)
-
+config.setLogger(logger)
 
 # Estratégia de importar a execução, para não carregar o TensorFlow antes de acetar parâmetros de entrada.
 from core.ExecuteProcess import ExecuteProcess
 
-execute = ExecuteProcess(modelConfig)
+execute = ExecuteProcess(config)
 execute.run()

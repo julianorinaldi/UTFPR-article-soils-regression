@@ -12,7 +12,7 @@ class ModelConfig:
                 argsEpochs : int = 100, argsPatience : int = 5, argsGridSearch : int = 0, 
                 argsShowModel : bool = False) -> None:
         self.modelSetEnum = modelSetEnum
-        self.logger = None
+        self.logger : LoggingPy
         self.log_level = log_level
         self.imageDimensionX = imageDimensionX
         self.imageDimensionY = imageDimensionY
@@ -30,6 +30,9 @@ class ModelConfig:
         self.argsPatience = argsPatience
         self.argsGridSearch = argsGridSearch
         self.argsShowModel = argsShowModel
+
+    def setLogger(self, logger : LoggingPy):
+        self.logger = logger
     
     def setPathCSV(self, pathCSV):
         self.pathCSV = pathCSV
