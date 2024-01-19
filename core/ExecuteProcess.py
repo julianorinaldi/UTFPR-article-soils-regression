@@ -77,6 +77,7 @@ class ExecuteProcess:
             self.config.logger.logInfo(f" -G (--grid_search_trials): {self.config.argsGridSearch}")
             self.config.logger.logInfo(f" -i (--amount_image_train): {self.config.amountImagesTrain}")
             self.config.logger.logInfo(f" -I (--amount_image_test): {self.config.amountImagesTest}")
+            self.config.logger.logInfo(f" -L (--log_level): {self.config.log_level}")
             self.config.logger.logInfo(f" -m (--model): {self.config.modelSetEnum.value} - {self.config.modelSetEnum.name}")
             self.config.logger.logInfo(f" -M (--show_model): {self.config.argsShowModel}")
             self.config.logger.logInfo(f" -n (--name): {self.config.argsNameModel}")
@@ -86,3 +87,4 @@ class ExecuteProcess:
             self.config.logger.logInfo(f" -t (--trainable): {self.config.argsTrainable}")
             self.config.logger.logInfo(f" -T (--Test): {self.config.argsOnlyTest}")
             self.config.logger.logInfo("#######################")
+            

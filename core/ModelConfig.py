@@ -3,7 +3,7 @@ from log.LoggingPy import LoggingPy
 
 class ModelConfig:
     def __init__(self, modelSetEnum : ModelSetEnum = ModelSetEnum.ResNet50, 
-                loggingPy : LoggingPy = LoggingPy(),
+                loggingPy : LoggingPy = LoggingPy(), log_level : int = 1,
                 pathCSV : str = 'dataset/csv/Dataset256x256-Treino.csv', 
                 dir_base_img : str = 'dataset/images/treinamento-solo-256x256', 
                 imageDimensionX : int = 256, imageDimensionY : int = 256, channelColors : int = 3,
@@ -14,6 +14,7 @@ class ModelConfig:
                 argsShowModel : bool = False):
         self.modelSetEnum = modelSetEnum
         self.logger = loggingPy
+        self.log_level = log_level
         self.imageDimensionX = imageDimensionX
         self.imageDimensionY = imageDimensionY
         self.channelColors = channelColors

@@ -87,10 +87,9 @@ O padrão de execução sempre é treinamento + teste, porém você pode escolhe
 
 O código abaixo irá procurar o modelo já gerado com o nome **NomeDoMolo.tf**, e executar o teste.
 
-```python3 main.py -n NomeDoMolo.tf -d -T```
+```python3 main.py -n NomeDoMolo.tf -T```
 
  - -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
- - -d, --debug           Para listar os prints de Debug
  - -T, --Test            Define execução apenas para o teste - [Modelos TransferLearning]
 
 # Baixar arquivo last-model.h5 via SSH/SCP

@@ -3,9 +3,23 @@ from datetime import datetime, timezone, timedelta
 
 class LoggingPy:
     LOGNAME = "Default"
-    def __init__(self, nameModel : str = "emptyNameModel", prefix : str = ">>>>>>>>>>>>>>>>>"):
+    def __init__(self, nameModel : str = "emptyNameModel", prefix : str = ">>>>>>>>>>>>>>>>>", log_level : int = 1):
         # Configurar o nível de log (pode ser logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, ou logging.CRITICAL)
-        logging.basicConfig(level=logging.INFO)
+        
+        if log_level == 0:
+            logLevel=logging.DEBUG
+        elif log_level == 1:
+            logLevel=logging.INFO
+        elif log_level == 2:
+            logLevel=logging.WARNING
+        elif log_level == 3:
+            logLevel=logging.ERROR
+        elif log_level == 4:
+            logLevel=logging.CRITICAL
+        else:
+            logLevel=logging.DEBUG
+        
+        logging.basicConfig(level=logLevel)
 
         tz_utc_minus3 = timezone(timedelta(hours=-3))
         timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M%S")
@@ -13,7 +27,7 @@ class LoggingPy:
         
         # Configurar um manipulador de console
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
+        console_handler.setLevel(logLevel)
         formatter = logging.Formatter(f'%(asctime)s - %(levelname)s {prefix} %(message)s')
 
         # Configurar o fuso horário para UTC-3
@@ -24,7 +38,7 @@ class LoggingPy:
 
         # Configurar um manipulador de arquivo
         file_handler = logging.FileHandler(log_filename)
-        file_handler.setLevel(logging.INFO)
+        file_handler.setLevel(logLevel)
         file_handler.setFormatter(formatter)
 
         # Criar e configurar o logger
