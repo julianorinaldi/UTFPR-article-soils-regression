@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime, timezone, timedelta
 
 class LoggingPy:
@@ -25,10 +26,11 @@ class LoggingPy:
 
         tz_utc_minus3 = timezone(timedelta(hours=-3))
         timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M%S")
+        os.makedirs('logs', exist_ok=True)
         log_filename = f'logs/log_{nameModel}_{timestamp}.log'
 
         # Configurar um manipulador de arquivo
-        file_handler = logging.FileHandler(log_filename)
+        file_handler = logging.FileHandler(log_filename, mode='w')
         formatterFile = logging.Formatter(f'%(asctime)s - %(levelname)s %(message)s')
         formatterFile.converter = lambda *args: datetime.now(tz=tz_utc_minus3).timetuple()
         file_handler.setFormatter(formatterFile)
