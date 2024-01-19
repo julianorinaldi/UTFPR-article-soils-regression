@@ -32,7 +32,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             x = tf.keras.layers.Dense(160, activation='relu')(x)
             predictions = tf.keras.layers.Dense(1, activation='linear')(x)
             
-        _model = tf.keras.model.Model(inputs=pretrained_model.input, outputs=predictions) # type: ignore
+        _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
         if self.config.argsGridSearch:
             opt = tf.keras.optimizers.RMSprop(learning_rate=hp.Choice('learning_rate', values=[0.0001, 0.001]),

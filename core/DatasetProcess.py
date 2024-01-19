@@ -37,13 +37,12 @@ class DatasetProcess:
         # _______________________________________________________________
         
         # Removendo colunas desnecessárias
-        df = df.drop(
-            columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"}) # type: ignore
+        df = df.drop(columns=["class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"]) 
 
         # *********************************
         # Excluindo Nitrogênio Por Enquanto
         # *********************************
-        df = df.drop(columns={"teor_nitrogenio"}) # type: ignore
+        df = df.drop(columns=["teor_nitrogenio"]) 
         # *********************************
 
         # Randomizando
@@ -52,7 +51,7 @@ class DatasetProcess:
         # Separando apenas nomes dos arquivos
         imageFileNames = df["arquivo"].to_list()
         # Removendo coluna arquivo para normalização
-        df = df.drop(columns={"arquivo"}) # type: ignore
+        df = df.drop(columns=["arquivo"])
         
         # Normalização Dataset Treinamento
         # df_stats = df.describe()
