@@ -64,23 +64,27 @@ class ModelABCRegressor(ABC):
         
         self.config.logger.logInfo(f"")
         self.config.logger.logInfo(f"Melhores resultados ...")
-        self.config.logger.logInfo(f"{df_sorted.head()}")
+        self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"\n{df_sorted.head()}")
+        self.config.logger.logInfo(f"\n")
         self.config.logger.logInfo(f"")
         self.config.logger.logInfo(f"Piores resultados ...")
-        self.config.logger.logInfo(f"{df_sorted.tail()}")
         self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"\n{df_sorted.tail()}")
+        self.config.logger.logInfo(f"\n")
         
         df_media = df_sorted.groupby('grupo').agg({'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
         r2 = r2_score(df_media['teor_cabono_real'], df_media['teor_cabono_predict'])
         
-        self.config.logger.logInfo(f"R2 sobre a média de predição:")
         self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"R2 sobre a média de predição:")
+        self.config.logger.logInfo(f"\n")
         self.config.logger.logInfo(f"====================================================")
         self.config.logger.logInfo(f"====================================================")
         self.config.logger.logInfo(f"=========>>>>> R2 da média: {r2} <<<<<=========")
         self.config.logger.logInfo(f"====================================================")
         self.config.logger.logInfo(f"====================================================")
-        self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"\n")
    
     def _load_images(self, qtdImagens : int):
         datasetProcess = DatasetProcess(self.config)
@@ -91,13 +95,15 @@ class ModelABCRegressor(ABC):
         if (qtd_imagens > qtdImagens) and (qtdImagens > 0):
             qtd_imagens = qtdImagens
 
-        self.config.logger.logInfo(f"Dados de validação do Treino")
         imageProcess = ImageProcess(self.config)
-        # Array com as imagens a serem carregadas para validação do treino
-        imageArrayValidate = imageProcess.image_load(imgFileNamesValidate, qtd_imagens)
-        X_validate, Y_carbono_validate = imageProcess.image_convert_array(imageArrayValidate, df_validate, qtd_imagens)
+        X_validate, Y_carbono_validate = np.array([]), np.array([])
+        if len(imgFileNamesValidate) > 0:
+            self.config.logger.logInfo(f"Carregando imagens ...\n")
+            # Array com as imagens a serem carregadas para validação do treino
+            imageArrayValidate = imageProcess.image_load(imgFileNamesValidate, qtd_imagens)
+            X_validate, Y_carbono_validate = imageProcess.image_convert_array(imageArrayValidate, df_validate, qtd_imagens)
 
-        self.config.logger.logInfo(f"Dados do Treino")
+        self.config.logger.logInfo(f"Carregando imagens ...\n")
         # Array com as imagens a serem carregadas de treino
         imageArray = imageProcess.image_load(imgFileNames, qtd_imagens)
         X_, Y_carbono = imageProcess.image_convert_array(imageArray, df, qtd_imagens)
@@ -110,7 +116,6 @@ class ModelABCRegressor(ABC):
         self.config.setDirBaseImg('dataset/images/treinamento-solo-256x256')
         self.config.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
         
-        self.config.logger.logInfo(f"Carregando imagens para o treino/validação")
         X_, Y_carbono, X_validate, Y_carbono_validate, imgFileNames = self._load_images(qtdImagens=self.config.amountImagesTrain)
         
         # Flatten das imagens
@@ -123,19 +128,25 @@ class ModelABCRegressor(ABC):
         self.config.logger.logDebug(f"Novo shape de X_validate: {X_validate.shape}")
         self.config.logger.logDebug(f"Novo shape de X_: {X_.shape}")
         
+        self.config.logger.logInfo(f"")
         self.config.logger.logInfo(f"Criando modelo: {self.config.modelSetEnum.name}")
+        self.config.logger.logInfo(f"")
         
         # Treinar o modelo
         self.config.logger.logInfo(f"Iniciando o treino")
             
         if (not self.config.argsGridSearch > 0):
             # Executa sem GridSearch
+            self.config.logger.logInfo(f"")
             self.config.logger.logInfo(f"Executando sem o GridSearch")
+            self.config.logger.logInfo(f"")
             self.models = { self.getSpecialistModel(hp = None) }
             self.modelFit(self.models, X_, Y_carbono, X_validate, Y_carbono_validate)
         else:
             # Executa com GridSearch
+            self.config.logger.logInfo(f"")
             self.config.logger.logInfo(f"Executando com o GridSearch")
+            self.config.logger.logInfo(f"")
             earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                             patience=self.config.argsPatience, restore_best_weights=True)
             
@@ -177,8 +188,6 @@ class ModelABCRegressor(ABC):
         self.config.setDirBaseImg('dataset/images/teste-solo-256x256')
         self.config.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
         
-        self.config.logger.logInfo(f"Carregando imagens para o teste")
-            
         X_, Y_carbono, X_validate, Y_carbono_validate, imgFileNames = self._load_images(qtdImagens=self.config.amountImagesTest)
         
         # No teste por ignorar estes dados, eles devem estar vazios.
@@ -187,7 +196,9 @@ class ModelABCRegressor(ABC):
         # Aceita apenas 2 dimensões.
         X_ = self.reshapeTwoDimensions(X_)
         
+        self.config.logger.logInfo(f"")
         self.config.logger.logInfo(f"Iniciando predição completa para o R2...")
+        self.config.logger.logInfo(f"\n")
         
         for index, model in enumerate(self.models):
             # Fazendo a predição sobre os dados de teste
@@ -202,14 +213,17 @@ class ModelABCRegressor(ABC):
             self.config.logger.logInfo(f"=========>>>>> R2 Modelo: {r2} <<<<<=========")
             self.config.logger.logInfo(f"====================================================")
             self.config.logger.logInfo(f"====================================================")
-            self.config.logger.logInfo(f"")
+            self.config.logger.logInfo(f"\n")
 
             if self.config.argsGridSearch > 0:
+                self.config.logger.logInfo(f"")
                 self.config.logger.logInfo(f"Hiperparâmetros deste modelo:")
                 self.config.logger.logInfo(f"{self.hyperparameters[index].values}")
-                self.config.logger.logInfo(f"")
+                self.config.logger.logInfo(f"\n")
             
+            self.config.logger.logInfo(f"")
             self.config.logger.logInfo(f"Alguns exemplos de predições ...")
+            self.config.logger.logInfo(f"")
             self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
                 
             del model

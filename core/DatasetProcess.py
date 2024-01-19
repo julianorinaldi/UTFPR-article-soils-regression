@@ -58,12 +58,11 @@ class DatasetProcess:
         # df_stats = df_stats.transpose()
         # df = (df - df_stats['mean']) / df_stats['std']
 
-        self.config.logger.logInfo(f"Dados do Dataset sem normalização ...")
+        self.config.logger.logInfo(f"Informações básicas do Dataset sem normalização ...")
         self.config.logger.logInfo(f"\n{df.describe()}")
         if not df_validate.empty:
             self.config.logger.logInfo(f"\n{df_validate.describe()}")
         
-
         #x = df.values
         
         # MinMaxScaler

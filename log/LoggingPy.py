@@ -39,7 +39,7 @@ class LoggingPy:
         
         # Configurar um manipulador de console
         console_handler = logging.StreamHandler()
-        formatterStream = logging.Formatter(f'%(asctime)s - %(levelname)s {prefix} %(message)s')
+        formatterStream = logging.Formatter(f'%(asctime)s - %(levelname)s {prefix} %(message)s', datefmt='%Y-%m-%d %H:%M')
         formatterStream.converter = lambda *args: datetime.now(tz=tz_utc_minus3).timetuple()
         console_handler.setFormatter(formatterStream)
         self.logger.addHandler(console_handler)
