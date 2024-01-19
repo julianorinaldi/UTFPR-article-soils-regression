@@ -1,12 +1,12 @@
 from sklearn.linear_model import LinearRegression
 from sklearn.feature_selection import RFE
-from entityModelConfig import ModelConfig
-from models.modelABCRegressor import ModelABCRegressor
+from core.ModelConfig import ModelConfig
+from model.ModelABCRegressor import ModelABCRegressor
 
 class ModelLinearRegressor(ModelABCRegressor):
     
-    def __init__(self, modelConfig : ModelConfig):
-        super().__init__(modelConfig)
+    def __init__(self, config : ModelConfig):
+        super().__init__(config)
         
     def getSpecialistModel(self, hp):
         return LinearRegression()

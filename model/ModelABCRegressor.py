@@ -4,17 +4,16 @@ import tensorflow as tf
 
 from tqdm import tqdm
 from abc import ABC, abstractmethod
-from entityModelConfig import ModelConfig
-from datasetProcess import dataset_process
-from imageProcess import image_load, image_convert_array
+from core.ModelConfig import ModelConfig
+from core.DatasetProcess import DatasetProcess
+from core.ImageProcess import ImageProcess
 from sklearn.metrics import r2_score
 from keras_tuner.tuners import RandomSearch
 from sklearn.model_selection import GridSearchCV
-from imageProcess import image_processing
 
 class ModelABCRegressor(ABC):
-    def __init__(self, modelConfig : ModelConfig):
-        self.modelConfig = modelConfig
+    def __init__(self, config : ModelConfig):
+        self.config = config
         self.models = []
         self.hyperparameters = []
         super().__init__()
@@ -64,16 +63,16 @@ class ModelABCRegressor(ABC):
         
         df_sorted['grupo'] = df_sorted['amostra'].str.extract(r'([A-Z]+\d+)')[0]
         
-        print(f'{self.modelConfig.printPrefix} Melhores resultados ...')
+        print(f'{self.config.printPrefix} Melhores resultados ...')
         print(f'{df_sorted.head()}')
         print()
-        print(f'{self.modelConfig.printPrefix} Piores resultados ...')
+        print(f'{self.config.printPrefix} Piores resultados ...')
         print(f'{df_sorted.tail()}')
         print()
         
         df_media = df_sorted.groupby('grupo').agg({'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
         r2 = r2_score(df_media['teor_cabono_real'], df_media['teor_cabono_predict'])
-        print(f'{self.modelConfig.printPrefix} R2 sobre a média de predição:')
+        print(f'{self.config.printPrefix} R2 sobre a média de predição:')
         print()
         print(f'====================================================')
         print(f'====================================================')
@@ -84,7 +83,8 @@ class ModelABCRegressor(ABC):
             
    
     def _load_images(self, modelConfig : ModelConfig, qtdImagens : int):
-        df, imgFileNames, df_validate, imgFileNamesValidate = dataset_process(modelConfig)
+        datasetProcess = DatasetProcess(modelConfig)
+        df, imgFileNames, df_validate, imgFileNamesValidate = datasetProcess.dataset_process()
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
@@ -93,27 +93,29 @@ class ModelABCRegressor(ABC):
 
         if (modelConfig.argsDebug):
             print(f'{modelConfig.printPrefix} Dados de validação do Treino')
+            
+        imageProcess = ImageProcess(modelConfig)
         # Array com as imagens a serem carregadas para validação do treino
-        imageArrayValidate = image_load(modelConfig, imgFileNamesValidate, qtd_imagens)
-        X_validate, Y_carbono_validate = image_convert_array(modelConfig, imageArrayValidate, df_validate, qtd_imagens)
+        imageArrayValidate = imageProcess.image_load(imgFileNamesValidate, qtd_imagens)
+        X_validate, Y_carbono_validate = imageProcess.image_convert_array(imageArrayValidate, df_validate, qtd_imagens)
 
         if (modelConfig.argsDebug):
             print(f'{modelConfig.printPrefix} Dados do Treino')
         # Array com as imagens a serem carregadas de treino
-        imageArray = image_load(modelConfig, imgFileNames, qtd_imagens)
-        X_, Y_carbono = image_convert_array(modelConfig, imageArray, df, qtd_imagens)
+        imageArray = imageProcess.image_load(imgFileNames, qtd_imagens)
+        X_, Y_carbono = imageProcess.image_convert_array(imageArray, df, qtd_imagens)
         
         # Retorno X_ e Y_carbono, DataFrame, e Lista de Imagens
         # X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate relaciona do Validate do Treino
         return X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate
         
     def train(self):
-        self.modelConfig.setDirBaseImg('dataset/images/treinamento-solo-256x256')
-        self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
+        self.config.setDirBaseImg('dataset/images/treinamento-solo-256x256')
+        self.config.setPathCSV('dataset/csv/Dataset256x256-Treino.csv')
         
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Carregando imagens para o treino/validação')
-        X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate  = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTrain)
+        if (self.config.argsDebug):
+            print(f'{self.config.printPrefix} Carregando imagens para o treino/validação')
+        X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate  = self._load_images(self.config, qtdImagens=self.config.amountImagesTrain)
         
         # Flatten das imagens
         # if (self.modelConfig.argsDebug):
@@ -127,47 +129,47 @@ class ModelABCRegressor(ABC):
         #     print(f'{self.modelConfig.printPrefix} Novo shape de X_validate: {X_validate.shape}')
         #     print(f'{self.modelConfig.printPrefix} Novo shape de X_: {X_.shape}')
         
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Criando modelo: {self.modelConfig.modelSet.name}')
+        if (self.config.argsDebug):
+            print(f'{self.config.printPrefix} Criando modelo: {self.config.modelSetEnum.name}')
         
         # Treinar o modelo
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Iniciando o treino')
+        if (self.config.argsDebug):
+            print(f'{self.config.printPrefix} Iniciando o treino')
             
-        if (not self.modelConfig.argsGridSearch > 0):
+        if (not self.config.argsGridSearch > 0):
             # Executa sem GridSearch
             self.models = { self.getSpecialistModel(hp = None) }
             self.modelFit(self.models, X_, Y_carbono, X_validate, Y_carbono_validate)
         else:
             # Executa com GridSearch
             earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
-                            patience=self.modelConfig.argsPatience, restore_best_weights=True)
+                            patience=self.config.argsPatience, restore_best_weights=True)
             tuner = RandomSearch(
                 self.getSpecialistModel,
                 objective='val_loss',
-                max_trials=self.modelConfig.argsGridSearch,  # Quantas tentativas de hiperparâmetros serão executadas
+                max_trials=self.config.argsGridSearch,  # Quantas tentativas de hiperparâmetros serão executadas
                 directory='_GridSearchTuning',  # diretório para armazenar os resultados
                 project_name='RandomSearchTuning'
             )
             
-            if (not self.modelConfig.argsSepared):
+            if (not self.config.argsSepared):
                 # Padrão sem separação entre validação e treino      
                 X_ = np.concatenate((X_, X_validate), axis=0)
                 Y_carbono = np.concatenate((Y_carbono, Y_carbono_validate), axis=0)
-                tuner.search(X_, Y_carbono, epochs=self.modelConfig.argsEpochs, 
+                tuner.search(X_, Y_carbono, epochs=self.config.argsEpochs, 
                             validation_split=0.2, callbacks=[earlyStopping])
             else:
                 # Execute a busca de hiperparâmetros
-                tuner.search(X_, Y_carbono, epochs=self.modelConfig.argsEpochs, 
+                tuner.search(X_, Y_carbono, epochs=self.config.argsEpochs, 
                             validation_data=(X_validate, Y_carbono_validate),
                             callbacks=[earlyStopping])
 
-            self.hyperparameters = tuner.get_best_hyperparameters(num_trials=self.modelConfig.argsGridSearch)
+            self.hyperparameters = tuner.get_best_hyperparameters(num_trials=self.config.argsGridSearch)
             # Imprima os melhores hiperparâmetros encontrados
             print("Melhores Hyperparameters:", self.hyperparameters[0].values)
             
             # Obtenha a melhor tentativa
-            best_trial = tuner.oracle.get_best_trials(num_trials=self.modelConfig.argsGridSearch)
+            best_trial = tuner.oracle.get_best_trials(num_trials=self.config.argsGridSearch)
             _models = []
             for trial in best_trial:
                 _models.append(tuner.load_model(trial))    
@@ -176,13 +178,13 @@ class ModelABCRegressor(ABC):
         
     def test(self):
         # Agora entra o Test
-        self.modelConfig.setDirBaseImg('dataset/images/teste-solo-256x256')
-        self.modelConfig.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
+        self.config.setDirBaseImg('dataset/images/teste-solo-256x256')
+        self.config.setPathCSV('dataset/csv/Dataset256x256-Teste.csv')
         
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Carregando imagens para o teste')
+        if (self.config.argsDebug):
+            print(f'{self.config.printPrefix} Carregando imagens para o teste')
             
-        X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate = self._load_images(self.modelConfig, qtdImagens=self.modelConfig.amountImagesTest)
+        X_, Y_carbono, df, imgFileNames, X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate = self._load_images(self.config, qtdImagens=self.config.amountImagesTest)
         
         # No teste por ignorar estes dados, eles devem estar vazios.
         # X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate
@@ -190,8 +192,8 @@ class ModelABCRegressor(ABC):
         # Aceita apenas 2 dimensões.
         X_ = self.reshapeTwoDimensions(X_)
         
-        if (self.modelConfig.argsDebug):
-            print(f'{self.modelConfig.printPrefix} Iniciando predição completa para o R2...')
+        if (self.config.argsDebug):
+            print(f'{self.config.printPrefix} Iniciando predição completa para o R2...')
         
         for index, model in enumerate(self.models):
             # Fazendo a predição sobre os dados de teste
@@ -208,12 +210,12 @@ class ModelABCRegressor(ABC):
             print(f'====================================================')
             print()
 
-            print(f'{self.modelConfig.printPrefix}{self.modelConfig.printPrefix}')
-            print(f'{self.modelConfig.printPrefix}{self.hyperparameters[index].values}')
-            print(f'{self.modelConfig.printPrefix}{self.modelConfig.printPrefix}')
+            print(f'{self.config.printPrefix}{self.config.printPrefix}')
+            print(f'{self.config.printPrefix}{self.hyperparameters[index].values}')
+            print(f'{self.config.printPrefix}{self.config.printPrefix}')
             
-            if (self.modelConfig.argsDebug):
-                print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')
+            if (self.config.argsDebug):
+                print(f'{self.config.printPrefix} Alguns exemplos de predições ...')
                 self._showPredictSamples(X_, imgFileNames, Y_carbono, prediction)
                 
             del model

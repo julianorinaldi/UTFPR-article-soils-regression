@@ -32,14 +32,14 @@ As pastas principais são:
 
 # Como rodar um modelo?
 
-Considerando que você já entrou no seu ambiente VENV, vamos executar o arquivo ```X-SoilRegression.py```.
+Considerando que você já entrou no seu ambiente VENV, vamos executar o arquivo ```main.py```.
 
-O arquivo main ```X-SoilRegression.py``` serve para rodar o treinamento e teste do modelo, contém vários parâmetros de configurações. 
+O arquivo main ```main.py``` serve para rodar o treinamento e teste do modelo, contém vários parâmetros de configurações. 
 
-**Para conhecer os parâmetros basta executar o comando ```python3 X-SoilRegression.py -h```.**
+**Para conhecer os parâmetros basta executar o comando ```python3 main.py -h```.**
 
 ```python
-usage: X-SoilRegression.py [-h] [-d] [-n NAME] [-p] [-t] [-T] [-i AMOUNT_IMAGE_TRAIN] [-I AMOUNT_IMAGE_TEST] [-P PATIENCE]
+usage: main.py [-h] [-d] [-n NAME] [-p] [-t] [-T] [-i AMOUNT_IMAGE_TRAIN] [-I AMOUNT_IMAGE_TEST] [-P PATIENCE]
                            [-e EPOCHS] [-m MODEL]
 
 options:
@@ -70,7 +70,7 @@ options:
 
 O padrão de execução sempre é treinamento + teste, porém você pode escolher apenas testar se desejar, veja o tópico a seguir.
 
-```python3 X-SoilRegression.py -n NomeDoMolo.tf -d -m 40 -p -P 2```
+```python3 main.py -n NomeDoMolo.tf -d -m 40 -p -P 2```
 
  - -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
  - -d, --debug           Para listar os prints de Debug
@@ -87,7 +87,7 @@ O padrão de execução sempre é treinamento + teste, porém você pode escolhe
 
 O código abaixo irá procurar o modelo já gerado com o nome **NomeDoMolo.tf**, e executar o teste.
 
-```python3 X-SoilRegression.py -n NomeDoMolo.tf -d -T```
+```python3 main.py -n NomeDoMolo.tf -d -T```
 
  - -n NAME, --name NAME  Nome do arquivo/diretório de saída do modelo .tf
  - -d, --debug           Para listar os prints de Debug

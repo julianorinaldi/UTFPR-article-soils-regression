@@ -2,10 +2,11 @@
 
 # Imports
 import argparse
-from loggingPy import loggingPy
+from log.LoggingPy import LoggingPy
 
-from modelSet import convertModelSet
-from entityModelConfig import ModelConfig
+from core.ModelSetEnum import convertModelSetEnum
+from core.ModelConfig import ModelConfig
+from core.ExecuteProcess import ExecuteProcess
 
 prefix = ">>>>>>>>>>>>>>>>>"
 
@@ -27,19 +28,22 @@ parser.add_argument("-T", "--Test", action="store_true", default=False, help="De
 
 args = parser.parse_args()
 
+logger = LoggingPy(args.name, prefix)
+logger.logInfo(args)
+
 if not (args.name):
     print(f'{prefix} Há parâmetros faltantes. Utilize -h ou --help para ajuda!')
     exit(1)
 
 # Definindo Modelo de TransferLearning e Configurações
-modelSet = convertModelSet(args.model)
+modelSetEnum = convertModelSetEnum(args.model)
 imageDimensionX = 256
 imageDimensionY = 256
 qtd_canal_color = 3
 pathCsv = ""
 dir_base_img = ""
 
-modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_base_img,
+modelConfig = ModelConfig(modelSetEnum=modelSetEnum, pathCSV=pathCsv, dir_base_img=dir_base_img,
                           imageDimensionX=imageDimensionX, imageDimensionY=imageDimensionY,
                           channelColors=qtd_canal_color, amountImagesTrain=args.amount_image_train,
                           amountImagesTest=args.amount_image_test,
@@ -49,10 +53,10 @@ modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_b
                           argsShowModel=args.show_model,
                           printPrefix = prefix)
 
-logger = loggingPy(modelConfig)
-logger.logInfo(args)
+
 
 # Estratégia de importar a execução, para não carregar o TensorFlow antes de acetar parâmetros de entrada.
-from XExecute import execute
+#from core.ExecuteProcess import ExecuteProcess
 
-execute(modelConfig)
+execute = ExecuteProcess(modelConfig)
+execute.run()

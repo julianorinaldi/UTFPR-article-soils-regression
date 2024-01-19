@@ -1,7 +1,9 @@
-from modelSet import ModelSet
+from core.ModelSetEnum import ModelSetEnum
+from log.LoggingPy import LoggingPy
 
 class ModelConfig:
-    def __init__(self, modelSet : ModelSet = ModelSet.ResNet50, 
+    def __init__(self, modelSetEnum : ModelSetEnum = ModelSetEnum.ResNet50, 
+                loggingPy : LoggingPy = LoggingPy(),
                 pathCSV : str = 'dataset/csv/Dataset256x256-Treino.csv', 
                 dir_base_img : str = 'dataset/images/treinamento-solo-256x256', 
                 imageDimensionX : int = 256, imageDimensionY : int = 256, channelColors : int = 3,
@@ -11,7 +13,8 @@ class ModelConfig:
                 argsEpochs : int = 100, argsPatience : int = 5, argsGridSearch : int = 0, 
                 argsShowModel : bool = False,
                 printPrefix : str = '>>>>>>>>>>>>>>>>>'):
-        self.modelSet = modelSet
+        self.modelSetEnum = modelSetEnum
+        self.logger = loggingPy
         self.imageDimensionX = imageDimensionX
         self.imageDimensionY = imageDimensionY
         self.channelColors = channelColors

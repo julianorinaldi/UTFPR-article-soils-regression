@@ -1,20 +1,20 @@
-from entityModelConfig import ModelConfig
-from models.modelABCRegressor import ModelABCRegressor
+from core.ModelConfig import ModelConfig
+from model.ModelABCRegressor import ModelABCRegressor
 import pandas as pd
 import tensorflow as tf
 
 class ModelRegressorCNN(ModelABCRegressor):
     
-    def __init__(self, modelConfig : ModelConfig):
-        super().__init__(modelConfig)
+    def __init__(self, config : ModelConfig):
+        super().__init__(config)
         
     def getSpecialistModel(self, hp):
         _model = tf.keras.models.Sequential([
                     # Camada de convolução 1
                     tf.keras.layers.Conv2D(32, (3, 3), activation='relu', 
-                                           input_shape=(self.modelConfig.imageDimensionX, 
-                                                        self.modelConfig.imageDimensionY, 
-                                                        self.modelConfig.channelColors)),
+                                           input_shape=(self.config.imageDimensionX, 
+                                                        self.config.imageDimensionY, 
+                                                        self.config.channelColors)),
                     
                     tf.keras.layers.GlobalAveragePooling2D(),
                     tf.keras.layers.Flatten(),
@@ -25,10 +25,10 @@ class ModelRegressorCNN(ModelABCRegressor):
         opt = tf.keras.optimizers.RMSprop()
         _model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
 
-        if (self.modelConfig.argsShowModel):
-            print(f'{self.modelConfig.printPrefix}')
+        if (self.config.argsShowModel):
+            print(f'{self.config.printPrefix}')
             print(_model.summary())
-            print(f'{self.modelConfig.printPrefix}')
+            print(f'{self.config.printPrefix}')
             
         return _model
     
@@ -37,21 +37,21 @@ class ModelRegressorCNN(ModelABCRegressor):
     
     def modelFit(self, models, X_, Y_carbono, X_validate, Y_carbono_validate):
         earlyStopping = tf.keras.callbacks.EarlyStopping(
-                monitor='val_loss', patience=self.modelConfig.argsPatience, 
+                monitor='val_loss', patience=self.config.argsPatience, 
                     restore_best_weights=True)
 
         for model in models:
-            if (not self.modelConfig.argsSepared):
+            if (not self.config.argsSepared):
                 # Padrão sem separação entre validação e treino      
                 X_ = pd.concat([X_, X_validate], axis=0)
                 X_ = X_.reset_index(drop=True)
                 Y_carbono = pd.concat([Y_carbono, Y_carbono_validate], axis=0)
                 Y_carbono = Y_carbono.reset_index(drop=True)
-                model.fit(X_, Y_carbono, validation_split=0.3, epochs=self.modelConfig.argsEpochs, 
+                model.fit(X_, Y_carbono, validation_split=0.3, epochs=self.config.argsEpochs, 
                                 callbacks=[earlyStopping])
             else:
                 model.fit(X_, Y_carbono, validation_data=(X_validate, Y_carbono_validate),
-                        epochs=self.modelConfig.argsEpochs, callbacks=[earlyStopping])
+                        epochs=self.config.argsEpochs, callbacks=[earlyStopping])
                 
             #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
             #print(f"{self.modelConfig.printPrefix} Model Saved!!!")

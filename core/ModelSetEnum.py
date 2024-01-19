@@ -1,12 +1,12 @@
 from enum import Enum
 
-def convertModelSet(modelNumber):
-    for enumItem in ModelSet:
+def convertModelSetEnum(modelNumber):
+    for enumItem in ModelSetEnum:
         if enumItem.value == modelNumber:
             return enumItem
     raise ValueError(f"Nenhum modelo tem o valor {modelNumber}")
 
-class ModelSet(Enum):
+class ModelSetEnum(Enum):
     ResNet50 = 0
     ResNet101 = 1
     ResNet152 = 2
