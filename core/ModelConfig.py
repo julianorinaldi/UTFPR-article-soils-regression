@@ -10,9 +10,9 @@ class ModelConfig:
                 argsNameModel : str = '', argsTrainable : bool = False,
                 argsSepared : bool = False, argsPreprocess : bool = False, argsOnlyTest : bool = False, 
                 argsEpochs : int = 100, argsPatience : int = 5, argsGridSearch : int = 0, 
-                argsShowModel : bool = False, loggingPy : LoggingPy = LoggingPy()) -> None:
+                argsShowModel : bool = False) -> None:
         self.modelSetEnum = modelSetEnum
-        self.logger = loggingPy
+        self.logger = None
         self.log_level = log_level
         self.imageDimensionX = imageDimensionX
         self.imageDimensionY = imageDimensionY
