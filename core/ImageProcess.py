@@ -49,24 +49,24 @@ class ImageProcess:
             elif self.config.modelSetEnum == ModelSetEnum.VGG19:
                 image = tf.keras.applications.vgg19.preprocess_input(image)
             else:
-                raise Exception('Modelo desconhecido')
+                error = "Modelo desconhecido"
+                self.config.logger.logInfo(f"Excetion: {error}")
+                raise Exception(error)
 
         return image
 
     def image_convert_array(self, imagesArray : list, df : pd.DataFrame, qtd_imagens : int):
         # Transformando em array a lista de imagens (Treino)
         X_ = np.array(imagesArray)
-        # if (modelConfig.argsDebug):
-        #     print(f'{modelConfig.printPrefix} Shape X: {X_.shape}')
+        self.config.logger.logDebug(f"Shape X: {X_.shape}")
 
         # *******************************************************
         # Neste momento apenas trabalhando com valores de Carbono
         # *******************************************************
         Y_carbono = np.array(df['teor_carbono'].tolist()[:qtd_imagens])
-        # if (modelConfig.argsDebug):
-        #     print(f'{modelConfig.printPrefix} Shape Y: {Y_carbono.shape}')
+        self.config.logger.logDebug(f"Shape Y: {Y_carbono.shape}")
             
-        #Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
-        #print(f'Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}')
+        # Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
+        # self.config.logger.logInfo(f"Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}")
         
         return X_, Y_carbono

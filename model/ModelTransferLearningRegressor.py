@@ -43,10 +43,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         _model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
 
         if (self.config.argsShowModel):
-            print(f'{self.config.printPrefix}')
-            print(_model.summary())
-            print(f'{self.config.printPrefix}')
-        
+            self.config.logger.logInfo(f"{_model.summary()}")
+
         return _model
     
     def reshapeTwoDimensions(self, X):
@@ -70,7 +68,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                                 callbacks=[earlyStopping])
             
             #model.save(filepath=self.config.argsNameModel, save_format='tf', overwrite=True)
-            #print(f"{self.config.printPrefix} Model Saved!!!")
+            #self.config.logger.logInfo(f"Model Saved!!!")
         
     def _selectTransferLearningModel(self):
         # Modelos disponíveis para Transfer-Learning
@@ -145,6 +143,4 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
 # Carregando Modelo
 # resnet_model = tf.keras.models.load_model(filepath = self.config.argsNameModel)
 # if (self.config.argsDebug):
-#     print(f'{self.config.printPrefix}')
-#     print(resnet_model.summary())
-#     print(f'{self.config.printPrefix}')
+#     self.config.logger.logInfo(f"{resnet_model.summary()}")

@@ -24,14 +24,13 @@ class ExecuteProcess:
         physical_devices = tf.config.list_physical_devices('GPU')
 
         # Infos da GPU e Framework
-        if (self.config.argsDebug):
-            print(f'{self.config.printPrefix} Amount of GPU Available: {physical_devices}')
+        self.config.logger.logDebug(f"Quantidade de GPU disponíveis: {physical_devices}")
 
         # Estratégia para trabalhar com Multi-GPU
         strategy = tf.distribute.MirroredStrategy(
             cross_device_ops=tf.distribute.HierarchicalCopyAllReduce(num_packs=2))
         
-        print(f'{self.config.printPrefix} Modelo: {self.config.modelSetEnum.name}')
+        self.config.logger.logInfo(f"Modelo: {self.config.modelSetEnum.name}")
         with strategy.scope():
             if (self.config.modelSetEnum == ModelSetEnum.ResNet50 or
                 self.config.modelSetEnum == ModelSetEnum.ResNet101 or
@@ -62,21 +61,28 @@ class ExecuteProcess:
                 _model = ModelSVMRBFRegressor(self.config)
 
             else:
-                raise Exception('Modelo desconhecido')
+                error = "Modelo desconhecido"
+                self.config.logger.logInfo(f"Excetion: {error}")
+                raise Exception(error)
             
+            # Chama o treinamento
             _model.train()
+            
+            # Chama os testes
             _model.test()
             
-            print()
-            print(f"{self.config.printPrefix} Info parameters: ")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -d (--debug): {self.config.argsDebug}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -n (--name): {self.config.argsNameModel}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -p (--preprocess): {self.config.argsPreprocess}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -t (--trainable): {self.config.argsTrainable}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -T (--Test): {self.config.argsOnlyTest}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -e (--epochs): {self.config.argsEpochs}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -P (--patience): {self.config.argsPatience}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -i (--amount_image_train): {self.config.amountImagesTrain}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -I (--amount_image_test): {self.config.amountImagesTest}")
-            print(f"{self.config.printPrefix}{self.config.printPrefix} -m (--model): {self.config.modelSetEnum.value} - {self.config.modelSetEnum.name}")
-            print()
+            self.config.logger.logInfo("#######################")
+            self.config.logger.logInfo(f"Info parameters: ")
+            self.config.logger.logInfo(f" -e (--epochs): {self.config.argsEpochs}")
+            self.config.logger.logInfo(f" -G (--grid_search_trials): {self.config.argsGridSearch}")
+            self.config.logger.logInfo(f" -i (--amount_image_train): {self.config.amountImagesTrain}")
+            self.config.logger.logInfo(f" -I (--amount_image_test): {self.config.amountImagesTest}")
+            self.config.logger.logInfo(f" -m (--model): {self.config.modelSetEnum.value} - {self.config.modelSetEnum.name}")
+            self.config.logger.logInfo(f" -M (--show_model): {self.config.argsShowModel}")
+            self.config.logger.logInfo(f" -n (--name): {self.config.argsNameModel}")
+            self.config.logger.logInfo(f" -p (--preprocess): {self.config.argsPreprocess}")
+            self.config.logger.logInfo(f" -P (--patience): {self.config.argsPatience}")
+            self.config.logger.logInfo(f" -S (--separed): {self.config.argsSepared}")
+            self.config.logger.logInfo(f" -t (--trainable): {self.config.argsTrainable}")
+            self.config.logger.logInfo(f" -T (--Test): {self.config.argsOnlyTest}")
+            self.config.logger.logInfo("#######################")

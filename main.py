@@ -12,7 +12,6 @@ prefix = ">>>>>>>>>>>>>>>>>"
 
 # Argumentos
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--debug", action="store_true", help="Para listar os prints de Debug")
 parser.add_argument("-e", "--epochs", type=int, default=100, help="Quantidade de épocas para o treino - [Modelos TransferLearning/CNN]")
 parser.add_argument("-G", "--grid_search_trials", type=int, default=0, help="Treinar modelos com diversos hyperparametros (setar > 0 para rodar) - [Modelos TransferLearning/CNN hardcoded]")
 parser.add_argument("-i", "--amount_image_train", type=int, default=8930, help="Quantidade de imagens para treino")
@@ -47,11 +46,10 @@ modelConfig = ModelConfig(modelSetEnum=modelSetEnum, pathCSV=pathCsv, dir_base_i
                           imageDimensionX=imageDimensionX, imageDimensionY=imageDimensionY,
                           channelColors=qtd_canal_color, amountImagesTrain=args.amount_image_train,
                           amountImagesTest=args.amount_image_test,
-                          argsNameModel=args.name,argsDebug=args.debug, argsTrainable=args.trainable,
+                          argsNameModel=args.name, argsTrainable=args.trainable,
                           argsSepared=args.separed, argsPreprocess=args.preprocess, argsOnlyTest=args.Test, 
                           argsEpochs=args.epochs, argsPatience=args.patience, argsGridSearch=args.grid_search_trials,
-                          argsShowModel=args.show_model,
-                          printPrefix = prefix)
+                          argsShowModel=args.show_model)
 
 
 

@@ -13,7 +13,6 @@ class DatasetProcess:
         # Carregamento do Dataset
         df : pd.DataFrame = pd.read_csv(self.config.pathCSV)
 
-
         # Estratégia (1) separando dados de validação.
         # _______________________________________________________________
     
@@ -28,14 +27,13 @@ class DatasetProcess:
         df = df[itensRemover]
 
         # Removendo colunas desnecessárias do DataFrame de Validação
-        df_validate = df_validate.drop(
-            columns={"class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho", "teor_nitrogenio"}) # type: ignore    
+        df_validate = df_validate.drop(columns=["class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho", "teor_nitrogenio"])
 
         # Randomizando DataFrame de Validação
         df_validate = df_validate.sample(frac=1, random_state=1, ignore_index=True)
 
         imageFileNamesValidate = df_validate["arquivo"].to_list()
-        df_validate = df_validate.drop(columns={"arquivo"}) # type: ignore
+        df_validate = df_validate.drop(columns=["arquivo"])
         # _______________________________________________________________
         
         # Removendo colunas desnecessárias
@@ -61,29 +59,29 @@ class DatasetProcess:
         # df_stats = df_stats.transpose()
         # df = (df - df_stats['mean']) / df_stats['std']
 
-        print(f'{self.config.printPrefix} Dados do Dataset sem normalização ...')
-        print(f'{df.describe()}')
-        print(f'{self.config.printPrefix}')
-        print(f'{df_validate.describe()}')
+        self.config.logger.logInfo(f"Dados do Dataset sem normalização ...")
+        self.config.logger.logInfo(f"{df.describe()}")
+        if not df_validate.empty:
+            self.config.logger.logInfo(f"{df_validate.describe()}")
         
 
         #x = df.values
         
         # MinMaxScaler
-        # print(f'{modeConfig.printPrefix} Normalizando Dataset com MinMaxScaler...')
+        # self.config.logger.logInfo(f"Normalizando Dataset com MinMaxScaler...")
         # scaler = preprocessing.MinMaxScaler()
         # x_scaled = scaler.fit_transform(x)
         
         #RobustScaler
-        # print(f'{modeConfig.printPrefix} Normalizando Dataset com RobustScaler...')
+        # self.config.logger.logInfo(f"Normalizando Dataset com RobustScaler...")
         # scaler = preprocessing.RobustScaler()
         # x_scaled = scaler.fit_transform(x)
         
-        # print(f'{modeConfig.printPrefix} Normalizando Dataset com StandardScaler...')
+        # self.config.logger.logInfo(f"Normalizando Dataset com StandardScaler...")
         # scaler = preprocessing.StandardScaler()
         # x_scaled = scaler.fit_transform(x)
         
         # df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
-        # print(f'{df.describe()}')
+        # self.config.logger.logInfo(f"{df.describe()}")
         
         return df, imageFileNames, df_validate, imageFileNamesValidate

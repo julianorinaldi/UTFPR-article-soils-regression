@@ -26,9 +26,7 @@ class ModelRegressorCNN(ModelABCRegressor):
         _model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
 
         if (self.config.argsShowModel):
-            print(f'{self.config.printPrefix}')
-            print(_model.summary())
-            print(f'{self.config.printPrefix}')
+            self.config.logger.logInfo(f"{_model.summary()}")
             
         return _model
     
@@ -54,4 +52,4 @@ class ModelRegressorCNN(ModelABCRegressor):
                         epochs=self.config.argsEpochs, callbacks=[earlyStopping])
                 
             #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)
-            #print(f"{self.modelConfig.printPrefix} Model Saved!!!")
+            #self.config.logger.logInfo(f"Model Saved!!!")
