@@ -1,5 +1,8 @@
-import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 import os
+# Defina o nível de log para suprimir mensagens de nível INFO
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 
 # Models
 from models.modelCNNRegressor import ModelRegressorCNN
@@ -13,8 +16,7 @@ from models.modelTransferLearningRegressor import ModelRegressorTransferLearning
 from entityModelConfig import ModelConfig
 from modelSet import ModelSet
 
-# Defina o nível de log para suprimir mensagens de nível INFO
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 
 def execute(modelConfig : ModelConfig):
     physical_devices = tf.config.list_physical_devices('GPU')
