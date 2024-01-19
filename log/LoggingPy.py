@@ -44,9 +44,9 @@ class LoggingPy:
 
         # Criar e configurar o logger
         self.logger = logging.getLogger(LoggingPy.LOGNAME)
-        self.logger.addHandler(console_handler)
+        #self.logger.addHandler(console_handler)
         self.logger.addHandler(file_handler)
-        print(f"********************** Instanciou Log uma vez **********************")
+        print(f"********************** Instanciou Log uma vez {nameModel} **********************")
 
     def logDebug(self, message):
         self.logger.debug(message)

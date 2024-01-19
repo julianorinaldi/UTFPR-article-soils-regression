@@ -3,15 +3,14 @@ from log.LoggingPy import LoggingPy
 
 class ModelConfig:
     def __init__(self, modelSetEnum : ModelSetEnum = ModelSetEnum.ResNet50, 
-                loggingPy : LoggingPy = LoggingPy(), log_level : int = 1,
-                pathCSV : str = 'dataset/csv/Dataset256x256-Treino.csv', 
+                log_level : int = 1, pathCSV : str = 'dataset/csv/Dataset256x256-Treino.csv', 
                 dir_base_img : str = 'dataset/images/treinamento-solo-256x256', 
                 imageDimensionX : int = 256, imageDimensionY : int = 256, channelColors : int = 3,
                 amountImagesTrain : int = 8930, amountImagesTest : int = 3843,
                 argsNameModel : str = '', argsTrainable : bool = False,
                 argsSepared : bool = False, argsPreprocess : bool = False, argsOnlyTest : bool = False, 
                 argsEpochs : int = 100, argsPatience : int = 5, argsGridSearch : int = 0, 
-                argsShowModel : bool = False):
+                argsShowModel : bool = False, loggingPy : LoggingPy = LoggingPy()) -> None:
         self.modelSetEnum = modelSetEnum
         self.logger = loggingPy
         self.log_level = log_level

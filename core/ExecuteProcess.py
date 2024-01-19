@@ -12,7 +12,6 @@ from model.ModelSVMLinearRegressor import ModelSVMLinearRegressor
 from model.ModelSVMRBFRegressor import ModelSVMRBFRegressor
 from model.ModelTransferLearningRegressor import ModelRegressorTransferLearning
 
-from log.LoggingPy import LoggingPy
 from core.ModelConfig import ModelConfig
 from core.ModelSetEnum import ModelSetEnum
 
