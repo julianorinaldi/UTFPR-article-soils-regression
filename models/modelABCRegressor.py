@@ -16,6 +16,7 @@ class ModelABCRegressor(ABC):
     def __init__(self, modelConfig : ModelConfig):
         self.modelConfig = modelConfig
         self.models = []
+        self.hyperparameters = []
         super().__init__()
 
     # Implemente para cada modelo de algoritmo de machine learn
@@ -133,16 +134,18 @@ class ModelABCRegressor(ABC):
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando o treino')
             
-        if (not self.modelConfig.argsGridSearch):
+        if (not self.modelConfig.argsGridSearch > 0):
+            # Executa sem GridSearch
             self.models = { self.getSpecialistModel(hp = None) }
             self.modelFit(self.models, X_, Y_carbono, X_validate, Y_carbono_validate)
         else:
+            # Executa com GridSearch
             earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
                             patience=self.modelConfig.argsPatience, restore_best_weights=True)
             tuner = RandomSearch(
                 self.getSpecialistModel,
                 objective='val_loss',
-                max_trials=10,  # Quantas tentativas de hiperparâmetros serão executadas
+                max_trials=self.modelConfig.argsGridSearch,  # Quantas tentativas de hiperparâmetros serão executadas
                 directory='_GridSearchTuning',  # diretório para armazenar os resultados
                 project_name='RandomSearchTuning'
             )
@@ -159,13 +162,12 @@ class ModelABCRegressor(ABC):
                             validation_data=(X_validate, Y_carbono_validate),
                             callbacks=[earlyStopping])
 
-            best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]
-            
+            self.hyperparameters = tuner.get_best_hyperparameters(num_trials=self.modelConfig.argsGridSearch)
             # Imprima os melhores hiperparâmetros encontrados
-            print("Melhores Hyperparameters:", best_hps.values)
+            print("Melhores Hyperparameters:", self.hyperparameters[0].values)
             
             # Obtenha a melhor tentativa
-            best_trial = tuner.oracle.get_best_trials(num_trials=10)
+            best_trial = tuner.oracle.get_best_trials(num_trials=self.modelConfig.argsGridSearch)
             _models = []
             for trial in best_trial:
                 _models.append(tuner.load_model(trial))    
@@ -191,7 +193,7 @@ class ModelABCRegressor(ABC):
         if (self.modelConfig.argsDebug):
             print(f'{self.modelConfig.printPrefix} Iniciando predição completa para o R2...')
         
-        for model in self.models:
+        for index, model in enumerate(self.models):
             # Fazendo a predição sobre os dados de teste
             prediction = model.predict(X_) # type: ignore
 
@@ -201,10 +203,14 @@ class ModelABCRegressor(ABC):
             print()
             print(f'====================================================')
             print(f'====================================================')
-            print(f'=========>>>>> R2 do modelo: {r2} <<<<<=========')
+            print(f'=========>>>>> R2 Modelo: {r2} <<<<<=========')
             print(f'====================================================')
             print(f'====================================================')
             print()
+
+            print(f'{self.modelConfig.printPrefix}{self.modelConfig.printPrefix}')
+            print(f'{self.modelConfig.printPrefix}{self.hyperparameters[index].values}')
+            print(f'{self.modelConfig.printPrefix}{self.modelConfig.printPrefix}')
             
             if (self.modelConfig.argsDebug):
                 print(f'{self.modelConfig.printPrefix} Alguns exemplos de predições ...')

@@ -2,6 +2,7 @@
 
 # Imports
 import argparse
+from loggingPy import loggingPy
 
 from modelSet import convertModelSet
 from entityModelConfig import ModelConfig
@@ -12,7 +13,7 @@ prefix = ">>>>>>>>>>>>>>>>>"
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--debug", action="store_true", help="Para listar os prints de Debug")
 parser.add_argument("-e", "--epochs", type=int, default=100, help="Quantidade de épocas para o treino - [Modelos TransferLearning/CNN]")
-parser.add_argument("-G", "--grid_search", action="store_true", default=False, help="Treinar modelos com diversos hyperparametros (estabelecidos hardcoded) - [Todos Modelos]")
+parser.add_argument("-G", "--grid_search_trials", type=int, default=0, help="Treinar modelos com diversos hyperparametros (setar > 0 para rodar) - [Modelos TransferLearning/CNN hardcoded]")
 parser.add_argument("-i", "--amount_image_train", type=int, default=8930, help="Quantidade de imagens para treino")
 parser.add_argument("-I", "--amount_image_test", type=int, default=3843, help="Quantidade de imagens para test")
 parser.add_argument("-m", "--model", type=int, default=0, help="Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge, [20]-EfficientNetB7, [21]-EfficientNetV2S, [22]-EfficientNetV2L, [30]-InceptionResNetV2, [40]-DenseNet169, [50]-VGG19, [100]-CNN, [500]-XGBRegressor, [510]-LinearRegression, [520]-SVMLinearRegression, [521]-SVMRBFRegressor")
@@ -24,13 +25,10 @@ parser.add_argument("-S", "--separed", action="store_true", default=False, help=
 parser.add_argument("-t", "--trainable", action="store_true", default=False, help="Define se terá as camadas do modelo de transfer-learning treináveis ou não - [Modelos TransferLearning]")
 parser.add_argument("-T", "--Test", action="store_true", default=False, help="Define execução apenas para o teste - [Modelos TransferLearning]")
 
-
 args = parser.parse_args()
 
 if not (args.name):
-    print(f'{prefix}')
     print(f'{prefix} Há parâmetros faltantes. Utilize -h ou --help para ajuda!')
-    print(f'{prefix}')
     exit(1)
 
 # Definindo Modelo de TransferLearning e Configurações
@@ -47,9 +45,12 @@ modelConfig = ModelConfig(modelSet=modelSet, pathCSV=pathCsv, dir_base_img=dir_b
                           amountImagesTest=args.amount_image_test,
                           argsNameModel=args.name,argsDebug=args.debug, argsTrainable=args.trainable,
                           argsSepared=args.separed, argsPreprocess=args.preprocess, argsOnlyTest=args.Test, 
-                          argsEpochs=args.epochs, argsPatience=args.patience, argsGridSearch=args.grid_search,
+                          argsEpochs=args.epochs, argsPatience=args.patience, argsGridSearch=args.grid_search_trials,
                           argsShowModel=args.show_model,
                           printPrefix = prefix)
+
+logger = loggingPy(modelConfig)
+logger.logInfo(args)
 
 # Estratégia de importar a execução, para não carregar o TensorFlow antes de acetar parâmetros de entrada.
 from XExecute import execute
