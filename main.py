@@ -6,7 +6,6 @@ from log.LoggingPy import LoggingPy
 
 from core.ModelSetEnum import convertModelSetEnum
 from core.ModelConfig import ModelConfig
-from core.ExecuteProcess import ExecuteProcess
 
 prefix = ">>>>>>>>>>>>>>>>>"
 
@@ -55,7 +54,7 @@ modelConfig = ModelConfig(modelSetEnum=modelSetEnum, loggingPy=logger, pathCSV=p
 
 
 # Estratégia de importar a execução, para não carregar o TensorFlow antes de acetar parâmetros de entrada.
-#from core.ExecuteProcess import ExecuteProcess
+from core.ExecuteProcess import ExecuteProcess
 
 execute = ExecuteProcess(modelConfig)
 execute.run()
