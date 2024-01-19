@@ -1,11 +1,20 @@
 import logging
 from datetime import datetime, timezone, timedelta
+import inspect
 
 class LoggingPy:
     LOGNAME = "Default"
     def __init__(self, nameModel : str = "emptyNameModel", prefix : str = ">>>>>>>>>>>>>>>>>", log_level : int = 1):
         # Configurar o nível de log (pode ser logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, ou logging.CRITICAL)
         print(f"********************** Instanciou Log uma vez {nameModel} **********************")
+        informacoes_pilha = inspect.stack()
+        
+        if len(informacoes_pilha) > 1:
+            chamador = informacoes_pilha[1].function
+            print(f"A função foi chamada por: {chamador}")
+        else:
+            print("A função foi chamada diretamente, não de dentro de outra função.")
+
         self.logger : logging.Logger
         
         if log_level == 0:
