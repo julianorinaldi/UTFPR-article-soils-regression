@@ -43,7 +43,7 @@ qtd_canal_color = 3
 pathCsv = ""
 dir_base_img = ""
 
-modelConfig = ModelConfig(modelSetEnum=modelSetEnum, loggingPy=logger, pathCSV=pathCsv, dir_base_img=dir_base_img,
+modelConfig = ModelConfig(modelSetEnum=modelSetEnum, pathCSV=pathCsv, dir_base_img=dir_base_img,
                           imageDimensionX=imageDimensionX, imageDimensionY=imageDimensionY,
                           channelColors=qtd_canal_color, amountImagesTrain=args.amount_image_train,
                           amountImagesTest=args.amount_image_test, log_level=args.log_level,
