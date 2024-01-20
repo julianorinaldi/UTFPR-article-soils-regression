@@ -19,7 +19,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         x = tf.keras.layers.Flatten()(x)
          
         if self.config.argsGridSearch:
-            x = tf.keras.layers.Dense(160, activation='relu')(x)
+            hp_dense1 = hp.Float('dense1', min_value=32, max_value=256, step=32)
+            x = tf.keras.layers.Dense(hp_dense1, activation='relu')(x)
             hp_dropout1 = hp.Float('dropuot_rate1', min_value=0.3, max_value=0.5, step=0.1)
             x = tf.keras.layers.Dropout(hp_dropout1)(x)
                 
