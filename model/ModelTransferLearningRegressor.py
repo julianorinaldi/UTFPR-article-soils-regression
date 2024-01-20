@@ -19,16 +19,11 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         x = tf.keras.layers.Flatten()(x)
          
         if self.config.argsGridSearch:
-            hp_units1 = hp.Int('num_dense_units_1', min_value=512, max_value=768, step=64)
-            x = tf.keras.layers.Dense(units=hp_units1, activation='relu')(x)
-            hp_dropout1 = hp.Float('dropuot_rate1', min_value=0.3, max_value=0.7, step=0.1)
+            x = tf.keras.layers.Dense(160, activation='relu')(x)
+            hp_dropout1 = hp.Float('dropuot_rate1', min_value=0.3, max_value=0.5, step=0.1)
             x = tf.keras.layers.Dropout(hp_dropout1)(x)
-            hp_units2 = hp.Int('num_dense_units_2', min_value=64, max_value=256, step=64)
-            x = tf.keras.layers.Dense(units=hp_units2, activation='relu')(x)
-            hp_dropout2 = hp.Float('dropuot_rate2', min_value=0.3, max_value=0.7, step=0.2)
-            x = tf.keras.layers.Dropout(hp_dropout2)(x)
                 
-            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['linear', 'relu']))(x)
+            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['linear']))(x)
             
         else:
             x = tf.keras.layers.Dense(160, activation='relu')(x)
@@ -37,8 +32,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
       
         if self.config.argsGridSearch:
-            opt = tf.keras.optimizers.RMSprop(learning_rate=hp.Choice('learning_rate', values=[0.0001, 0.001]),
-                                              weight_decay=hp.Choice('weight_decay', values=[0.00001, 0.0001, 0.001]))
+            opt = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[0.0001]))
         else:
             opt = tf.keras.optimizers.RMSprop()
         
@@ -54,7 +48,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
     
     def modelFit(self, models, X_, Y_carbono, X_validate, Y_carbono_validate):
         earlyStopping = tf.keras.callbacks.EarlyStopping(
-                monitor='val_loss', patience=self.config.argsPatience, 
+                monitor='val_mae', patience=self.config.argsPatience, 
                     restore_best_weights=True)
         
         for model in models:
