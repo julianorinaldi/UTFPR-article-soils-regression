@@ -196,16 +196,10 @@ class ModelABCRegressor(ABC):
             erro : float = abs(diff)/abs(real)*100
 
             regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff, 'error(%)' : erro}
+            print(regLine)
             result.append(regLine)
             
         df_sorted = pd.DataFrame(result)
-        # Remover colchetes "[" e "]" das colunas especificadas
-        cols_to_clean = ['teor_cabono_predict', 'teor_cabono_diff', 'error(%)']
-
-        for col in cols_to_clean:
-            if "[" in df_sorted[col].iloc[0]:
-                df_sorted[col] = df_sorted[col].str.replace(r'\[|\]', '', regex=True)
-            
         df_sorted = df_sorted.sort_values(by='error(%)')
         #df_sorted.to_csv('resultado.csv', index=False)
         #self.config.logger.logInfo(f"{df_sorted.to_string(index=False)}")
