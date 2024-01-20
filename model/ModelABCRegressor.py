@@ -203,7 +203,8 @@ class ModelABCRegressor(ABC):
         cols_to_clean = ['teor_cabono_predict', 'teor_cabono_diff', 'error(%)']
 
         for col in cols_to_clean:
-            df_sorted[col] = df_sorted[col].str.replace(r'\[|\]', '', regex=True)
+            if "[" in df_sorted[col].iloc[0]:
+                df_sorted[col] = df_sorted[col].str.replace(r'\[|\]', '', regex=True)
             
         df_sorted = df_sorted.sort_values(by='error(%)')
         #df_sorted.to_csv('resultado.csv', index=False)
