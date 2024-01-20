@@ -191,7 +191,7 @@ class ModelABCRegressor(ABC):
         for i in tqdm(range(len(cabonoRealArray))):
             amostra = imgFileNames[i]
             predictValue = carbonoPredictionArray[i].tolist()[0]
-            real = cabonoRealArray[i].tolist()[0]
+            real = cabonoRealArray[i]
             diff = abs(real - predictValue).tolist()[0]
             erro = (abs(diff)/abs(real)*100).tolist()[0]
 
