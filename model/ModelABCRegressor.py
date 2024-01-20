@@ -189,13 +189,14 @@ class ModelABCRegressor(ABC):
     def _minMaxPredictTest(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
         result = []
         for i in tqdm(range(len(cabonoRealArray))):
-            amostra = imgFileNames[i]
-            predictValue = carbonoPredictionArray[i].tolist()[0]
-            real = cabonoRealArray[i]
-            diff = abs(real - predictValue).tolist()[0]
-            erro = (abs(diff)/abs(real)*100).tolist()[0]
+            amostra : str = imgFileNames[i]
+            predictValue : float = carbonoPredictionArray[i]
+            real : float = cabonoRealArray[i]
+            diff : float = abs(real - predictValue)
+            erro : float = (abs(diff)/abs(real)*100)
 
             regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff, 'error(%)' : erro}
+            print(regLine)
             result.append(regLine)
             
         df_sorted = pd.DataFrame(result)
