@@ -196,7 +196,6 @@ class ModelABCRegressor(ABC):
             erro : float = abs(diff)/abs(real)*100
 
             regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff, 'error(%)' : erro}
-            print(regLine)
             result.append(regLine)
             
         df_sorted = pd.DataFrame(result)
