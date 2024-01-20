@@ -8,8 +8,7 @@ from core.ModelConfig import ModelConfig
 from core.DatasetProcess import DatasetProcess
 from core.ImageProcess import ImageProcess
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-from keras_tuner.tuners import RandomSearch
-from sklearn.model_selection import GridSearchCV
+from keras_tuner.tuners import Hyperband
 
 class ModelABCRegressor(ABC):
     def __init__(self, config : ModelConfig):
@@ -107,11 +106,14 @@ class ModelABCRegressor(ABC):
             earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_mae', 
                             patience=self.config.argsPatience, restore_best_weights=True)
             
-            tuner = RandomSearch(
+            tuner = Hyperband(
                 self.getSpecialistModel,
                 objective='val_mae',
-                max_trials=self.config.argsGridSearch,  # Quantas tentativas de hiperparâmetros serão executadas
-                directory='_gridSearchResults',  # diretório para armazenar os resultados
+                max_epochs=self.config.argsEpochs,
+                factor=3,
+                #max_trials=self.config.argsGridSearch,  # Quantas tentativas de hiperparâmetros serão executadas
+                #directory='_gridSearchResults',  # diretório para armazenar os resultados
+                directory='_hyperbandResults',  # diretório para armazenar os resultados
                 project_name=self.config.argsNameModel
             )
             
