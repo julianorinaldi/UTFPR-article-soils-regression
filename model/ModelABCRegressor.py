@@ -113,6 +113,7 @@ class ModelABCRegressor(ABC):
                 factor=3,
                 #max_trials=self.config.argsGridSearch,  # Quantas tentativas de hiperparâmetros serão executadas
                 #directory='_gridSearchResults',  # diretório para armazenar os resultados
+                hyperband_iterations=self.config.argsGridSearch,
                 directory='_hyperbandResults',  # diretório para armazenar os resultados
                 project_name=self.config.argsNameModel
             )
