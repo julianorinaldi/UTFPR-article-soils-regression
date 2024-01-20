@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from core.ModelConfig import ModelConfig
 from core.DatasetProcess import DatasetProcess
 from core.ImageProcess import ImageProcess
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from keras_tuner.tuners import RandomSearch
 from sklearn.model_selection import GridSearchCV
 
@@ -42,49 +42,6 @@ class ModelABCRegressor(ABC):
     
     def _showPredictSamples(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
         self._minMaxPredictTest(carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray)
-
-    def _minMaxPredictTest(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
-        result = []
-        for i in tqdm(range(len(cabonoRealArray))):
-            predictValue = carbonoPredictionArray[i]
-            real = cabonoRealArray[i]
-            diff = abs(real - predictValue)
-            amostra = imgFileNames[i]
-            erro = abs(diff)/abs(real)*100
-
-            regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff, 'error(%)' : erro}
-            result.append(regLine)
-            
-        df_sorted = pd.DataFrame(result)
-        df_sorted = df_sorted.sort_values(by='error(%)')
-        #df_sorted.to_csv('resultado.csv', index=False)
-        #self.config.logger.logInfo(f"df_sorted.to_string(index=False)}")
-        
-        df_sorted['grupo'] = df_sorted['amostra'].str.extract(r'([A-Z]+\d+)')[0]
-        
-        self.config.logger.logInfo(f"")
-        self.config.logger.logInfo(f"Melhores resultados ...")
-        self.config.logger.logInfo(f"")
-        self.config.logger.logInfo(f"\n{df_sorted.head()}")
-        self.config.logger.logInfo(f"\n")
-        self.config.logger.logInfo(f"")
-        self.config.logger.logInfo(f"Piores resultados ...")
-        self.config.logger.logInfo(f"")
-        self.config.logger.logInfo(f"\n{df_sorted.tail()}")
-        self.config.logger.logInfo(f"\n")
-        
-        df_media = df_sorted.groupby('grupo').agg({'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
-        r2 = r2_score(df_media['teor_cabono_real'], df_media['teor_cabono_predict'])
-        
-        self.config.logger.logInfo(f"")
-        self.config.logger.logInfo(f"R2 sobre a média de predição:")
-        self.config.logger.logInfo(f"\n")
-        self.config.logger.logInfo(f"====================================================")
-        self.config.logger.logInfo(f"====================================================")
-        self.config.logger.logInfo(f"=========>>>>> R2 da média: {r2} <<<<<=========")
-        self.config.logger.logInfo(f"====================================================")
-        self.config.logger.logInfo(f"====================================================")
-        self.config.logger.logInfo(f"\n")
    
     def _load_images(self, qtdImagens : int):
         datasetProcess = DatasetProcess(self.config)
@@ -147,12 +104,12 @@ class ModelABCRegressor(ABC):
             self.config.logger.logInfo(f"")
             self.config.logger.logInfo(f"Executando com o GridSearch")
             self.config.logger.logInfo(f"")
-            earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', 
+            earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_mae', 
                             patience=self.config.argsPatience, restore_best_weights=True)
             
             tuner = RandomSearch(
                 self.getSpecialistModel,
-                objective='val_loss',
+                objective='val_mae',
                 max_trials=self.config.argsGridSearch,  # Quantas tentativas de hiperparâmetros serão executadas
                 directory='_gridSearchResults',  # diretório para armazenar os resultados
                 project_name=self.config.argsNameModel
@@ -163,7 +120,7 @@ class ModelABCRegressor(ABC):
                 X_ = np.concatenate((X_, X_validate), axis=0)
                 Y_carbono = np.concatenate((Y_carbono, Y_carbono_validate), axis=0)
                 tuner.search(X_, Y_carbono, epochs=self.config.argsEpochs, 
-                            validation_split=0.2, callbacks=[earlyStopping])
+                            validation_split=0.3, callbacks=[earlyStopping])
             else:
                 # Execute a busca de hiperparâmetros
                 tuner.search(X_, Y_carbono, epochs=self.config.argsEpochs, 
@@ -229,4 +186,62 @@ class ModelABCRegressor(ABC):
             del model
         del self.models
             
+    def _minMaxPredictTest(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
+        result = []
+        for i in tqdm(range(len(cabonoRealArray))):
+            amostra = imgFileNames[i]
+            predictValue = carbonoPredictionArray[i].tolist()[0]
+            real = cabonoRealArray[i].tolist()[0]
+            diff = abs(real - predictValue).tolist()[0]
+            erro = (abs(diff)/abs(real)*100).tolist()[0]
 
+            regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predictValue, 'teor_cabono_diff' : diff, 'error(%)' : erro}
+            result.append(regLine)
+            
+        df_sorted = pd.DataFrame(result)
+        df_sorted = df_sorted.sort_values(by='error(%)')
+        #df_sorted.to_csv('resultado.csv', index=False)
+        #self.config.logger.logInfo(f"{df_sorted.to_string(index=False)}")
+        
+        df_sorted['grupo'] = df_sorted['amostra'].str.extract(r'([A-Z]+\d+)')[0]
+        
+        self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"Melhores resultados ...")
+        self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"\n{df_sorted.head()}")
+        self.config.logger.logInfo(f"\n")
+        self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"Piores resultados ...")
+        self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"\n{df_sorted.tail()}")
+        self.config.logger.logInfo(f"\n")
+        
+        df_media_mean = df_sorted.groupby('grupo').agg({'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
+        r2_mean = r2_score(df_media_mean['teor_cabono_real'], df_media_mean['teor_cabono_predict'])
+        mae_mean = mean_absolute_error(df_media_mean['teor_cabono_real'], df_media_mean['teor_cabono_predict'])
+        mse_mean = mean_squared_error(df_media_mean['teor_cabono_real'], df_media_mean['teor_cabono_predict'])
+        
+        self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"R2 [mean] conjunto de predição:")
+        self.config.logger.logInfo(f"\n")
+        self.config.logger.logInfo(f"====================================================")
+        self.config.logger.logInfo(f"====>>>>> R2 [mean]: {r2_mean} <<<<<====")
+        self.config.logger.logInfo(f"====>>>>> MAE [mean]: {mae_mean} <<<<<====")
+        self.config.logger.logInfo(f"====>>>>> MSE [mean]: {mse_mean} <<<<<====")
+        self.config.logger.logInfo(f"====================================================")
+        self.config.logger.logInfo(f"\n")
+        
+        df_media_median = df_sorted.groupby('grupo').agg({'teor_cabono_predict': 'median', 'teor_cabono_real': 'first'}).reset_index()
+        r2_median = r2_score(df_media_median['teor_cabono_real'], df_media_median['teor_cabono_predict'])
+        mae_median = mean_absolute_error(df_media_median['teor_cabono_real'], df_media_median['teor_cabono_predict'])
+        mse_median = mean_squared_error(df_media_median['teor_cabono_real'], df_media_median['teor_cabono_predict'])
+        
+        self.config.logger.logInfo(f"")
+        self.config.logger.logInfo(f"R2 [median] conjunto de predição:")
+        self.config.logger.logInfo(f"\n")
+        self.config.logger.logInfo(f"====================================================")
+        self.config.logger.logInfo(f"====>>>>> R2 [mean]: {r2_median} <<<<<====")
+        self.config.logger.logInfo(f"====>>>>> MAE [mean]: {mae_median} <<<<<====")
+        self.config.logger.logInfo(f"====>>>>> MSE [mean]: {mse_median} <<<<<====")
+        self.config.logger.logInfo(f"====================================================")
+        self.config.logger.logInfo(f"\n")

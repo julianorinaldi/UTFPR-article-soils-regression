@@ -21,10 +21,12 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         if self.config.argsGridSearch:
             hp_units1 = hp.Int('num_dense_units_1', min_value=512, max_value=768, step=64)
             x = tf.keras.layers.Dense(units=hp_units1, activation='relu')(x)
+            hp_dropout1 = hp.Float('dropuot_rate1', min_value=0.3, max_value=0.7, step=0.1)
+            x = tf.keras.layers.Dropout(hp_dropout1)(x)
             hp_units2 = hp.Int('num_dense_units_2', min_value=64, max_value=256, step=64)
             x = tf.keras.layers.Dense(units=hp_units2, activation='relu')(x)
-            hp_dropout = hp.Float('dropuot_rate', min_value=0.3, max_value=0.7, step=0.2)
-            x = tf.keras.layers.Dropout(hp_dropout)(x)
+            hp_dropout2 = hp.Float('dropuot_rate2', min_value=0.3, max_value=0.7, step=0.2)
+            x = tf.keras.layers.Dropout(hp_dropout2)(x)
                 
             predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['linear', 'relu']))(x)
             
@@ -40,7 +42,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         else:
             opt = tf.keras.optimizers.RMSprop()
         
-        _model.compile(optimizer=opt, loss='mse', metrics=['mae', 'mse'])
+        _model.compile(optimizer=opt, loss='mae', metrics=['mae', 'mse'])
 
         if (self.config.argsShowModel):
             self.config.logger.logInfo(f"{_model.summary()}")
