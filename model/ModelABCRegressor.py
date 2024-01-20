@@ -163,12 +163,14 @@ class ModelABCRegressor(ABC):
 
             # Avaliando com R2
             r2 = r2_score(Y_carbono, prediction)
+            mae = mean_absolute_error(Y_carbono, prediction)
+            mse = mean_squared_error(Y_carbono, prediction)
 
             self.config.logger.logInfo(f"")
             self.config.logger.logInfo(f"====================================================")
-            self.config.logger.logInfo(f"====================================================")
-            self.config.logger.logInfo(f"=========>>>>> R2 Modelo: {r2} <<<<<=========")
-            self.config.logger.logInfo(f"====================================================")
+            self.config.logger.logInfo(f"********** R2 Modelo: {r2} **********")
+            self.config.logger.logInfo(f"********** MAE [mean]: {mae} **********")
+            self.config.logger.logInfo(f"********** MSE [mean]: {mse} **********")
             self.config.logger.logInfo(f"====================================================")
             self.config.logger.logInfo(f"\n")
 
