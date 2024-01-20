@@ -191,6 +191,7 @@ class ModelABCRegressor(ABC):
         for i in tqdm(range(len(cabonoRealArray))):
             amostra : str = imgFileNames[i]
             predictValue : float = carbonoPredictionArray[i]
+            print(f"{carbonoPredictionArray[i]} = {predictValue}")
             real : float = cabonoRealArray[i]
             diff : float = abs(real - predictValue)
             erro : float = abs(diff)/abs(real)*100
