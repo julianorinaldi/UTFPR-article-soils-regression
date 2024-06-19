@@ -24,6 +24,8 @@ class ModelSetEnum(Enum):
     
     VGG19 = 50
     CNN = 100
+
+    PLSRegression = 200
     
     XGBRegressor = 500
     LinearRegression = 510

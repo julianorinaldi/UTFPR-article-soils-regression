@@ -11,6 +11,7 @@ from model.ModelLinearRegressor import ModelLinearRegressor
 from model.ModelSVMLinearRegressor import ModelSVMLinearRegressor
 from model.ModelSVMRBFRegressor import ModelSVMRBFRegressor
 from model.ModelTransferLearningRegressor import ModelRegressorTransferLearning
+from model.ModelPLSRegression import ModelPLSRegression
 
 from core.ModelConfig import ModelConfig
 from core.ModelSetEnum import ModelSetEnum
@@ -58,6 +59,9 @@ class ExecuteProcess:
 
             elif (self.config.modelSetEnum == ModelSetEnum.SVMRBFRegressor):
                 _model = ModelSVMRBFRegressor(self.config)
+
+            elif (self.config.modelSetEnum == ModelSetEnum.PLSRegression):
+                _model = ModelPLSRegression(self.config)
 
             else:
                 error = "Modelo desconhecido"

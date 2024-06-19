@@ -16,7 +16,7 @@ parser.add_argument("-G", "--grid_search_trials", type=int, default=0, help="Tre
 parser.add_argument("-i", "--amount_image_train", type=int, default=8930, help="Quantidade de imagens para treino")
 parser.add_argument("-I", "--amount_image_test", type=int, default=3843, help="Quantidade de imagens para test")
 parser.add_argument("-L", "--log_level", type=int, default=1, help="Log Level: [0]-DEBUG, [1]-INFO - DEFAULT")
-parser.add_argument("-m", "--model", type=int, default=0, help="Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge, [20]-EfficientNetB7, [21]-EfficientNetV2S, [22]-EfficientNetV2L, [30]-InceptionResNetV2, [40]-DenseNet169, [50]-VGG19, [100]-CNN, [500]-XGBRegressor, [510]-LinearRegression, [520]-SVMLinearRegression, [521]-SVMRBFRegressor")
+parser.add_argument("-m", "--model", type=int, default=0, help="Modelo: [0]-ResNet50, [1]-ResNet101, [2]-ResNet152, [10]-ConvNeXtBase, [11]-ConvNeXtXLarge, [20]-EfficientNetB7, [21]-EfficientNetV2S, [22]-EfficientNetV2L, [30]-InceptionResNetV2, [40]-DenseNet169, [50]-VGG19, [100]-CNN, [200]-PLSRegression, [500]-XGBRegressor, [510]-LinearRegression, [520]-SVMLinearRegression, [521]-SVMRBFRegressor")
 parser.add_argument("-M", "--show_model", action="store_true", default=False, help="Mostra na tela os layers do modelo - [Modelos TransferLearning/CNN]")
 parser.add_argument("-n", "--name", help="Nome do arquivo/diretório de saída do modelo .tf")
 parser.add_argument("-p", "--preprocess", action="store_true", default=False, help="Preprocessar imagem 'model.preprocess_input(...)' - [Modelos TransferLearning]")
