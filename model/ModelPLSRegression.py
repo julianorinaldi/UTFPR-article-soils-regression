@@ -8,7 +8,7 @@ class ModelPLSRegression(ModelABCRegressor):
         super().__init__(config)
         
     def getSpecialistModel(self, hp):
-        return PLSRegression(n_components=2)
+        return PLSRegression(n_components=5, max_iter=1000)
     
     def reshapeTwoDimensions(self, X):
         return super().reshapeTwoDimensions(X)
