@@ -64,8 +64,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                         epochs=self.config.argsEpochs, 
                                 callbacks=[earlyStopping])
             
-            #model.save(filepath=self.config.argsNameModel, save_format='tf', overwrite=True)
-            #self.config.logger.logInfo(f"Model Saved!!!")
+            model.save(filepath=self.config.argsNameModel, save_format='tf', overwrite=True)
+            self.config.logger.logInfo(f"Model Saved!!!")
         
     def _selectTransferLearningModel(self):
         # Modelos disponíveis para Transfer-Learning
