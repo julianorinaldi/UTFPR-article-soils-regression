@@ -1,5 +1,6 @@
 
 import pandas as pd  # Trabalhar com análise de dados, importação, etc.
+import random
 from sklearn import preprocessing
 from core.ModelConfig import ModelConfig
 
@@ -28,9 +29,12 @@ class DatasetProcess:
 
         # Removendo colunas desnecessárias do DataFrame de Validação
         df_validate = df_validate.drop(columns=["class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho", "teor_nitrogenio"])
+        
+        # Gerador de Random State
+        randomState = random.randint(0, 100)
 
         # Randomizando DataFrame de Validação
-        df_validate = df_validate.sample(frac=1, random_state=1, ignore_index=True)
+        df_validate = df_validate.sample(frac=1, random_state=randomState, ignore_index=True)
 
         imageFileNamesValidate = df_validate["arquivo"].to_list()
         df_validate = df_validate.drop(columns=["arquivo"])
@@ -40,13 +44,13 @@ class DatasetProcess:
         df = df.drop(columns=["class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"]) 
 
         # *********************************
-        # Excluindo Nitrogênio Por Enquanto
+        # Excluindo Nitrogênio Por Enquantorandom_state
         # *********************************
         df = df.drop(columns=["teor_nitrogenio"]) 
         # *********************************
 
         # Randomizando
-        df = df.sample(frac=1, random_state=1, ignore_index=True)
+        df = df.sample(frac=1, random_state=randomState, ignore_index=True)
         
         # Separando apenas nomes dos arquivos
         imageFileNames = df["arquivo"].to_list()
