@@ -40,7 +40,7 @@ class ModelABCRegressor(ABC):
             model.fit(x_data, y_carbono)
 
     def _show_predict_samples(self, carbono_image_array, img_file_names, cabono_real_array, carbono_prediction_array):
-        self._minMaxPredictTest(carbono_image_array, img_file_names, cabono_real_array, carbono_prediction_array)
+        self._min_max_predict_test(carbono_image_array, img_file_names, cabono_real_array, carbono_prediction_array)
 
     def _load_images(self, qtd_imagens: int):
         dataset_process = DatasetProcess(self.config)
@@ -73,18 +73,18 @@ class ModelABCRegressor(ABC):
         self.config.set_dir_base_img('dataset/images/treinamento-solo-256x256')
         self.config.set_path_csv('dataset/csv/Dataset256x256-Treino.csv')
 
-        X_, Y_carbono, X_validate, Y_carbono_validate, imgFileNames = self._load_images(
+        x_data, y_carbono, x_validate, y_carbono_validate, img_file_names = self._load_images(
             qtd_imagens=self.config.amountImagesTrain)
 
         # Flatten das imagens
         self.config.logger.log_debug(f"Fazendo reshape")
 
         # Aceita apenas 2 dimensões.
-        X_validate = self.reshape_two_dimensions(X_validate)
-        X_ = self.reshape_two_dimensions(X_)
+        x_validate = self.reshape_two_dimensions(x_validate)
+        x_data = self.reshape_two_dimensions(x_data)
 
-        self.config.logger.log_debug(f"Novo shape de X_validate: {X_validate.shape}")
-        self.config.logger.log_debug(f"Novo shape de X_: {X_.shape}")
+        self.config.logger.log_debug(f"Novo shape de x_validate: {x_validate.shape}")
+        self.config.logger.log_debug(f"Novo shape de x_data: {x_data.shape}")
 
         self.config.logger.log_info(f"")
         self.config.logger.log_info(f"Criando modelo: {self.config.modelSetEnum.name}")
@@ -93,21 +93,21 @@ class ModelABCRegressor(ABC):
         # Treinar o modelo
         self.config.logger.log_info(f"Iniciando o treino")
 
-        if (not self.config.argsGridSearch > 0):
+        if not self.config.argsGridSearch > 0:
             # Executa sem GridSearch
             self.config.logger.log_info(f"")
             self.config.logger.log_info(f"Executando sem o GridSearch")
             self.config.logger.log_info(f"")
             self.models = {self.get_specialist_model(hp=None)}
-            self.model_fit(self.models, X_, Y_carbono, X_validate, Y_carbono_validate)
+            self.model_fit(self.models, x_data, y_carbono, x_validate, y_carbono_validate)
         else:
             # Executa com GridSearch
             self.config.logger.log_info(f"")
             self.config.logger.log_info(f"Executando com o GridSearch")
             self.config.logger.log_info(f"")
-            earlyStopping = tf.keras.callbacks.EarlyStopping(monitor='val_mae',
-                                                             patience=self.config.argsPatience,
-                                                             restore_best_weights=True)
+            early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_mae',
+                                                              patience=self.config.argsPatience,
+                                                              restore_best_weights=True)
 
             tuner = Hyperband(
                 self.get_specialist_model,
@@ -121,17 +121,17 @@ class ModelABCRegressor(ABC):
                 project_name=self.config.argsNameModel
             )
 
-            if (not self.config.argsSepared):
+            if not self.config.argsSepared:
                 # Padrão sem separação entre validação e treino      
-                X_ = np.concatenate((X_, X_validate), axis=0)
-                Y_carbono = np.concatenate((Y_carbono, Y_carbono_validate), axis=0)
-                tuner.search(X_, Y_carbono, epochs=self.config.argsEpochs,
-                             validation_split=0.3, callbacks=[earlyStopping])
+                x_data = np.concatenate((x_data, x_validate), axis=0)
+                y_carbono = np.concatenate((y_carbono, y_carbono_validate), axis=0)
+                tuner.search(x_data, y_carbono, epochs=self.config.argsEpochs,
+                             validation_split=0.3, callbacks=[early_stopping])
             else:
                 # Execute a busca de hiperparâmetros
-                tuner.search(X_, Y_carbono, epochs=self.config.argsEpochs,
-                             validation_data=(X_validate, Y_carbono_validate),
-                             callbacks=[earlyStopping])
+                tuner.search(x_data, y_carbono, epochs=self.config.argsEpochs,
+                             validation_data=(x_validate, y_carbono_validate),
+                             callbacks=[early_stopping])
 
             self.hyperparameters = tuner.get_best_hyperparameters(num_trials=self.config.argsGridSearch)
             # Imprima os melhores hiperparâmetros encontrados
@@ -151,14 +151,14 @@ class ModelABCRegressor(ABC):
         self.config.set_dir_base_img('dataset/images/teste-solo-256x256')
         self.config.set_path_csv('dataset/csv/Dataset256x256-Teste.csv')
 
-        X_, Y_carbono, X_validate, Y_carbono_validate, imgFileNames = self._load_images(
+        x_data, y_carbono, x_validate, y_carbono_validate, img_file_names = self._load_images(
             qtd_imagens=self.config.amountImagesTest)
 
         # No teste por ignorar estes dados, eles devem estar vazios.
-        # X_validate, Y_carbono_validate, df_validate, imgFileNamesValidate
+        # x_validate, y_carbono_validate, df_validate, imgFileNamesValidate
 
         # Aceita apenas 2 dimensões.
-        X_ = self.reshape_two_dimensions(X_)
+        x_data = self.reshape_two_dimensions(x_data)
 
         self.config.logger.log_info(f"")
         self.config.logger.log_info(f"Iniciando predição completa para o R2...")
@@ -166,12 +166,12 @@ class ModelABCRegressor(ABC):
 
         for index, model in enumerate(self.models):
             # Fazendo a predição sobre os dados de teste
-            prediction = model.predict(X_)  # type: ignore
+            prediction = model.predict(x_data)  # type: ignore
 
             # Avaliando com R2
-            r2 = r2_score(Y_carbono, prediction)
-            mae = mean_absolute_error(Y_carbono, prediction)
-            mse = mean_squared_error(Y_carbono, prediction)
+            r2 = r2_score(y_carbono, prediction)
+            mae = mean_absolute_error(y_carbono, prediction)
+            mse = mean_squared_error(y_carbono, prediction)
 
             self.config.logger.log_info(f"")
             self.config.logger.log_info(f"====================================================")
@@ -190,21 +190,21 @@ class ModelABCRegressor(ABC):
             self.config.logger.log_info(f"")
             self.config.logger.log_info(f"Alguns exemplos de predições ...")
             self.config.logger.log_info(f"")
-            self._show_predict_samples(X_, imgFileNames, Y_carbono, prediction)
+            self._show_predict_samples(x_data, img_file_names, y_carbono, prediction)
 
             del model
         del self.models
 
-    def _minMaxPredictTest(self, carbonoImageArray, imgFileNames, cabonoRealArray, carbonoPredictionArray):
+    def _min_max_predict_test(self, carbono_image_array, img_file_names, cabono_real_array, carbono_prediction_array):
         result = []
-        for i in tqdm(range(len(cabonoRealArray))):
-            amostra: str = imgFileNames[i]
-            predictValue: float = np.array(carbonoPredictionArray[i]).item()
-            real: float = cabonoRealArray[i]
-            diff: float = abs(real - predictValue)
+        for i in tqdm(range(len(cabono_real_array))):
+            amostra: str = img_file_names[i]
+            predict_value: float = np.array(carbono_prediction_array[i]).item()
+            real: float = cabono_real_array[i]
+            diff: float = abs(real - predict_value)
             erro: float = abs(diff) / abs(real) * 100
 
-            regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predictValue,
+            regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predict_value,
                        'teor_cabono_diff': diff, 'error(%)': erro}
             result.append(regLine)
 
@@ -215,16 +215,10 @@ class ModelABCRegressor(ABC):
 
         df_sorted['grupo'] = df_sorted['amostra'].str.extract(r'([A-Z]+\d+)')[0]
 
-        self.config.logger.log_info(f"")
-        self.config.logger.log_info(f"Melhores resultados ...")
-        self.config.logger.log_info(f"")
-        self.config.logger.log_info(f"\n{df_sorted.head()}")
-        self.config.logger.log_info(f"\n")
-        self.config.logger.log_info(f"")
-        self.config.logger.log_info(f"Piores resultados ...")
-        self.config.logger.log_info(f"")
-        self.config.logger.log_info(f"\n{df_sorted.tail()}")
-        self.config.logger.log_info(f"\n")
+        self.config.logger.log_info(f"\nMelhores resultados ...\n\n")
+        self.config.logger.log_info(f"\n{df_sorted.head()}\n")
+        self.config.logger.log_info(f"\nPiores resultados ...\n\n")
+        self.config.logger.log_info(f"\n{df_sorted.tail()}\n\n")
 
         df_media_mean = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
