@@ -159,6 +159,7 @@ class ModelABCRegressor(ABC):
 
         # Aceita apenas 2 dimensões.
         x_test = self.reshape_two_dimensions(x_test)
+        y_test = self.reshape_two_dimensions(y_test)
 
         self.config.logger.log_info(f"")
         self.config.logger.log_info(f"Iniciando predição completa para o R2...")
