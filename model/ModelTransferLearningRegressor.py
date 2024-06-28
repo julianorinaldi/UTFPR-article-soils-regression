@@ -17,7 +17,8 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         # Adicionando camadas personalizadas no topo do modelo
         x = pretrained_model.output
         x = tf.keras.layers.GlobalAveragePooling2D()(x)
-        x = tf.keras.layers.Flatten()(x)
+        x = tf.keras.layers.Dense(128, activation='relu')(x)
+        x = tf.keras.layers.Dropout(0.5)(x)
 
         if self.config.argsGridSearch:
             hp_dense1 = hp.Float('dense1', min_value=32, max_value=256, step=32)
@@ -25,11 +26,10 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             hp_dropout1 = hp.Float('dropuot_rate1', min_value=0.3, max_value=0.5, step=0.1)
             x = tf.keras.layers.Dropout(hp_dropout1)(x)
 
-            predictions = tf.keras.layers.Dense(1, activation=hp.Choice('activation', values=['linear']))(x)
-
+            predictions = tf.keras.layers.Dense(2, activation=hp.Choice('activation', values=['linear']))(x)
         else:
-            x = tf.keras.layers.Dense(160, activation='relu')(x)
-            predictions = tf.keras.layers.Dense(1, activation='linear')(x)
+            x = tf.keras.layers.Dense(256, activation='relu')(x)
+            predictions = tf.keras.layers.Dense(2, activation='linear')(x)
 
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
 
@@ -38,7 +38,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         else:
             opt = tf.keras.optimizers.RMSprop()
 
-        _model.compile(optimizer=opt, loss='mae', metrics=['mae', 'mse'])
+        _model.compile(optimizer=opt, loss='mse', metrics=['mae'])
 
         if self.config.argsShowModel:
             self.config.logger.log_info(f"{_model.summary()}")
