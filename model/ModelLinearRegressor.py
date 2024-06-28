@@ -3,16 +3,17 @@ from sklearn.feature_selection import RFE
 from core.ModelConfig import ModelConfig
 from model.ModelABCRegressor import ModelABCRegressor
 
+
 class ModelLinearRegressor(ModelABCRegressor):
-    
-    def __init__(self, config : ModelConfig):
+
+    def __init__(self, config: ModelConfig):
         super().__init__(config)
-        
-    def getSpecialistModel(self, hp):
+
+    def get_specialist_model(self, hp):
         return LinearRegression()
-    
-    def reshapeTwoDimensions(self, X):
-        return super().reshapeTwoDimensions(X)
-    
-    def modelFit(self, models, X_, Y_carbono, X_validate, Y_carbono_validate):
-        super().modelFit(models, X_, Y_carbono, X_validate, Y_carbono_validate)
+
+    def reshape_two_dimensions(self, x_data):
+        return super().reshape_two_dimensions(x_data)
+
+    def model_fit(self, models, x_data, y_carbono, x_validate, y_carbono_validate):
+        super().model_fit(models, x_data, y_carbono, x_validate, y_carbono_validate)
