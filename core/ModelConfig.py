@@ -1,4 +1,5 @@
 from core.ModelSetEnum import ModelSetEnum
+from core.NormalizeEnum import NormalizeEnum
 from log.LoggingPy import LoggingPy
 
 
@@ -8,12 +9,12 @@ class ModelConfig:
                  dir_base_img: str = 'dataset/images/treinamento-solo-256x256',
                  image_dimension_x: int = 256, image_dimension_y: int = 256, channel_colors: int = 3,
                  amount_images_train: int = 8930, amount_images_test: int = 3843,
-                 args_name_model: str = '', args_trainable: bool = False,
+                 args_name_model: str = '', args_normalize: NormalizeEnum = NormalizeEnum.NONE, args_trainable: bool = False,
                  args_separed: bool = False, args_preprocess: bool = False, args_only_test: bool = False,
                  args_epochs: int = 100, args_patience: int = 5, args_grid_search: int = 0,
                  args_show_model: bool = False) -> None:
         self.logger = LoggingPy
-        self.modelSetEnum = model_set_enum
+        self.modelSetEnum: ModelSetEnum = model_set_enum
         self.log_level = log_level
         self.imageDimensionX = image_dimension_x
         self.imageDimensionY = image_dimension_y
@@ -23,6 +24,7 @@ class ModelConfig:
         self.dirBaseImg = dir_base_img
         self.pathCSV = path_csv
         self.argsNameModel = args_name_model
+        self.argsNormalize: NormalizeEnum = args_normalize
         self.argsTrainable = args_trainable
         self.argsSepared = args_separed
         self.argsPreprocess = args_preprocess

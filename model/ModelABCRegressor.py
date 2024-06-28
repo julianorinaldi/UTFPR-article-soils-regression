@@ -44,7 +44,7 @@ class ModelABCRegressor(ABC):
 
     def _load_images(self, qtd_imagens: int):
         dataset_process = DatasetProcess(self.config)
-        df, img_file_names, df_validate, img_file_names_validate = dataset_process.dataset_process()
+        df, img_file_names, df_validate, img_file_names_validate = dataset_process.dataset_process
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
@@ -52,39 +52,39 @@ class ModelABCRegressor(ABC):
             qtd_imagens = qtd_imagens
 
         image_process = ImageProcess(self.config)
-        x_validate, y_carbono_validate = np.array([]), np.array([])
+        x_validate_train, y_validate_train = np.array([]), np.array([])
         if len(img_file_names_validate) > 0:
             self.config.logger.log_info(f"Carregando imagens ...\n")
             # Array com as imagens a serem carregadas para validação do treino
             image_array_validate = image_process.image_load(img_file_names_validate, qtd_imagens)
-            x_validate, y_carbono_validate = image_process.image_convert_array(image_array_validate, df_validate,
-                                                                               qtd_imagens)
+            x_validate_train, y_validate_train = image_process.image_convert_array(image_array_validate, df_validate,
+                                                                                   qtd_imagens)
 
         self.config.logger.log_info(f"Carregando imagens ...\n")
         # Array com as imagens a serem carregadas de treino
         image_array = image_process.image_load(img_file_names, qtd_imagens)
-        x_data, y_carbono = image_process.image_convert_array(image_array, df, qtd_imagens)
+        x_train, y_train = image_process.image_convert_array(image_array, df, qtd_imagens)
 
-        # Retorno X_ e y_carbono, DataFrame, e Lista de Imagens
-        # x_validate, y_carbono_validate, df_validate, img_file_names_validate relaciona do Validate do Treino
-        return x_data, y_carbono, x_validate, y_carbono_validate, img_file_names
+        # Retorno X_ e y_train, DataFrame, e Lista de Imagens
+        # x_validate_train, y_validate_train, df_validate, img_file_names_validate relaciona do Validate do Treino
+        return x_train, y_train, x_validate_train, y_validate_train, img_file_names
 
     def train(self):
         self.config.set_dir_base_img('dataset/images/treinamento-solo-256x256')
         self.config.set_path_csv('dataset/csv/Dataset256x256-Treino.csv')
 
-        x_data, y_carbono, x_validate, y_carbono_validate, img_file_names = self._load_images(
+        x_train, y_train, x_validate_train, y_validate_train, img_file_names = self._load_images(
             qtd_imagens=self.config.amountImagesTrain)
 
         # Flatten das imagens
         self.config.logger.log_debug(f"Fazendo reshape")
 
         # Aceita apenas 2 dimensões.
-        x_validate = self.reshape_two_dimensions(x_validate)
-        x_data = self.reshape_two_dimensions(x_data)
+        x_validate_train = self.reshape_two_dimensions(x_validate_train)
+        x_train = self.reshape_two_dimensions(x_train)
 
-        self.config.logger.log_debug(f"Novo shape de x_validate: {x_validate.shape}")
-        self.config.logger.log_debug(f"Novo shape de x_data: {x_data.shape}")
+        self.config.logger.log_debug(f"Novo shape de x_validate_train: {x_validate_train.shape}")
+        self.config.logger.log_debug(f"Novo shape de x_train: {x_train.shape}")
 
         self.config.logger.log_info(f"")
         self.config.logger.log_info(f"Criando modelo: {self.config.modelSetEnum.name}")
@@ -99,7 +99,7 @@ class ModelABCRegressor(ABC):
             self.config.logger.log_info(f"Executando sem o GridSearch")
             self.config.logger.log_info(f"")
             self.models = {self.get_specialist_model(hp=None)}
-            self.model_fit(self.models, x_data, y_carbono, x_validate, y_carbono_validate)
+            self.model_fit(self.models, x_train, y_train, x_validate_train, y_validate_train)
         else:
             # Executa com GridSearch
             self.config.logger.log_info(f"")
@@ -123,14 +123,14 @@ class ModelABCRegressor(ABC):
 
             if not self.config.argsSepared:
                 # Padrão sem separação entre validação e treino      
-                x_data = np.concatenate((x_data, x_validate), axis=0)
-                y_carbono = np.concatenate((y_carbono, y_carbono_validate), axis=0)
-                tuner.search(x_data, y_carbono, epochs=self.config.argsEpochs,
+                x_train = np.concatenate((x_train, x_validate_train), axis=0)
+                y_train = np.concatenate((y_train, y_validate_train), axis=0)
+                tuner.search(x_train, y_train, epochs=self.config.argsEpochs,
                              validation_split=0.3, callbacks=[early_stopping])
             else:
                 # Execute a busca de hiperparâmetros
-                tuner.search(x_data, y_carbono, epochs=self.config.argsEpochs,
-                             validation_data=(x_validate, y_carbono_validate),
+                tuner.search(x_train, y_train, epochs=self.config.argsEpochs,
+                             validation_data=(x_validate_train, y_validate_train),
                              callbacks=[early_stopping])
 
             self.hyperparameters = tuner.get_best_hyperparameters(num_trials=self.config.argsGridSearch)
@@ -151,14 +151,14 @@ class ModelABCRegressor(ABC):
         self.config.set_dir_base_img('dataset/images/teste-solo-256x256')
         self.config.set_path_csv('dataset/csv/Dataset256x256-Teste.csv')
 
-        x_data, y_carbono, x_validate, y_carbono_validate, img_file_names = self._load_images(
+        x_test, y_test, x_validate_test, y_validate_test, img_file_names = self._load_images(
             qtd_imagens=self.config.amountImagesTest)
 
         # No teste por ignorar estes dados, eles devem estar vazios.
-        # x_validate, y_carbono_validate, df_validate, imgFileNamesValidate
+        # x_validate_test, y_validate_test, df_validate, imgFileNamesValidate
 
         # Aceita apenas 2 dimensões.
-        x_data = self.reshape_two_dimensions(x_data)
+        x_test = self.reshape_two_dimensions(x_test)
 
         self.config.logger.log_info(f"")
         self.config.logger.log_info(f"Iniciando predição completa para o R2...")
@@ -166,12 +166,12 @@ class ModelABCRegressor(ABC):
 
         for index, model in enumerate(self.models):
             # Fazendo a predição sobre os dados de teste
-            prediction = model.predict(x_data)  # type: ignore
+            prediction = model.predict(x_test)  # type: ignore
 
             # Avaliando com R2
-            r2 = r2_score(y_carbono, prediction)
-            mae = mean_absolute_error(y_carbono, prediction)
-            mse = mean_squared_error(y_carbono, prediction)
+            r2 = r2_score(y_test, prediction)
+            mae = mean_absolute_error(y_test, prediction)
+            mse = mean_squared_error(y_test, prediction)
 
             self.config.logger.log_info(f"")
             self.config.logger.log_info(f"====================================================")
@@ -190,7 +190,7 @@ class ModelABCRegressor(ABC):
             self.config.logger.log_info(f"")
             self.config.logger.log_info(f"Alguns exemplos de predições ...")
             self.config.logger.log_info(f"")
-            self._show_predict_samples(x_data, img_file_names, y_carbono, prediction)
+            self._show_predict_samples(x_test, img_file_names, y_test, prediction)
 
             del model
         del self.models
@@ -204,9 +204,9 @@ class ModelABCRegressor(ABC):
             diff: float = abs(real - predict_value)
             erro: float = abs(diff) / abs(real) * 100
 
-            regLine = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predict_value,
-                       'teor_cabono_diff': diff, 'error(%)': erro}
-            result.append(regLine)
+            reg_line = {'amostra': amostra, 'teor_cabono_real': real, 'teor_cabono_predict': predict_value,
+                        'teor_cabono_diff': diff, 'error(%)': erro}
+            result.append(reg_line)
 
         df_sorted = pd.DataFrame(result)
         df_sorted = df_sorted.sort_values(by='error(%)')

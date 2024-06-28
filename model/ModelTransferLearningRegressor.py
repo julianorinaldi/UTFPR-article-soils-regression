@@ -28,7 +28,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
 
             predictions = tf.keras.layers.Dense(2, activation=hp.Choice('activation', values=['linear']))(x)
         else:
-            x = tf.keras.layers.Dense(256, activation='relu')(x)
+            x = tf.keras.layers.Dense(64, activation='relu')(x)
             predictions = tf.keras.layers.Dense(2, activation='linear')(x)
 
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
@@ -77,89 +77,84 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         # classificação. Vamos adicionar nossas próprias camadas finais input_shape=(imageDimensionX,
         # imageDimensionY, qtd_canal_color) => Nosso array de imagens tem as dimensões (256, 256, 3) pooling => Modo
         # de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max],
-        # passado por parâmetro, mas o default é avg. classes=1 => Apenas uma classe de saída, no caso de regressão
-        # precisamos de valor predito para o carbono. weights='imagenet' => Carregamento do modelo inicial com pesos
+        # passado por parâmetro, mas o default é NONE. weights='imagenet' => Carregamento do modelo inicial com pesos
         # do ImageNet, no qual no treinamento será re-adaptado.
         if self.config.modelSetEnum == ModelSetEnum.ResNet50:
             pretrained_model = tf.keras.applications.ResNet50(include_top=False,
                                                               input_shape=(
                                                                   self.config.imageDimensionX,
                                                                   self.config.imageDimensionY,
-                                                                  self.config.channelColors), classes=1,
-                                                              weights='imagenet')
+                                                                  self.config.channelColors),
+                                                              weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.ResNet101:
             pretrained_model = tf.keras.applications.ResNet101(include_top=False,
                                                                input_shape=(
                                                                    self.config.imageDimensionX,
                                                                    self.config.imageDimensionY,
-                                                                   self.config.channelColors), classes=1,
-                                                               weights='imagenet')
+                                                                   self.config.channelColors),
+                                                               weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.ResNet152:
             pretrained_model = tf.keras.applications.ResNet152(include_top=False,
                                                                input_shape=(
                                                                    self.config.imageDimensionX,
                                                                    self.config.imageDimensionY,
-                                                                   self.config.channelColors), classes=1,
-                                                               weights='imagenet')
+                                                                   self.config.channelColors),
+                                                               weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.ConvNeXtBase:
             pretrained_model = tf.keras.applications.ConvNeXtBase(include_top=False,
                                                                   input_shape=(self.config.imageDimensionX,
                                                                                self.config.imageDimensionY,
-                                                                               self.config.channelColors), classes=1,
-                                                                  weights='imagenet')
+                                                                               self.config.channelColors),
+                                                                  weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.ConvNeXtXLarge:
             pretrained_model = tf.keras.applications.ConvNeXtXLarge(include_top=False,
                                                                     input_shape=(self.config.imageDimensionX,
                                                                                  self.config.imageDimensionY,
-                                                                                 self.config.channelColors), classes=1,
-                                                                    weights='imagenet')
+                                                                                 self.config.channelColors),
+                                                                    weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.EfficientNetB7:
             pretrained_model = tf.keras.applications.EfficientNetB7(include_top=False,
                                                                     input_shape=(self.config.imageDimensionX,
                                                                                  self.config.imageDimensionY,
-                                                                                 self.config.channelColors), classes=1,
-                                                                    weights='imagenet')
+                                                                                 self.config.channelColors),
+                                                                    weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.EfficientNetV2S:
             pretrained_model = tf.keras.applications.EfficientNetV2S(include_top=False,
                                                                      input_shape=(self.config.imageDimensionX,
                                                                                   self.config.imageDimensionY,
-                                                                                  self.config.channelColors), classes=1,
-                                                                     weights='imagenet')
+                                                                                  self.config.channelColors),
+                                                                     weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.EfficientNetV2L:
             pretrained_model = tf.keras.applications.EfficientNetV2L(include_top=False,
                                                                      input_shape=(self.config.imageDimensionX,
                                                                                   self.config.imageDimensionY,
-                                                                                  self.config.channelColors), classes=1,
-                                                                     weights='imagenet')
+                                                                                  self.config.channelColors),
+                                                                     weights='imagenet', pooling='avg')
 
         elif self.config.modelSetEnum == ModelSetEnum.InceptionResNetV2:
             pretrained_model = tf.keras.applications.InceptionResNetV2(include_top=False,
                                                                        input_shape=(self.config.imageDimensionX,
                                                                                     self.config.imageDimensionY,
                                                                                     self.config.channelColors),
-                                                                       classes=1, weights='imagenet')
+                                                                       weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.DenseNet169:
             pretrained_model = tf.keras.applications.DenseNet169(include_top=False,
                                                                  input_shape=(self.config.imageDimensionX,
                                                                               self.config.imageDimensionY,
-                                                                              self.config.channelColors), classes=1,
-                                                                 weights='imagenet')
+                                                                              self.config.channelColors),
+                                                                 weights='imagenet', pooling='avg')
         elif self.config.modelSetEnum == ModelSetEnum.VGG19:
             pretrained_model = tf.keras.applications.VGG19(include_top=False,
                                                            input_shape=(
                                                                self.config.imageDimensionX, self.config.imageDimensionY,
-                                                               self.config.channelColors), classes=1,
-                                                           weights='imagenet')
+                                                               self.config.channelColors),
+                                                           weights='imagenet', pooling='avg')
         else:
             raise Exception('Modelo desconhecido')
 
         pretrained_model.trainable = self.config.argsTrainable
         for layer in pretrained_model.layers:
             layer.trainable = self.config.argsTrainable
-
-        # Faz com que o modelo seja treinado nos últimos 20 camadas
-        # for layer in pretrained_model.layers[-1:-21:-1]:
-        #     layer.trainable = True
 
         return pretrained_model
 
