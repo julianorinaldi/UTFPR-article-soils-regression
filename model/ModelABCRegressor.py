@@ -31,60 +31,65 @@ class ModelABCRegressor(ABC):
 
     # Re-implemente se desejar fazer um fit diferente, por exempĺo para CNN
     @abstractmethod
-    def model_fit(self, models, x_data, y_carbono, x_validate, y_carbono_validate):
+    def model_fit(self, models, x_img_data, y_carbono, y_nitrogenio, x_img_validate, y_carbono_validate, y_nitrogenio_validate):
         # Juntando os dados de validação com treino no SUPER.
-        x_data = np.concatenate((x_data, x_validate), axis=0)
+        x_img_data = np.concatenate((x_img_data, x_img_validate), axis=0)
         y_carbono = np.concatenate((y_carbono, y_carbono_validate), axis=0)
+        y_nitrogenio = np.concatenate((y_nitrogenio, y_nitrogenio_validate), axis=0)
 
         for model in models:
-            model.fit(x_data, y_carbono)
+            model.fit(x_img_data, y_carbono)
+            model.fit(x_img_data, y_nitrogenio)
 
     def _show_predict_samples(self, carbono_image_array, img_file_names, cabono_real_array, carbono_prediction_array):
         self._min_max_predict_test(carbono_image_array, img_file_names, cabono_real_array, carbono_prediction_array)
 
-    def _load_images(self, qtd_imagens: int):
+    def _load_images(self, qtd_img: int):
         dataset_process = DatasetProcess(self.config)
         df, img_file_names, df_validate, img_file_names_validate = dataset_process.dataset_process
 
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
-        if (qtd_imagens > qtd_imagens) and (qtd_imagens > 0):
-            qtd_imagens = qtd_imagens
+        if (qtd_imagens > qtd_img) and (qtd_imagens > 0):
+            qtd_imagens = qtd_img
 
         image_process = ImageProcess(self.config)
-        x_validate_train, y_validate_train = np.array([]), np.array([])
+        x_img_validate_train, y_carbono_validate_train, y_nitrogenio_validate_train = np.array([]), np.array([]), np.array([])
         if len(img_file_names_validate) > 0:
             self.config.logger.log_info(f"Carregando imagens ...\n")
             # Array com as imagens a serem carregadas para validação do treino
             image_array_validate = image_process.image_load(img_file_names_validate, qtd_imagens)
-            x_validate_train, y_validate_train = image_process.image_convert_array(image_array_validate, df_validate,
-                                                                                   qtd_imagens)
+            x_img_validate_train, y_carbono_validate_train, y_nitrogenio_validate_train = (image_process.
+                                                                                           image_convert_array(image_array_validate,
+                                                                                                               df_validate,
+                                                                                                               qtd_imagens))
 
         self.config.logger.log_info(f"Carregando imagens ...\n")
         # Array com as imagens a serem carregadas de treino
         image_array = image_process.image_load(img_file_names, qtd_imagens)
-        x_train, y_train = image_process.image_convert_array(image_array, df, qtd_imagens)
+        x_img_train, y_carbono_train, y_nitrogenio_train = image_process.image_convert_array(image_array, df, qtd_imagens)
 
-        # Retorno X_ e y_train, DataFrame, e Lista de Imagens
-        # x_validate_train, y_validate_train, df_validate, img_file_names_validate relaciona do Validate do Treino
-        return x_train, y_train, x_validate_train, y_validate_train, img_file_names
+        # Retorno X_ e y_carbono_train, DataFrame, e Lista de Imagens
+        # x_img_validate_train, y_carbono_validate_train, df_validate, img_file_names_validate relaciona do Validate do Treino
+        return x_img_train, y_carbono_train, y_nitrogenio_train, x_img_validate_train, y_carbono_validate_train, y_nitrogenio_validate_train, img_file_names
 
     def train(self):
         self.config.set_dir_base_img('dataset/images/treinamento-solo-256x256')
         self.config.set_path_csv('dataset/csv/Dataset256x256-Treino.csv')
 
-        x_train, y_train, x_validate_train, y_validate_train, img_file_names = self._load_images(
-            qtd_imagens=self.config.amountImagesTrain)
+        (x_img_train, y_carbono_train, y_nitrogenio_train,
+         x_img_validate_train, y_carbono_validate_train, y_nitrogenio_validate_train, img_file_names) = self._load_images(
+            qtd_img=self.config.amountImagesTrain)
 
         # Flatten das imagens
         self.config.logger.log_debug(f"Fazendo reshape")
 
         # Aceita apenas 2 dimensões.
-        x_validate_train = self.reshape_two_dimensions(x_validate_train)
-        x_train = self.reshape_two_dimensions(x_train)
+        x_img_validate_train = self.reshape_two_dimensions(x_img_validate_train)
+        x_img_train = self.reshape_two_dimensions(x_img_train)
 
-        self.config.logger.log_debug(f"Novo shape de x_validate_train: {x_validate_train.shape}")
-        self.config.logger.log_debug(f"Novo shape de x_train: {x_train.shape}")
+        self.config.logger.log_debug(f"Novo shape de x_img_validate_train: {x_img_validate_train.shape}")
+        self.config.logger.log_debug(f"Novo shape de x_img_train: {x_img_train.shape}")
 
         self.config.logger.log_info(f"")
         self.config.logger.log_info(f"Criando modelo: {self.config.modelSetEnum.name}")
@@ -99,7 +104,8 @@ class ModelABCRegressor(ABC):
             self.config.logger.log_info(f"Executando sem o GridSearch")
             self.config.logger.log_info(f"")
             self.models = {self.get_specialist_model(hp=None)}
-            self.model_fit(self.models, x_train, y_train, x_validate_train, y_validate_train)
+            self.model_fit(self.models, x_img_train, y_carbono_train, y_nitrogenio_train,
+                           x_img_validate_train, y_carbono_validate_train, y_nitrogenio_validate_train)
         else:
             # Executa com GridSearch
             self.config.logger.log_info(f"")
@@ -123,14 +129,14 @@ class ModelABCRegressor(ABC):
 
             if not self.config.argsSepared:
                 # Padrão sem separação entre validação e treino      
-                x_train = np.concatenate((x_train, x_validate_train), axis=0)
-                y_train = np.concatenate((y_train, y_validate_train), axis=0)
-                tuner.search(x_train, y_train, epochs=self.config.argsEpochs,
+                x_img_train = np.concatenate((x_img_train, x_img_validate_train), axis=0)
+                y_carbono_train = np.concatenate((y_carbono_train, y_carbono_validate_train), axis=0)
+                tuner.search(x_img_train, y_carbono_train, epochs=self.config.argsEpochs,
                              validation_split=0.3, callbacks=[early_stopping])
             else:
                 # Execute a busca de hiperparâmetros
-                tuner.search(x_train, y_train, epochs=self.config.argsEpochs,
-                             validation_data=(x_validate_train, y_validate_train),
+                tuner.search(x_img_train, y_carbono_train, epochs=self.config.argsEpochs,
+                             validation_data=(x_img_validate_train, y_carbono_validate_train),
                              callbacks=[early_stopping])
 
             self.hyperparameters = tuner.get_best_hyperparameters(num_trials=self.config.argsGridSearch)
@@ -152,14 +158,13 @@ class ModelABCRegressor(ABC):
         self.config.set_path_csv('dataset/csv/Dataset256x256-Teste.csv')
 
         x_test, y_test, x_validate_test, y_validate_test, img_file_names = self._load_images(
-            qtd_imagens=self.config.amountImagesTest)
+            qtd_img=self.config.amountImagesTest)
 
         # No teste por ignorar estes dados, eles devem estar vazios.
-        # x_validate_test, y_validate_test, df_validate, imgFileNamesValidate
+        # x_validate_test, y_validate_test
 
         # Aceita apenas 2 dimensões.
         x_test = self.reshape_two_dimensions(x_test)
-        y_test = self.reshape_two_dimensions(y_test)
 
         self.config.logger.log_info(f"")
         self.config.logger.log_info(f"Iniciando predição completa para o R2...")

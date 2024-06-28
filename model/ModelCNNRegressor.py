@@ -34,7 +34,7 @@ class ModelRegressorCNN(ModelABCRegressor):
     def reshape_two_dimensions(self, x_data):
         return x_data
 
-    def model_fit(self, models, x_data, y_carbono, x_validate, y_carbono_validate):
+    def model_fit(self, models, x_img_data, y_carbono, x_img_validate, y_carbono_validate):
         early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss', patience=self.config.argsPatience,
             restore_best_weights=True)
@@ -42,14 +42,14 @@ class ModelRegressorCNN(ModelABCRegressor):
         for model in models:
             if not self.config.argsSepared:
                 # Padrão sem separação entre validação e treino      
-                x_data = pd.concat([x_data, x_validate], axis=0)
-                x_data = x_data.reset_index(drop=True)
+                x_img_data = pd.concat([x_img_data, x_img_validate], axis=0)
+                x_img_data = x_img_data.reset_index(drop=True)
                 y_carbono = pd.concat([y_carbono, y_carbono_validate], axis=0)
                 y_carbono = y_carbono.reset_index(drop=True)
-                model.fit(x_data, y_carbono, validation_split=0.3, epochs=self.config.argsEpochs,
+                model.fit(x_img_data, y_carbono, validation_split=0.3, epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
             else:
-                model.fit(x_data, y_carbono, validation_data=(x_validate, y_carbono_validate),
+                model.fit(x_img_data, y_carbono, validation_data=(x_img_validate, y_carbono_validate),
                           epochs=self.config.argsEpochs, callbacks=[early_stopping])
 
             #model.save(filepath=self.modelConfig.argsNameModel, save_format='tf', overwrite=True)

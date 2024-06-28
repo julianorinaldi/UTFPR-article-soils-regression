@@ -14,5 +14,5 @@ class ModelXGBRegressor(ModelABCRegressor):
     def reshape_two_dimensions(self, x_data):
         return super().reshape_two_dimensions(x_data)
 
-    def model_fit(self, models, x_data, y_carbono, x_validate, y_carbono_validate):
-        super().model_fit(models, x_data, y_carbono, x_validate, y_carbono_validate)
+    def model_fit(self, models, x_img_data, y_carbono, y_nitrogenio, x_img_validate, y_carbono_validate, y_nitrogenio_validate):
+        super().model_fit(models, x_img_data, y_carbono, y_nitrogenio, x_img_validate, y_carbono_validate, y_nitrogenio_validate)

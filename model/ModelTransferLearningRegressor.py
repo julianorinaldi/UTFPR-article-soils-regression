@@ -47,7 +47,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
     def reshape_two_dimensions(self, x_data):
         return x_data
 
-    def model_fit(self, models, x_data, y_carbono, x_validate, y_carbono_validate):
+    def model_fit(self, models, x_img_data, y_carbono, x_img_validate, y_carbono_validate):
         early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_mae', patience=self.config.argsPatience,
             restore_best_weights=True)
@@ -55,12 +55,12 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         for model in models:
             if not self.config.argsSepared:
                 # Padrão sem separação entre validação e treino      
-                x_data = np.concatenate((x_data, x_validate), axis=0)
+                x_img_data = np.concatenate((x_img_data, x_img_validate), axis=0)
                 y_carbono = np.concatenate((y_carbono, y_carbono_validate), axis=0)
-                model.fit(x_data, y_carbono, validation_split=0.2, epochs=self.config.argsEpochs,
+                model.fit(x_img_data, y_carbono, validation_split=0.2, epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
             else:
-                model.fit(x_data, y_carbono, validation_data=(x_validate, y_carbono_validate),
+                model.fit(x_img_data, y_carbono, validation_data=(x_img_validate, y_carbono_validate),
                           epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
 

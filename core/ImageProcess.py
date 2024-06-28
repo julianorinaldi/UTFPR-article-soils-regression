@@ -61,16 +61,15 @@ class ImageProcess:
 
     def image_convert_array(self, images_array: list, df: pd.DataFrame, qtd_imagens: int):
         # Transformando em array a lista de imagens (Treino)
-        X_ = np.array(images_array)
-        self.config.logger.log_debug(f"Shape X: {X_.shape}")
+        x_img_array = np.array(images_array)
+        self.config.logger.log_debug(f"Shape X: {x_img_array.shape}")
 
         # *******************************************************
         # Neste momento apenas trabalhando com valores de Carbono
         # *******************************************************
         y_carbono = np.array(df['teor_carbono'].tolist()[:qtd_imagens])
+        y_nitrogenio = np.array(df['teor_nitrogenio'].tolist()[:qtd_imagens])
         self.config.logger.log_debug(f"Shape Y: {y_carbono.shape}")
+        self.config.logger.log_debug(f"Shape Y: {y_nitrogenio.shape}")
 
-        # Y_train_nitrogenio = np.array(df_train['teor_nitrogenio'].tolist()[:qtd_imagens])
-        # self.config.logger.logInfo(f"Shape Y_train_nitrogenio: {Y_train_nitrogenio.shape}")
-
-        return X_, y_carbono
+        return x_img_array, y_carbono, y_nitrogenio
