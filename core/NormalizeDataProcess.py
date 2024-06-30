@@ -21,9 +21,9 @@ __normalization_functions = {
 }
 
 def get_normalize_data(df: DataFrame, normalize: NormalizeEnum, logger) -> DataFrame:
-    df_clean = df.drop(columns=["amostra", "arquivo"])
     logger.log_info(f"Informações básicas do Dataset com normalização {normalize.name} ...")
     normalize_func = __normalization_functions.get(normalize, lambda df_inner: df_inner)
-    df_normalized = normalize_func(df_clean)
-    df_normalized = df_normalized.join(df[["amostra", "arquivo"]])
-    return df_normalized
+    numeric_columns = df.select_dtypes(include='number')  # Seleciona apenas colunas numéricas
+    df_normalized = normalize_func(numeric_columns)
+    df[numeric_columns.columns] = df_normalized  # Substitui as colunas originais pelas normalizadas
+    return df
