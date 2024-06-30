@@ -5,3 +5,6 @@ lib64
 share
 include
 *.log
+*.keras
+out/logs
+model

@@ -1,108 +1,87 @@
-import pandas as pd  # Trabalhar com análise de dados, importação, etc.
+import pandas as pd
 import random
-from sklearn import preprocessing
-from core.ModelConfig import ModelConfig
-from core.NormalizeEnum import NormalizeEnum
+
+from core.NormalizeDataProcess import get_normalize_data
+from dto.ConfigModelDTO import ConfigModelDTO
 
 
 class DatasetProcess:
-    def __init__(self, config: ModelConfig):
+    def __init__(self, config: ConfigModelDTO):
         self.config = config
 
-    # Faz o preparado do Dataset para trabalhar no modelo de regressão
-    # Retorna dataset limpo, lista de nomes dos arquivos
-    @property
-    def dataset_process(self):
+    # Carrega o Dataset from CSV
+    def __load_dataset_from_csv(self) -> pd.DataFrame:
         # Carregamento do Dataset
         df: pd.DataFrame = pd.read_csv(self.config.pathCSV)
+        return df
 
-        # Estratégia (1) separando dados de validação.
-        # _______________________________________________________________
+    # Define amostras aleatórias para compor o DataFrame de Teste (20%)
+    def __prepare_dataset_train_and_validate(self, df: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
+        required_columns = {"amostra", "teor_carbono", "teor_nitrogenio", "arquivo"}
+        if not required_columns.issubset(df.columns):
+            raise Exception(
+                "O DataFrame de Treinamento deve conter as colunas 'amostra', 'teor_carbono', 'teor_nitrogenio', 'arquivo'"
+            )
 
-        # Amostras aleatórias para compor o DataFrame de Validação (apenas no de teste).
+        # Define amostras aleatórias para compor o DataFrame de Teste (20%)
         # Essa separação é necessária para ele não misturar as amostras entre os conjuntos
         df_validate = df[df['amostra'].isin(
             ['C2', 'C11', 'C18', 'C28', 'C35', 'C47', 'L3', 'L6', 'L13', 'L16', 'L22', 'L31', 'L39'])]
 
-        # Merge para remover amostras do DataFrame de Validação para o Principal.
-        df = (pd.merge(df, df_validate, how='outer', indicator=True)
+        # Merge com o DataSet total, para remover amostras que ficaram no Teste.
+        # Fica como DataSet Treino
+        df_train = (pd.merge(df, df_validate, how='outer', indicator=True)
               .query('_merge == "left_only"')
               .drop('_merge', axis=1))
 
-        # Itens a remover
-        # A ideia aqui é se alguma amostra se tornar tão ruim na predição, melhor remover ela do DataFrame
-        #itens_remover = ~df['amostra'].isin(['C51', 'L12', 'L5'])
-        #df = df[itens_remover]
+        # Excluir amostra pois não precisa mais.
+        df_train = df_train.drop(columns=["amostra"])
+        df_validate = df_validate.drop(columns=["amostra"])
 
-        # Removendo colunas desnecessárias do DataFrame de Validação
-        df_validate = df_validate.drop(
-            columns=["class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"])
+        return df_train, df_validate
 
-        # Gerador de Random State
-        # A cada treinamento vai embaralhar os dados diferentes
-        random_state = random.randint(0, 100)
-        self.config.logger.log_info(f"Embaralhamento de dados->random_state: {random_state}")
+    def __prepare_dataset_remove_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = df.drop(columns=["class", "qtd_mat_org", "nitrog_calc", "classe", "tamanho"])
+        return df
 
+    # Gerador de Random State
+    # Vai embaralhar os dados de forma diferentes
+    # Usar somente depois de separar o dataset em teste e treino
+    def __random_dataset(self, df: pd.DataFrame, random_state: int) -> pd.DataFrame:
         # Randomizando DataFrame de Validação
-        df_validate = df_validate.sample(frac=1, random_state=random_state, ignore_index=True)
+        self.config.logger.log_info(f"Embaralhamento de dados->random_state: {random_state}")
+        df_random = df.sample(frac=1, random_state=random_state, ignore_index=True)
+        return df_random
 
-        image_file_names_validate = df_validate["arquivo"].to_list()
-        df_validate = df_validate.drop(columns=["arquivo"])
-        # _______________________________________________________________
+    # Faz o preparado do Dataset para trabalhar no modelo de regressão
+    # Retorna dataset limpo e separado em treino e teste, e lista dos arquivos imagens
+    @property
+    def load_and_clean_data(self) -> pd.DataFrame:
+        # Carregamento do Dataset
+        df_all: pd.DataFrame = self.__load_dataset_from_csv()
 
         # Removendo colunas desnecessárias
-        df = df.drop(columns=["class", "qtd_mat_org", "nitrog_calc", "amostra", "classe", "tamanho"])
+        df_all = self.__prepare_dataset_remove_columns(df_all)
 
-        # Randomizando
-        df = df.sample(frac=1, random_state=random_state, ignore_index=True)
+        # Gerador de Random State
+        # Vai embaralhar os dados de forma diferentes
+        random_state = random.randint(0, 100)
+        df_all = self.__random_dataset(df_all, random_state)
 
-        # Separando apenas nomes dos arquivos
-        image_file_names = df["arquivo"].to_list()
-        # Removendo coluna arquivo para normalização
-        df = df.drop(columns=["arquivo"])
+        return df_all
 
-        if self.config.argsNormalize == NormalizeEnum.NONE:
-            self.config.logger.log_info(f"Informações básicas do Dataset sem normalização ...")
-            self.config.logger.log_info(f"DataFrame de dados:\n{df.describe()}\n")
-            if not df_validate.empty:
-                self.config.logger.log_info(f"DataFrame de validação:\n{df_validate.describe()}\n")
-        elif self.config.argsNormalize == NormalizeEnum.Z_Score:
-            self.config.logger.log_info(f"Informações básicas do Dataset com normalização Z SCORE ...")
-            df_stats = df.describe()
-            df_stats = df_stats.transpose()
-            df = (df - df_stats['mean']) / df_stats['std']
-            self.config.logger.log_info(f"DataFrame de dados:\n{df.describe()}\n")
-            if not df_validate.empty:
-                df_validate_stats = df_validate.describe()
-                df_validate_stats = df_validate_stats.transpose()
-                df_validate = (df_validate - df_validate_stats['mean']) / df_validate_stats['std']
-                self.config.logger.log_info(f"DataFrame de validação:\n{df_validate.describe()}\n")
-        elif self.config.argsNormalize == NormalizeEnum.MinMaxScaler:
-            self.config.logger.log_info(f"Informações básicas do Dataset com normalização MinMaxScaler ...")
-            scaler = preprocessing.MinMaxScaler()
-            df = scaler.fit_transform(df)
-            self.config.logger.log_info(f"DataFrame de dados:\n{df.describe()}\n")
-            if not df_validate.empty:
-                df_validate = scaler.fit_transform(df_validate)
-                self.config.logger.log_info(f"DataFrame de validação:\n{df_validate.describe()}\n")
-        elif self.config.argsNormalize == NormalizeEnum.RobustScaler:
-            self.config.logger.log_info(f"Informações básicas do Dataset com normalização RobustScaler ...")
-            scaler = preprocessing.RobustScaler()
-            df = scaler.fit_transform(df)
-            self.config.logger.log_info(f"DataFrame de dados:\n{df.describe()}\n")
-            if not df_validate.empty:
-                df_validate = scaler.fit_transform(df_validate)
-                self.config.logger.log_info(f"DataFrame de validação:\n{df_validate.describe()}\n")
-        elif self.config.argsNormalize == NormalizeEnum.StandardScaler:
-            self.config.logger.log_info(f"Informações básicas do Dataset com normalização StandardScaler ...")
-            scaler = preprocessing.StandardScaler()
-            df = scaler.fit_transform(df)
-            self.config.logger.log_info(f"DataFrame de dados:\n{df.describe()}\n")
-            if not df_validate.empty:
-                df_validate = scaler.fit_transform(df_validate)
-                self.config.logger.log_info(f"DataFrame de validação:\n{df_validate.describe()}\n")
+    def get_train_validate_process(self, df_all: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
+        # Normalização dos dados conforme enumerador passado
+        df_all = get_normalize_data(df_all, self.config.argsNormalize, self.config.logger)
 
-        # df = pd.DataFrame(x_scaled, columns=['teor_carbono'])
-        # self.config.logger.logInfo(f"{df.describe()}")
+        # Separa dados de Treinamento e de Test
+        df_train, df_validate = self.__prepare_dataset_train_and_validate(df_all)
 
-        return df, image_file_names, df_validate, image_file_names_validate
+        return  df_train, df_validate
+
+    def get_test_process(self, df_all: pd.DataFrame) -> pd.DataFrame:
+        df_all = df_all.drop(columns=["amostra"])
+        # Normalização dos dados conforme enumerador passado
+        df_test = get_normalize_data(df_all, self.config.argsNormalize, self.config.logger)
+
+        return df_test

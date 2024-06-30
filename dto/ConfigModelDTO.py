@@ -1,10 +1,10 @@
-from core.ModelSetEnum import ModelSetEnum
-from core.NormalizeEnum import NormalizeEnum
-from log.LoggingPy import LoggingPy
+from dto.ModelSetEnum import ModelSetEnum
+from dto.NormalizeEnum import NormalizeEnum
+from shared.infrastructure.log.LoggingPy import LoggingPy
 
 
-class ModelConfig:
-    def __init__(self, model_set_enum: ModelSetEnum = ModelSetEnum.ResNet50,
+class ConfigModelDTO:
+    def __init__(self, logger: LoggingPy = None,  model_set_enum: ModelSetEnum = ModelSetEnum.ResNet50,
                  log_level: int = 1, path_csv: str = 'dataset/csv/Dataset256x256-Treino.csv',
                  dir_base_img: str = 'dataset/images/treinamento-solo-256x256',
                  image_dimension_x: int = 256, image_dimension_y: int = 256, channel_colors: int = 3,
@@ -13,13 +13,13 @@ class ModelConfig:
                  args_separed: bool = False, args_preprocess: bool = False, args_only_test: bool = False,
                  args_epochs: int = 100, args_patience: int = 5, args_grid_search: int = 0,
                  args_show_model: bool = False) -> None:
-        self.logger = LoggingPy
+        self.logger = logger
         self.modelSetEnum: ModelSetEnum = model_set_enum
         self.log_level = log_level
         self.imageDimensionX = image_dimension_x
         self.imageDimensionY = image_dimension_y
         self.channelColors = channel_colors
-        self.amountImagesTrain = amount_images_train
+        self.amountImagesTrain: int = amount_images_train
         self.amountImagesTest = amount_images_test
         self.dirBaseImg = dir_base_img
         self.pathCSV = path_csv
@@ -33,9 +33,6 @@ class ModelConfig:
         self.argsPatience = args_patience
         self.argsGridSearch = args_grid_search
         self.argsShowModel = args_show_model
-
-    def set_logger(self, logger: LoggingPy):
-        self.logger = logger
 
     def set_path_csv(self, path_csv):
         self.pathCSV = path_csv

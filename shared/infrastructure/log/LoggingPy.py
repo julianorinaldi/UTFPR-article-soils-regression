@@ -4,7 +4,7 @@ from datetime import datetime, timezone, timedelta
 
 
 class LoggingPy:
-    def __init__(self, name_model: str = "emptyNameModel", prefix: str = ">>>>>>>>>>>>>>>>>", log_level: int = 1):
+    def __init__(self, name_model: str = "emptyNameModel", prefix: str = ">>>", log_level: int = 0):
         # Configurar o nível de log
         # (pode ser logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, ou logging.CRITICAL)
         self.logger: logging.Logger
@@ -23,13 +23,15 @@ class LoggingPy:
             log_level = logging.DEBUG
 
         # Criar e configurar o logger
+        if not name_model:
+            name_model = "ERROR"
         self.logger = logging.getLogger(name_model)
         self.logger.setLevel(log_level)
 
         tz_utc_minus3 = timezone(timedelta(hours=-3))
         timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M")
-        os.makedirs('logs', exist_ok=True)
-        log_filename = f'logs/log_{name_model}_{timestamp}.log'
+        os.makedirs('out/logs', exist_ok=True)
+        log_filename = f'out/logs/log_{name_model}_{timestamp}.log'
 
         # Configurar um manipulador de arquivo
         file_handler = logging.FileHandler(log_filename, mode='w')
@@ -51,3 +53,6 @@ class LoggingPy:
 
     def log_info(self, message):
         self.logger.info(message)
+
+    def log_error(self, error: Exception):
+        self.logger.error(error, exc_info=True)

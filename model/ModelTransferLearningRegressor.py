@@ -1,53 +1,50 @@
+import os
+from datetime import timezone, datetime, timedelta
+
 import numpy as np
 import tensorflow as tf
 
-from core.ModelConfig import ModelConfig
-from core.ModelSetEnum import ModelSetEnum
-from model.ModelABCRegressor import ModelABCRegressor
+from dto.ConfigModelDTO import ConfigModelDTO
+from dto.FitDTO import FitDTO
+from dto.ModelSetEnum import ModelSetEnum
+from model.abstract.ModelABCRegressor import ModelABCRegressor
+from model.gridsearch.ModelGridSearch import get_config_gridsearch_transfer_learning
 
 
 class ModelRegressorTransferLearning(ModelABCRegressor):
 
-    def __init__(self, config: ModelConfig):
+    def __init__(self, config: ConfigModelDTO):
         super().__init__(config)
 
     def get_specialist_model(self, hp):
-        pretrained_model = self._select_transfer_learning_model
+        # Retora o modelo de TransferLearning selecionado por Enumerador
+        self.config.logger.log_info(f"Modelo Selecionado: {self.config.modelSetEnum.name}")
+        pretrained_model = self.__select_transfer_learning_model()
 
         # Adicionando camadas personalizadas no topo do modelo
-        x = pretrained_model.output
-        x = tf.keras.layers.Dense(128, activation='relu')(x)
-        x = tf.keras.layers.Dropout(0.5)(x)
+        layer = pretrained_model.output
+        layer = tf.keras.layers.Dense(128, activation='relu')(layer)
+        layer = tf.keras.layers.Dropout(0.5)(layer)
 
         if self.config.argsGridSearch:
-            hp_dense1 = hp.Float('dense1', min_value=32, max_value=256, step=32)
-            x = tf.keras.layers.Dense(hp_dense1, activation='relu')(x)
-            hp_dropout1 = hp.Float('dropuot_rate1', min_value=0.3, max_value=0.5, step=0.1)
-            x = tf.keras.layers.Dropout(hp_dropout1)(x)
-
-            predictions = tf.keras.layers.Dense(2, activation=hp.Choice('activation', values=['linear']))(x)
+            predictions, optimizer = get_config_gridsearch_transfer_learning(hp, layer)
         else:
-            x = tf.keras.layers.Dense(64, activation='relu')(x)
-            predictions = tf.keras.layers.Dense(2, activation='linear')(x)
+            layer = tf.keras.layers.Dense(64, activation='relu')(layer)
+            predictions = tf.keras.layers.Dense(2, activation='linear')(layer)
+            optimizer = tf.keras.optimizers.RMSprop()
 
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
-
-        if self.config.argsGridSearch:
-            opt = tf.keras.optimizers.Adam(learning_rate=hp.Choice('learning_rate', values=[0.0001]))
-        else:
-            opt = tf.keras.optimizers.RMSprop()
-
-        _model.compile(optimizer=opt, loss='mse', metrics=['mae'])
+        _model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
 
         if self.config.argsShowModel:
-            self.config.logger.log_info(f"{_model.summary()}")
+            self.config.logger.log_info(f"\n{_model.summary()}")
 
         return _model
 
     def reshape_two_dimensions(self, x_data):
         return x_data
 
-    def model_fit(self, models, x_img_data, y_carbono, x_img_validate, y_carbono_validate):
+    def model_fit(self, models, fit_dto: FitDTO):
         early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_mae', patience=self.config.argsPatience,
             restore_best_weights=True)
@@ -55,107 +52,82 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         for model in models:
             if not self.config.argsSepared:
                 # Padrão sem separação entre validação e treino      
-                x_img_data = np.concatenate((x_img_data, x_img_validate), axis=0)
-                y_carbono = np.concatenate((y_carbono, y_carbono_validate), axis=0)
-                model.fit(x_img_data, y_carbono, validation_split=0.2, epochs=self.config.argsEpochs,
+                x_img_data = np.concatenate((fit_dto.x_img_train, fit_dto.x_img_validate), axis=0)
+                y_df_train = np.concatenate((fit_dto.y_df_train, fit_dto.y_df_validate), axis=0)
+                model.fit(x_img_data, y_df_train, validation_split=0.2, epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
             else:
-                model.fit(x_img_data, y_carbono, validation_data=(x_img_validate, y_carbono_validate),
+                model.fit(fit_dto.x_img_train, fit_dto.y_df_train,
+                          validation_data=(fit_dto.x_img_validate, fit_dto.y_df_validate),
                           epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
 
-            model.save(filepath=self.config.argsNameModel, save_format='tf', overwrite=True)
+            tz_utc_minus3 = timezone(timedelta(hours=-3))
+            timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M")
+            os.makedirs('out/model', exist_ok=True)
+            filepath_model = f'out/model/TF_{self.config.argsNameModel}_{timestamp}.keras'
+            model.save(filepath=filepath_model, overwrite=True)
             self.config.logger.log_info(f"Model Saved!!!")
 
-    @property
-    def _select_transfer_learning_model(self):
-        # Modelos disponíveis para Transfer-Learning
-        # https://keras.io/api/applications/
+    # Modelos disponíveis para Transfer-Learning
+    # https://keras.io/api/applications/
 
-        # include_top=False => Excluindo as camadas finais (top layers) da rede, que geralmente são usadas para
-        # classificação. Vamos adicionar nossas próprias camadas finais input_shape=(imageDimensionX,
-        # imageDimensionY, qtd_canal_color) => Nosso array de imagens tem as dimensões (256, 256, 3) pooling => Modo
-        # de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max],
-        # passado por parâmetro, mas o default é NONE. weights='imagenet' => Carregamento do modelo inicial com pesos
-        # do ImageNet, no qual no treinamento será re-adaptado.
-        if self.config.modelSetEnum == ModelSetEnum.ResNet50:
-            pretrained_model = tf.keras.applications.ResNet50(include_top=False,
-                                                              input_shape=(
-                                                                  self.config.imageDimensionX,
-                                                                  self.config.imageDimensionY,
-                                                                  self.config.channelColors),
-                                                              weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.ResNet101:
-            pretrained_model = tf.keras.applications.ResNet101(include_top=False,
-                                                               input_shape=(
-                                                                   self.config.imageDimensionX,
-                                                                   self.config.imageDimensionY,
-                                                                   self.config.channelColors),
-                                                               weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.ResNet152:
-            pretrained_model = tf.keras.applications.ResNet152(include_top=False,
-                                                               input_shape=(
-                                                                   self.config.imageDimensionX,
-                                                                   self.config.imageDimensionY,
-                                                                   self.config.channelColors),
-                                                               weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.ConvNeXtBase:
-            pretrained_model = tf.keras.applications.ConvNeXtBase(include_top=False,
-                                                                  input_shape=(self.config.imageDimensionX,
-                                                                               self.config.imageDimensionY,
-                                                                               self.config.channelColors),
-                                                                  weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.ConvNeXtXLarge:
-            pretrained_model = tf.keras.applications.ConvNeXtXLarge(include_top=False,
-                                                                    input_shape=(self.config.imageDimensionX,
-                                                                                 self.config.imageDimensionY,
-                                                                                 self.config.channelColors),
-                                                                    weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.EfficientNetB7:
-            pretrained_model = tf.keras.applications.EfficientNetB7(include_top=False,
-                                                                    input_shape=(self.config.imageDimensionX,
-                                                                                 self.config.imageDimensionY,
-                                                                                 self.config.channelColors),
-                                                                    weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.EfficientNetV2S:
-            pretrained_model = tf.keras.applications.EfficientNetV2S(include_top=False,
-                                                                     input_shape=(self.config.imageDimensionX,
-                                                                                  self.config.imageDimensionY,
-                                                                                  self.config.channelColors),
-                                                                     weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.EfficientNetV2L:
-            pretrained_model = tf.keras.applications.EfficientNetV2L(include_top=False,
-                                                                     input_shape=(self.config.imageDimensionX,
-                                                                                  self.config.imageDimensionY,
-                                                                                  self.config.channelColors),
-                                                                     weights='imagenet', pooling='avg')
+    # include_top=False => Excluindo as camadas finais (top layers) da rede, que geralmente são usadas para
+    # classificação. Vamos adicionar nossas próprias camadas finais input_shape=(imageDimensionX,
+    # imageDimensionY, qtd_canal_color) => Nosso array de imagens tem as dimensões (256, 256, 3) pooling => Modo
+    # de pooling opcional para extração de recursos quando include_top for False [none, avg (default), max],
+    # passado por parâmetro, mas o default é NONE. weights='imagenet' => Carregamento do modelo inicial com pesos
+    # do ImageNet, no qual no treinamento será re-adaptado.
+    def __select_transfer_learning_model(self):
+        """
+        Seleciona e retorna um modelo de transfer learning pré-treinado com base na configuração.
 
-        elif self.config.modelSetEnum == ModelSetEnum.InceptionResNetV2:
-            pretrained_model = tf.keras.applications.InceptionResNetV2(include_top=False,
-                                                                       input_shape=(self.config.imageDimensionX,
-                                                                                    self.config.imageDimensionY,
-                                                                                    self.config.channelColors),
-                                                                       weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.DenseNet169:
-            pretrained_model = tf.keras.applications.DenseNet169(include_top=False,
-                                                                 input_shape=(self.config.imageDimensionX,
-                                                                              self.config.imageDimensionY,
-                                                                              self.config.channelColors),
-                                                                 weights='imagenet', pooling='avg')
-        elif self.config.modelSetEnum == ModelSetEnum.VGG19:
-            pretrained_model = tf.keras.applications.VGG19(include_top=False,
-                                                           input_shape=(
-                                                               self.config.imageDimensionX, self.config.imageDimensionY,
-                                                               self.config.channelColors),
-                                                           weights='imagenet', pooling='avg')
-        else:
-            raise Exception('Modelo desconhecido')
+        Returns:
+            tf.keras.Model: O modelo de transfer learning pré-treinado com camadas adicionais para a tarefa de regressão.
 
+        Raises:
+            ValueError: Se o modelo especificado não for encontrado no mapeamento.
+        """
+        model_map = {
+            ModelSetEnum.ResNet50: "ResNet50",
+            ModelSetEnum.ResNet101: "ResNet101",
+            ModelSetEnum.ResNet152: "ResNet152",
+            ModelSetEnum.ConvNeXtBase: "ConvNeXtBase",
+            ModelSetEnum.ConvNeXtXLarge: "ConvNeXtXLarge",
+            ModelSetEnum.EfficientNetB7: "EfficientNetB7",
+            ModelSetEnum.EfficientNetV2S: "EfficientNetV2S",
+            ModelSetEnum.EfficientNetV2L: "EfficientNetV2L",
+            ModelSetEnum.InceptionResNetV2: "InceptionResNetV2",
+            ModelSetEnum.DenseNet169: "DenseNet169",
+            ModelSetEnum.VGG19: "VGG19",
+        }
+
+        model_name = model_map.get(self.config.modelSetEnum)
+        if model_name is None:
+            raise ValueError(f"Modelo '{self.config.modelSetEnum}' não encontrado no mapeamento.")
+
+        # Use getattr para obter dinamicamente a classe do modelo a partir do nome
+        model_class = getattr(tf.keras.applications, model_name)
+        input_shape = (self.config.imageDimensionX, self.config.imageDimensionY, self.config.channelColors)
+
+        pretrained_model = model_class(
+            include_top=False,
+            input_shape=input_shape,
+            weights="imagenet",
+            pooling="avg",
+        )
+
+        # Congelar ou descongelar camadas com base na configuração
         pretrained_model.trainable = self.config.argsTrainable
         for layer in pretrained_model.layers:
             layer.trainable = self.config.argsTrainable
 
-        return pretrained_model
+        # Criação do modelo completo
+        inputs = tf.keras.Input(shape=input_shape)
+        outputs = pretrained_model(inputs, training=pretrained_model.trainable)
+        model = tf.keras.Model(inputs=inputs, outputs=outputs)
+
+        return model
 
 # Carregando Modelo
 # resnet_model = tf.keras.models.load_model(filepath = self.config.argsNameModel)
