@@ -122,8 +122,12 @@ class ModelABCRegressor(ABC):
 
         # 80% para Treino
         amount_img_train: int = round(self.config.amountImagesTrain * 0.80)
+        if amount_img_train > len(y_df_train):
+            amount_img_train = len(y_df_train)
         # 20% para Validação
         amount_img_validate: int = round(self.config.amountImagesTrain * 0.20)
+        if amount_img_validate > len(y_df_validate):
+            amount_img_validate = len(y_df_validate)
         self.config.logger.log_info("Quantidade de Imagens para Treino e Validação: %d, %d\n" % (amount_img_train, amount_img_validate))
 
         # Carregar imagens e separar em treino e validação

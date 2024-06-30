@@ -21,8 +21,9 @@ __normalization_functions = {
 }
 
 def get_normalize_data(df: DataFrame, normalize: NormalizeEnum, logger) -> DataFrame:
+    df_clean = df.drop(columns=["amostra"])
     logger.log_info(f"Informações básicas do Dataset com normalização {normalize.name} ...")
     normalize_func = __normalization_functions.get(normalize, lambda df_inner: df_inner)
-    df = normalize_func(df)
+    df_normalized = normalize_func(df_clean)
 
-    return df
+    return df_normalized
