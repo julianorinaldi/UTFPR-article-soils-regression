@@ -1,20 +1,20 @@
 #!/bin/bash
 
-python3 main.py --name ConvNeXtXLarge_11_Normalize0_Epochs100_Patience10_Separed_Preprocess \
-               --normalize 0 \
-               --log_level 0 \
-               --model 11 \
-               --epochs 100 \
-               --patience 10 \
-               --preprocess
-
-python3 main.py --name ConvNeXtXLarge_11_Normalize1_Epochs100_Patience10_Separed_Preprocess \
-               --normalize 1 \
-               --log_level 0 \
-               --model 11 \
-               --epochs 100 \
-               --patience 10 \
-               --preprocess
+#python3 main.py --name ConvNeXtXLarge_11_Normalize0_Epochs100_Patience10_Separed_Preprocess \
+#               --normalize 0 \
+#               --log_level 0 \
+#               --model 11 \
+#               --epochs 100 \
+#               --patience 10 \
+#               --preprocess
+#
+#python3 main.py --name ConvNeXtXLarge_11_Normalize1_Epochs100_Patience10_Separed_Preprocess \
+#               --normalize 1 \
+#               --log_level 0 \
+#               --model 11 \
+#               --epochs 100 \
+#               --patience 10 \
+#               --preprocess
 
 python3 main.py --name ConvNeXtXLarge_11_Normalize2_Epochs100_Patience10_Separed_Preprocess \
                --normalize 2 \

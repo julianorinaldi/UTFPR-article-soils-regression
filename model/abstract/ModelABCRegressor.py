@@ -199,8 +199,8 @@ class ModelABCRegressor(ABC):
             self.config.logger.log_resume(f"")
             self.config.logger.log_resume(f"====================================================")
             self.config.logger.log_resume(f"********** R2 Modelo: {r2} **********")
-            self.config.logger.log_resume(f"********** MAE [mean]: {mae} **********")
-            self.config.logger.log_resume(f"********** MSE [mean]: {mse} **********")
+            self.config.logger.log_resume(f"********** MAE: {mae} **********")
+            self.config.logger.log_resume(f"********** MSE: {mse} **********")
             self.config.logger.log_resume(f"====================================================")
             self.config.logger.log_resume(f"\n")
 
