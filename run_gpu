@@ -5,7 +5,6 @@ python main.py --name ResNet50_Normalize0_Epochs100_Patience10_Separed_Preproces
                --model 0 \
                --epochs 100 \
                --patience 10 \
-               --separed \
                --preprocess
 
 python main.py --name ResNet50_Normalize1_Epochs100_Patience10_Separed_Preprocess \
@@ -14,7 +13,6 @@ python main.py --name ResNet50_Normalize1_Epochs100_Patience10_Separed_Preproces
                --model 0 \
                --epochs 100 \
                --patience 10 \
-               --separed \
                --preprocess
 
 python main.py --name ResNet50_Normalize2_Epochs100_Patience10_Separed_Preprocess \
@@ -23,7 +21,6 @@ python main.py --name ResNet50_Normalize2_Epochs100_Patience10_Separed_Preproces
                --model 0 \
                --epochs 100 \
                --patience 10 \
-               --separed \
                --preprocess
 
 python main.py --name ResNet50_Normalize3_Epochs100_Patience10_Separed_Preprocess \
@@ -32,7 +29,6 @@ python main.py --name ResNet50_Normalize3_Epochs100_Patience10_Separed_Preproces
                --model 0 \
                --epochs 100 \
                --patience 10 \
-               --separed \
                --preprocess
 
 python main.py --name ResNet50_Normalize4_Epochs100_Patience10_Separed_Preprocess \
@@ -41,5 +37,4 @@ python main.py --name ResNet50_Normalize4_Epochs100_Patience10_Separed_Preproces
                --model 0 \
                --epochs 100 \
                --patience 10 \
-               --separed \
                --preprocess

@@ -1,0 +1,10 @@
+
+python main.py --name ResNet50_Normalize0_Epochs100_Patience10_Separed_Preprocess \
+               --normalize 0 \
+               --log_level 0 \
+               --model 0 \
+               --epochs 1 \
+               --patience 1 \
+               --amount_image_train 500 \
+               --amount_image_test 200 \
+               --preprocess
