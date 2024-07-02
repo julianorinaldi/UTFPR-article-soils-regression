@@ -13,11 +13,9 @@ def get_config_from_args(args, logger: LoggingPy = None):
     image_dimension_x = 256
     image_dimension_y = 256
     qtd_canal_color = 3
-    path_csv = ""
-    dir_base_img = ""
     normalize_enum = convert_normalize_set_enum(args.normalize)
 
-    config = ConfigModelDTO(logger=logger, model_set_enum=model_set_enum, path_csv=path_csv, dir_base_img=dir_base_img,
+    config = ConfigModelDTO(logger=logger, model_set_enum=model_set_enum,
                             image_dimension_x=image_dimension_x, image_dimension_y=image_dimension_y,
                             channel_colors=qtd_canal_color, amount_images_train=args.amount_image_train,
                             amount_images_test=args.amount_image_test, log_level=args.log_level,

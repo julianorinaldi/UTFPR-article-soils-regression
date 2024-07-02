@@ -56,14 +56,14 @@ class ModelABCRegressor(ABC):
     def __show_predict_samples(self, df_amostra, y_df_data, prediction):
         self._min_max_predict_test(df_amostra, y_df_data, prediction)
 
-    def __load_images(self, df: pd.DataFrame, amount_img: int) -> list:
+    def __load_images(self, df: pd.DataFrame, path_img: str, amount_img: int) -> list:
         # Quantidade de imagens usadas para a rede.
         qtd_imagens = len(df)
         if (qtd_imagens > amount_img) and (amount_img > 0):
             qtd_imagens = amount_img
 
         img_p = ImageProcess(self.config)
-        img_loaded = img_p.image_load(df, qtd_imagens)
+        img_loaded = img_p.image_load(df, path_img, qtd_imagens)
 
         return  img_loaded
 
@@ -108,17 +108,13 @@ class ModelABCRegressor(ABC):
             self.models = _models
             del tuner
 
-    def train(self):
-        self.config.set_dir_base_img('dataset/images/treinamento-solo-256x256')
-        self.config.set_path_csv('dataset/csv/Dataset256x256-Treino.csv')
+    def train(self, df_train: pd.DataFrame):
         self.config.logger.log_info("Iniciando o Treinamento...\n")
-        # Tratamento inicial dos dados
-        dp = DatasetProcess(self.config)
-        df_all: pd.DataFrame = dp.load_and_clean_data
 
         self.config.logger.log_info("Separando Treino e Validação...\n")
+        dp = DatasetProcess(self.config)
         # Separar dados de Treinamento e de Validação
-        y_df_train, y_df_validate = dp.get_train_validate_process(df_all)
+        y_df_train, y_df_validate = dp.get_train_validate_process(df_train)
 
         # 80% para Treino
         amount_img_train: int = round(self.config.amountImagesTrain * 0.80)
@@ -132,8 +128,8 @@ class ModelABCRegressor(ABC):
 
         # Carregar imagens e separar em treino e validação
         self.config.logger.log_info(f"Carregando imagens ...\n")
-        x_img_train_array = self.__load_images(df=y_df_train, amount_img=amount_img_train)
-        x_img_validate_array = self.__load_images(df=y_df_validate, amount_img=amount_img_validate)
+        x_img_train_array = self.__load_images(df=y_df_train, path_img=ConfigModelDTO.PATH_IMG_TRAIN, amount_img=amount_img_train)
+        x_img_validate_array = self.__load_images(df=y_df_validate, path_img=ConfigModelDTO.PATH_IMG_TRAIN, amount_img=amount_img_validate)
 
         # Remover a coluna 'arquivo' após carregamento das imagens
         y_df_train = y_df_train.drop(columns=["arquivo"])
@@ -167,17 +163,14 @@ class ModelABCRegressor(ABC):
         else:
             self.__execute_grid_search(fit_dto)
 
-    def test(self):
-        # Agora entra o Test
-        self.config.set_dir_base_img('dataset/images/teste-solo-256x256')
-        self.config.set_path_csv('dataset/csv/Dataset256x256-Teste.csv')
+    def test(self, df_test: pd.DataFrame):
+        self.config.logger.log_info("Iniciando o Test...\n")
 
         dp = DatasetProcess(self.config)
-        y_df_all_test: pd.DataFrame = dp.load_and_clean_data
-        df_amostra = y_df_all_test["amostra"]
-        y_df_all_test = dp.get_test_process(df_all=y_df_all_test)
+        df_amostra = df_test["amostra"]
+        y_df_all_test = dp.get_test_process(df_all=df_test)
 
-        x_img_test_array = self.__load_images(df=y_df_all_test, amount_img=self.config.amountImagesTest)
+        x_img_test_array = self.__load_images(df=y_df_all_test, path_img=ConfigModelDTO.PATH_IMG_TEST, amount_img=self.config.amountImagesTest)
         x_img_test_array = tf.stack(x_img_test_array, axis=0)
 
         # Remover a coluna 'arquivo' para carregar as imagens
@@ -203,19 +196,19 @@ class ModelABCRegressor(ABC):
             mae = mean_absolute_error(y_df_all_test, prediction)
             mse = mean_squared_error(y_df_all_test, prediction)
 
-            self.config.logger.log_info(f"")
-            self.config.logger.log_info(f"====================================================")
-            self.config.logger.log_info(f"********** R2 Modelo: {r2} **********")
-            self.config.logger.log_info(f"********** MAE [mean]: {mae} **********")
-            self.config.logger.log_info(f"********** MSE [mean]: {mse} **********")
-            self.config.logger.log_info(f"====================================================")
-            self.config.logger.log_info(f"\n")
+            self.config.logger.log_resume(f"")
+            self.config.logger.log_resume(f"====================================================")
+            self.config.logger.log_resume(f"********** R2 Modelo: {r2} **********")
+            self.config.logger.log_resume(f"********** MAE [mean]: {mae} **********")
+            self.config.logger.log_resume(f"********** MSE [mean]: {mse} **********")
+            self.config.logger.log_resume(f"====================================================")
+            self.config.logger.log_resume(f"\n")
 
             if self.config.argsGridSearch > 0:
-                self.config.logger.log_info(f"Hiperparâmetros deste modelo:")
-                self.config.logger.log_info(f"{self.hyperparameters[index].values}\n")
+                self.config.logger.log_resume(f"Hiperparâmetros deste modelo:")
+                self.config.logger.log_resume(f"{self.hyperparameters[index].values}\n")
 
-            self.config.logger.log_info(f"Alguns exemplos de predições ...")
+            self.config.logger.log_resume(f"Alguns exemplos de predições ...")
             self.__show_predict_samples(df_amostra, y_df_all_test, prediction)
 
             del model
@@ -246,10 +239,10 @@ class ModelABCRegressor(ABC):
 
         df_sorted['grupo'] = df_sorted['amostra'].str.extract(r'([A-Z]+\d+)')[0]
 
-        self.config.logger.log_info(f"\nMelhores resultados ...\n\n")
-        self.config.logger.log_info(f"\n{df_sorted.head()}\n")
-        self.config.logger.log_info(f"\nPiores resultados ...\n\n")
-        self.config.logger.log_info(f"\n{df_sorted.tail()}\n\n")
+        self.config.logger.log_resume(f"\nMelhores resultados ...\n\n")
+        self.config.logger.log_resume(f"\n{df_sorted.head()}\n")
+        self.config.logger.log_resume(f"\nPiores resultados ...\n\n")
+        self.config.logger.log_resume(f"\n{df_sorted.tail()}\n\n")
 
         df_media_mean_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
@@ -257,13 +250,13 @@ class ModelABCRegressor(ABC):
         mae_mean = mean_absolute_error(df_media_mean_carbono['teor_cabono_real'], df_media_mean_carbono['teor_cabono_predict'])
         mse_mean = mean_squared_error(df_media_mean_carbono['teor_cabono_real'], df_media_mean_carbono['teor_cabono_predict'])
 
-        self.config.logger.log_info(f"R2 [mean] conjunto de predição CARBONO:")
-        self.config.logger.log_info(f"====================================================")
-        self.config.logger.log_info(f"====>>>>> R2 [mean]: {r2_mean} <<<<<====")
-        self.config.logger.log_info(f"====>>>>> MAE [mean]: {mae_mean} <<<<<====")
-        self.config.logger.log_info(f"====>>>>> MSE [mean]: {mse_mean} <<<<<====")
-        self.config.logger.log_info(f"====================================================")
-        self.config.logger.log_info(f"\n")
+        self.config.logger.log_resume(f"R2 [mean] conjunto de predição CARBONO:")
+        self.config.logger.log_resume(f"====================================================")
+        self.config.logger.log_resume(f"====>>>>> R2 [mean]: {r2_mean} <<<<<====")
+        self.config.logger.log_resume(f"====>>>>> MAE [mean]: {mae_mean} <<<<<====")
+        self.config.logger.log_resume(f"====>>>>> MSE [mean]: {mse_mean} <<<<<====")
+        self.config.logger.log_resume(f"====================================================")
+        self.config.logger.log_resume(f"\n")
 
         df_media_median_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'median', 'teor_cabono_real': 'first'}).reset_index()
@@ -271,13 +264,13 @@ class ModelABCRegressor(ABC):
         mae_median = mean_absolute_error(df_media_median_carbono['teor_cabono_real'], df_media_median_carbono['teor_cabono_predict'])
         mse_median = mean_squared_error(df_media_median_carbono['teor_cabono_real'], df_media_median_carbono['teor_cabono_predict'])
 
-        self.config.logger.log_info(f"R2 [median] conjunto de predição CARBONO:")
-        self.config.logger.log_info(f"====================================================")
-        self.config.logger.log_info(f"====>>>>> R2 [median]: {r2_median} <<<<<====")
-        self.config.logger.log_info(f"====>>>>> MAE [median]: {mae_median} <<<<<====")
-        self.config.logger.log_info(f"====>>>>> MSE [median]: {mse_median} <<<<<====")
-        self.config.logger.log_info(f"====================================================")
-        self.config.logger.log_info(f"\n")
+        self.config.logger.log_resume(f"R2 [median] conjunto de predição CARBONO:")
+        self.config.logger.log_resume(f"====================================================")
+        self.config.logger.log_resume(f"====>>>>> R2 [median]: {r2_median} <<<<<====")
+        self.config.logger.log_resume(f"====>>>>> MAE [median]: {mae_median} <<<<<====")
+        self.config.logger.log_resume(f"====>>>>> MSE [median]: {mse_median} <<<<<====")
+        self.config.logger.log_resume(f"====================================================")
+        self.config.logger.log_resume(f"\n")
 
         df_media_mean_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'mean', 'teor_nitrogenio_real': 'first'}).reset_index()
@@ -285,13 +278,13 @@ class ModelABCRegressor(ABC):
         mae_mean = mean_absolute_error(df_media_mean_nitrogenio['teor_nitrogenio_real'], df_media_mean_nitrogenio['teor_nitrogenio_predict'])
         mse_mean = mean_squared_error(df_media_mean_nitrogenio['teor_nitrogenio_real'], df_media_mean_nitrogenio['teor_nitrogenio_predict'])
 
-        self.config.logger.log_info(f"R2 [mean] conjunto de predição NITROGENIO:")
-        self.config.logger.log_info(f"====================================================")
-        self.config.logger.log_info(f"====>>>>> R2 [mean]: {r2_mean} <<<<<====")
-        self.config.logger.log_info(f"====>>>>> MAE [mean]: {mae_mean} <<<<<====")
-        self.config.logger.log_info(f"====>>>>> MSE [mean]: {mse_mean} <<<<<====")
-        self.config.logger.log_info(f"====================================================")
-        self.config.logger.log_info(f"\n")
+        self.config.logger.log_resume(f"R2 [mean] conjunto de predição NITROGENIO:")
+        self.config.logger.log_resume(f"====================================================")
+        self.config.logger.log_resume(f"====>>>>> R2 [mean]: {r2_mean} <<<<<====")
+        self.config.logger.log_resume(f"====>>>>> MAE [mean]: {mae_mean} <<<<<====")
+        self.config.logger.log_resume(f"====>>>>> MSE [mean]: {mse_mean} <<<<<====")
+        self.config.logger.log_resume(f"====================================================")
+        self.config.logger.log_resume(f"\n")
 
         df_media_median_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'median', 'teor_nitrogenio_real': 'first'}).reset_index()
@@ -299,10 +292,10 @@ class ModelABCRegressor(ABC):
         mae_median = mean_absolute_error(df_media_median_nitrogenio['teor_nitrogenio_real'], df_media_median_nitrogenio['teor_nitrogenio_predict'])
         mse_median = mean_squared_error(df_media_median_nitrogenio['teor_nitrogenio_real'], df_media_median_nitrogenio['teor_nitrogenio_predict'])
 
-        self.config.logger.log_info(f"R2 [median] conjunto de predição NITROGENIO:")
-        self.config.logger.log_info(f"====================================================")
-        self.config.logger.log_info(f"====>>>>> R2 [median]: {r2_median} <<<<<====")
-        self.config.logger.log_info(f"====>>>>> MAE [median]: {mae_median} <<<<<====")
-        self.config.logger.log_info(f"====>>>>> MSE [median]: {mse_median} <<<<<====")
-        self.config.logger.log_info(f"====================================================")
-        self.config.logger.log_info(f"\n")
+        self.config.logger.log_resume(f"R2 [median] conjunto de predição NITROGENIO:")
+        self.config.logger.log_resume(f"====================================================")
+        self.config.logger.log_resume(f"====>>>>> R2 [median]: {r2_median} <<<<<====")
+        self.config.logger.log_resume(f"====>>>>> MAE [median]: {mae_median} <<<<<====")
+        self.config.logger.log_resume(f"====>>>>> MSE [median]: {mse_median} <<<<<====")
+        self.config.logger.log_resume(f"====================================================")
+        self.config.logger.log_resume(f"\n")

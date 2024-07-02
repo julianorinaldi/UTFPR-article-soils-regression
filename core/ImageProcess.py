@@ -14,8 +14,8 @@ class ImageProcess:
         self.config = config
 
     # Carregamento de imagem para objeto e tratamento de imagem
-    def __image_processing(self, image_name: str) -> np.ndarray:
-        img_path = f'{self.config.dirBaseImg}/{image_name}'
+    def __image_processing(self, path_img: str, image_name: str) -> np.ndarray:
+        img_path = f'{path_img}/{image_name}'
         image = tf.keras.preprocessing.image.load_img(
             path=img_path, target_size=(self.config.imageDimensionX, self.config.imageDimensionY))
         image = tf.keras.preprocessing.image.img_to_array(image)
@@ -44,7 +44,7 @@ class ImageProcess:
         return image
 
     # Carregar imagens
-    def image_load(self, df: pd.DataFrame, qtd_imagens: int) -> list:
+    def image_load(self, df: pd.DataFrame, path_img: str, qtd_imagens: int) -> list:
         if df["arquivo"] is None:
             raise Exception("O DataFrame deve conter a coluna 'arquivo'")
 
@@ -53,6 +53,6 @@ class ImageProcess:
         # Array com as imagens a serem carregadas de treino
         image_array = []
         for img_file_path in tqdm(image_files[:qtd_imagens]):
-            image_array.append(self.__image_processing(img_file_path))
+            image_array.append(self.__image_processing(path_img, img_file_path))
 
         return image_array

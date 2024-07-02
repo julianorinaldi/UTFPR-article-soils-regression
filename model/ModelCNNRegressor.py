@@ -1,11 +1,13 @@
 import os
-from datetime import timezone, timedelta, datetime
+import shared.infrastructure.helper.DateTimeHelper as helper
 
 from dto.ConfigModelDTO import ConfigModelDTO
 from dto.FitDTO import FitDTO
 from model.abstract.ModelABCRegressor import ModelABCRegressor
 import pandas as pd
 import tensorflow as tf
+
+from shared.infrastructure.helper.FileHelper import create_file_model
 
 
 class ModelRegressorCNN(ModelABCRegressor):
@@ -56,9 +58,6 @@ class ModelRegressorCNN(ModelABCRegressor):
                 model.fit(fit_dto.x_img_train, fit_dto.y_df_train, validation_data=(fit_dto.x_img_validate, fit_dto.y_df_validate),
                           epochs=self.config.argsEpochs, callbacks=[early_stopping])
 
-            tz_utc_minus3 = timezone(timedelta(hours=-3))
-            timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M")
-            os.makedirs('out/model', exist_ok=True)
-            filepath_model = f'out/model/CNN_{self.config.argsNameModel}_{timestamp}.keras'
+            filepath_model = create_file_model(self.config.argsNameModel, "CNN")
             model.save(filepath=filepath_model, overwrite=True)
-            self.config.logger.log_info(f"Model Saved!!!")
+            self.config.logger.log_info(f"Modelo Salvo!!!")

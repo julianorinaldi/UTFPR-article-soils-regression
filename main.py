@@ -79,24 +79,24 @@ def execute_process(config: ConfigModelDTO):
 
 
 def info_args(config):
-    config.logger.log_info("#######################")
-    config.logger.log_info(f"Info parameters: ")
-    config.logger.log_info(f" -e (--epochs): {config.argsEpochs}")
-    config.logger.log_info(f" -G (--grid_search_trials): {config.argsGridSearch}")
-    config.logger.log_info(f" -i (--amount_image_train): {config.amountImagesTrain}")
-    config.logger.log_info(f" -I (--amount_image_test): {config.amountImagesTest}")
-    config.logger.log_info(f" -L (--log_level): {config.log_level}")
-    config.logger.log_info(
+    config.logger.log_resume("#######################")
+    config.logger.log_resume(f"Info parameters: ")
+    config.logger.log_resume(f" -e (--epochs): {config.argsEpochs}")
+    config.logger.log_resume(f" -G (--grid_search_trials): {config.argsGridSearch}")
+    config.logger.log_resume(f" -i (--amount_image_train): {config.amountImagesTrain}")
+    config.logger.log_resume(f" -I (--amount_image_test): {config.amountImagesTest}")
+    config.logger.log_resume(f" -L (--log_level): {config.log_level}")
+    config.logger.log_resume(
         f" -m (--model): {config.modelSetEnum.value} - {config.modelSetEnum.name}")
-    config.logger.log_info(f" -M (--show_model): {config.argsShowModel}")
-    config.logger.log_info(f" -n (--name): {config.argsNameModel}")
-    config.logger.log_info(f" -N (--normalize): {config.argsNormalize}")
-    config.logger.log_info(f" -p (--preprocess): {config.argsPreprocess}")
-    config.logger.log_info(f" -P (--patience): {config.argsPatience}")
-    config.logger.log_info(f" -S (--separed): {config.argsSepared}")
-    config.logger.log_info(f" -t (--trainable): {config.argsTrainable}")
-    config.logger.log_info(f" -T (--Test): {config.argsOnlyTest}")
-    config.logger.log_info("#######################")
+    config.logger.log_resume(f" -M (--show_model): {config.argsShowModel}")
+    config.logger.log_resume(f" -n (--name): {config.argsNameModel}")
+    config.logger.log_resume(f" -N (--normalize): {config.argsNormalize}")
+    config.logger.log_resume(f" -p (--preprocess): {config.argsPreprocess}")
+    config.logger.log_resume(f" -P (--patience): {config.argsPatience}")
+    config.logger.log_resume(f" -S (--separed): {config.argsSepared}")
+    config.logger.log_resume(f" -t (--trainable): {config.argsTrainable}")
+    config.logger.log_resume(f" -T (--Test): {config.argsOnlyTest}")
+    config.logger.log_resume("#######################")
 
 if __name__ == "__main__":
     main()

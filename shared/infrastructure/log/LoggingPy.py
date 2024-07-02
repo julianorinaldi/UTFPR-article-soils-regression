@@ -1,6 +1,7 @@
 import logging
-import os
-from datetime import datetime, timezone, timedelta
+import shared.infrastructure.helper.DateTimeHelper as helper
+
+from shared.infrastructure.helper.FileHelper import create_file_log, create_file_log_resume
 
 
 class LoggingPy:
@@ -8,7 +9,25 @@ class LoggingPy:
         # Configurar o nível de log
         # (pode ser logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, ou logging.CRITICAL)
         self.logger: logging.Logger
+        self.logger_resume: logging.Logger
 
+        # Criar e configurar o logger
+        if not name_model:
+            name_model = "ERROR"
+        self.logger = logging.getLogger(name_model)
+        self.logger_resume = logging.getLogger(f'{name_model}_resume')
+
+        log_level = self.__get_log_level(log_level)
+        self.logger.setLevel(log_level)
+        self.logger_resume.setLevel(logging.INFO)
+
+        # Configurar o manipulador de logs
+        self.__config_log_output_file(name_model)
+        self.__config_log_output_file_resume(name_model_resume=name_model)
+        self.__config_log_output_console(prefix=prefix)
+
+    @staticmethod
+    def __get_log_level(log_level: int):
         if log_level == 0:
             log_level = logging.DEBUG
         elif log_level == 1:
@@ -22,29 +41,32 @@ class LoggingPy:
         else:
             log_level = logging.DEBUG
 
-        # Criar e configurar o logger
-        if not name_model:
-            name_model = "ERROR"
-        self.logger = logging.getLogger(name_model)
-        self.logger.setLevel(log_level)
+        return log_level
 
-        tz_utc_minus3 = timezone(timedelta(hours=-3))
-        timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M")
-        os.makedirs('out/logs', exist_ok=True)
-        log_filename = f'out/logs/log_{name_model}_{timestamp}.log'
-
+    def __config_log_output_file_resume(self, name_model_resume: str):
         # Configurar um manipulador de arquivo
+        log_filename = create_file_log_resume(name_model=name_model_resume)
+        file_handler = logging.FileHandler(log_filename, mode='w')
+        formatter_file = logging.Formatter(f'%(asctime)s - %(message)s')
+        formatter_file.converter = lambda *args: helper.get_date_time_now().timetuple()
+        file_handler.setFormatter(formatter_file)
+        self.logger_resume.addHandler(file_handler)
+
+    def __config_log_output_file(self, name_model: str):
+        # Configurar um manipulador de arquivo
+        log_filename = create_file_log(name_model=name_model)
         file_handler = logging.FileHandler(log_filename, mode='w')
         formatter_file = logging.Formatter(f'%(asctime)s - %(levelname)s %(message)s')
-        formatter_file.converter = lambda *args: datetime.now(tz=tz_utc_minus3).timetuple()
+        formatter_file.converter = lambda *args: helper.get_date_time_now().timetuple()
         file_handler.setFormatter(formatter_file)
         self.logger.addHandler(file_handler)
 
+    def __config_log_output_console(self, prefix: str = ">>>"):
         # Configurar um manipulador de console
         console_handler = logging.StreamHandler()
         formatter_stream = logging.Formatter(f'%(asctime)s - %(levelname)s {prefix} %(message)s',
                                              datefmt='%Y-%m-%d %H:%M')
-        formatter_stream.converter = lambda *args: datetime.now(tz=tz_utc_minus3).timetuple()
+        formatter_stream.converter = lambda *args: helper.get_date_time_now().timetuple()
         console_handler.setFormatter(formatter_stream)
         self.logger.addHandler(console_handler)
 
@@ -53,6 +75,10 @@ class LoggingPy:
 
     def log_info(self, message):
         self.logger.info(message)
+
+    def log_resume(self, message):
+        self.log_info(message)
+        self.logger_resume.info(message)
 
     def log_error(self, error: Exception):
         self.logger.error(error, exc_info=True)

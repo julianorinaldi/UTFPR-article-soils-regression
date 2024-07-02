@@ -10,9 +10,9 @@ class DatasetProcess:
         self.config = config
 
     # Carrega o Dataset from CSV
-    def __load_dataset_from_csv(self) -> pd.DataFrame:
+    def __load_dataset_from_csv(self, path_csv: str) -> pd.DataFrame:
         # Carregamento do Dataset
-        df: pd.DataFrame = pd.read_csv(self.config.pathCSV)
+        df: pd.DataFrame = pd.read_csv(path_csv)
         return df
 
     # Define amostras aleatórias para compor o DataFrame de Teste (20%)
@@ -53,12 +53,33 @@ class DatasetProcess:
         df_random = df.sample(frac=1, random_state=random_state, ignore_index=True)
         return df_random
 
+    # Carrega o Dataset de Treino e Teste.
+    # Centraliza aqui para juntar os DataFrames, normalizar e depois separar novamente.
+    def load_train_test_data(self) -> (pd.DataFrame, pd.DataFrame):
+        df_train = self.__load_and_clean_data(ConfigModelDTO.PATH_CSV_TRAIN)
+        df_test = self.__load_and_clean_data(ConfigModelDTO.PATH_CSV_TEST)
+
+        # Cria uma coluna temporária para identificar origem (treino ou teste)
+        df_train['is_train'] = True
+        df_test['is_train'] = False
+
+        df_all = pd.concat([df_train, df_test], ignore_index=True)
+        df_all = get_normalize_data(df_all, self.config.argsNormalize, self.config.logger)
+
+        # Reconstrói os DataFrames de treino e teste com base nos índices originais
+        df_train = df_all[df_all['is_train']].drop(columns=['is_train']).reset_index(drop=True)
+        df_test = df_all[~df_all['is_train']].drop(columns=['is_train']).reset_index(drop=True)
+
+        self.config.logger.log_debug(f"Load df_train: {len(df_train)}\n{df_train.head()}")
+        self.config.logger.log_debug(f"Load df_test: {len(df_test)}\n{df_test.head()}")
+
+        return df_train, df_test
+
     # Faz o preparado do Dataset para trabalhar no modelo de regressão
     # Retorna dataset limpo e separado em treino e teste, e lista dos arquivos imagens
-    @property
-    def load_and_clean_data(self) -> pd.DataFrame:
+    def __load_and_clean_data(self, path_csv: str) -> pd.DataFrame:
         # Carregamento do Dataset
-        df_all: pd.DataFrame = self.__load_dataset_from_csv()
+        df_all: pd.DataFrame = self.__load_dataset_from_csv(path_csv)
 
         # Removendo colunas desnecessárias
         df_all = self.__prepare_dataset_remove_columns(df_all)
@@ -71,17 +92,12 @@ class DatasetProcess:
         return df_all
 
     def get_train_validate_process(self, df_all: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame):
-        # Normalização dos dados conforme enumerador passado
-        df_all = get_normalize_data(df_all, self.config.argsNormalize, self.config.logger)
-
         # Separa dados de Treinamento e de Test
         df_train, df_validate = self.__prepare_dataset_train_and_validate(df_all)
 
         return  df_train, df_validate
 
     def get_test_process(self, df_all: pd.DataFrame) -> pd.DataFrame:
-        df_all = df_all.drop(columns=["amostra"])
-        # Normalização dos dados conforme enumerador passado
-        df_test = get_normalize_data(df_all, self.config.argsNormalize, self.config.logger)
+        df_test = df_all.drop(columns=["amostra"])
 
         return df_test

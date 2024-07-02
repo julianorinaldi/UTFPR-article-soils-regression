@@ -1,5 +1,5 @@
 import os
-from datetime import timezone, datetime, timedelta
+import shared.infrastructure.helper.DateTimeHelper as helper
 
 import numpy as np
 import tensorflow as tf
@@ -9,6 +9,7 @@ from dto.FitDTO import FitDTO
 from dto.ModelSetEnum import ModelSetEnum
 from model.abstract.ModelABCRegressor import ModelABCRegressor
 from model.gridsearch.ModelGridSearch import get_config_gridsearch_transfer_learning
+from shared.infrastructure.helper.FileHelper import create_file_model
 
 
 class ModelRegressorTransferLearning(ModelABCRegressor):
@@ -62,12 +63,9 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                           epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
 
-            tz_utc_minus3 = timezone(timedelta(hours=-3))
-            timestamp = datetime.now(tz=tz_utc_minus3).strftime("%Y%m%d_%H%M")
-            os.makedirs('out/model', exist_ok=True)
-            filepath_model = f'out/model/TF_{self.config.argsNameModel}_{timestamp}.keras'
+            filepath_model = create_file_model(self.config.argsNameModel, "TF")
             model.save(filepath=filepath_model, overwrite=True)
-            self.config.logger.log_info(f"Model Saved!!!")
+            self.config.logger.log_info(f"Modelo Salvo!!!")
 
     # Modelos disponíveis para Transfer-Learning
     # https://keras.io/api/applications/

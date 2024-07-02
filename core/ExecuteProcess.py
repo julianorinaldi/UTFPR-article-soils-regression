@@ -1,6 +1,7 @@
 import os
 import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 
+from core.DatasetProcess import DatasetProcess
 # Models
 from model.ModelCNNRegressor import ModelRegressorCNN
 from model.ModelXGBRegressor import ModelXGBRegressor
@@ -37,11 +38,14 @@ class ExecuteProcess:
         # Cria o modelo
         _model = self.__get_model_instance()
 
+        dp = DatasetProcess(self.config)
+        df_train, df_test = dp.load_train_test_data()
+
         with strategy.scope():
             # Chama o treinamento
-            _model.train()
+            _model.train(df_train)
             # Chama os testes
-            _model.test()
+            _model.test(df_test)
 
     def __get_model_instance(self):
         self.config.logger.log_info(f"Modelo: {self.config.modelSetEnum.name}")
