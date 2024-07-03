@@ -1,6 +1,3 @@
-import os
-import shared.infrastructure.helper.DateTimeHelper as helper
-
 import numpy as np
 import tensorflow as tf
 
@@ -10,7 +7,6 @@ from dto.ModelSetEnum import ModelSetEnum
 from model.abstract.ModelABCRegressor import ModelABCRegressor
 from model.gridsearch.ModelGridSearch import get_config_gridsearch_transfer_learning
 from shared.infrastructure.helper.FileHelper import create_file_model
-
 
 class ModelRegressorTransferLearning(ModelABCRegressor):
 
@@ -50,13 +46,15 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             monitor='val_mae', patience=self.config.argsPatience,
             restore_best_weights=True)
 
+        # Padrão sem separação entre validação e treino
         for model in models:
             if not self.config.argsSepared:
                 # Padrão sem separação entre validação e treino      
                 x_img_data = np.concatenate((fit_dto.x_img_train, fit_dto.x_img_validate), axis=0)
                 y_df_train = np.concatenate((fit_dto.y_df_train, fit_dto.y_df_validate), axis=0)
+                self.config.logger.log_debug(f"\nUsando batch_size=32\n")
                 model.fit(x_img_data, y_df_train, validation_split=0.2, epochs=self.config.argsEpochs,
-                          callbacks=[early_stopping])
+                          callbacks=[early_stopping], batch_size=32)
             else:
                 model.fit(fit_dto.x_img_train, fit_dto.y_df_train,
                           validation_data=(fit_dto.x_img_validate, fit_dto.y_df_validate),

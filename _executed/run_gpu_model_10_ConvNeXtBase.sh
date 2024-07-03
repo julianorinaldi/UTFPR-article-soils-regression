@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 python3 main.py --name ConvNeXtBase_10_Normalize0_Epochs100_Patience10_Separed_Preprocess \
                --normalize 0 \
                --log_level 0 \
@@ -41,35 +42,35 @@ python3 main.py --name ConvNeXtBase_10_Normalize4_Epochs100_Patience10_Separed_P
                --preprocess
 
 # Sem o preprocess
-python3 main.py --name ConvNeXtBase_10_Normalize0_Epochs100_Patience10_Separed_Preprocess \
+python3 main.py --name ConvNeXtBase_10_Normalize0_Epochs100_Patience10_Separed \
                --normalize 0 \
                --log_level 0 \
                --model 10 \
                --epochs 100 \
                --patience 10 \
 
-python3 main.py --name ConvNeXtBase_10_Normalize1_Epochs100_Patience10_Separed_Preprocess \
+python3 main.py --name ConvNeXtBase_10_Normalize1_Epochs100_Patience10_Separed \
                --normalize 1 \
                --log_level 0 \
                --model 10 \
                --epochs 100 \
                --patience 10 \
 
-python3 main.py --name ConvNeXtBase_10_Normalize2_Epochs100_Patience10_Separed_Preprocess \
+python3 main.py --name ConvNeXtBase_10_Normalize2_Epochs100_Patience10_Separed \
                --normalize 2 \
                --log_level 0 \
                --model 10 \
                --epochs 100 \
                --patience 10 \
 
-python3 main.py --name ConvNeXtBase_10_Normalize3_Epochs100_Patience10_Separed_Preprocess \
+python3 main.py --name ConvNeXtBase_10_Normalize3_Epochs100_Patience10_Separed \
                --normalize 3 \
                --log_level 0 \
                --model 10 \
                --epochs 100 \
                --patience 10 \
 
-python3 main.py --name ConvNeXtBase_10_Normalize4_Epochs100_Patience10_Separed_Preprocess \
+python3 main.py --name ConvNeXtBase_10_Normalize4_Epochs100_Patience10_Separed \
                --normalize 3 \
                --log_level 0 \
                --model 10 \
