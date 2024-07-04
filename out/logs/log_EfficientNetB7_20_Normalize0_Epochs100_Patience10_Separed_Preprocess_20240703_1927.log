@@ -1,0 +1,86 @@
+2024-07-03 19:27:12,833 - INFO Parâmetros:
+2024-07-03 19:27:12,833 - INFO Namespace(epochs=100, grid_search_trials=0, amount_image_train=8930, amount_image_test=3843, log_level=0, model=20, show_model=False, name='EfficientNetB7_20_Normalize0_Epochs100_Patience10_Separed_Preprocess', normalize=0, preprocess=True, patience=10, separed=False, trainable=False, Test=False)
+2024-07-03 19:27:18,608 - DEBUG Quantidade de GPU disponíveis: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU'), PhysicalDevice(name='/physical_device:GPU:1', device_type='GPU')]
+2024-07-03 19:27:19,428 - INFO Modelo: EfficientNetB7
+2024-07-03 19:27:19,436 - INFO Embaralhamento de dados->random_state: 56
+2024-07-03 19:27:19,441 - INFO Embaralhamento de dados->random_state: 65
+2024-07-03 19:27:19,442 - INFO Informações básicas do Dataset com normalização NONE ...
+2024-07-03 19:27:19,450 - DEBUG Load df_train: 8930
+  amostra       arquivo  teor_carbono  teor_nitrogenio
+0     C33   C33B-88.png          0.86             0.08
+1     C14  C14A-102.png          1.46             0.11
+2     C38  C38A-154.png          1.64             0.14
+3     C28  C28A-102.png          1.49             0.16
+4     C15   C15A-74.png          2.20             0.17
+2024-07-03 19:27:19,453 - DEBUG Load df_test: 3843
+  amostra       arquivo  teor_carbono  teor_nitrogenio
+0     C26   C26B-58.png          1.94             0.20
+1     L20  L20A-115.png          3.28             0.26
+2      L2    L2B-87.png          2.40             0.12
+3     L29   L29A-52.png          4.79             0.39
+4      C3   C3A-104.png          4.95             0.34
+2024-07-03 19:27:19,454 - INFO Iniciando o Treinamento...
+
+2024-07-03 19:27:19,454 - INFO Separando Treino e Validação...
+
+2024-07-03 19:27:19,464 - INFO Quantidade de Imagens para Treino e Validação: 7115, 1786
+
+2024-07-03 19:27:19,464 - INFO Carregando imagens ...
+
+2024-07-03 19:27:56,228 - DEBUG Limitando Dados:
+
+2024-07-03 19:27:56,228 - DEBUG 
+Train X: 7115
+Validate X: 1786
+Train Y: (7115, 2)
+Validate Y: (1786, 2)
+2024-07-03 19:27:56,232 - INFO DataFrame Info Treino:
+       teor_carbono  teor_nitrogenio
+count   7115.000000      7115.000000
+mean       2.696204         0.207497
+std        1.321019         0.109656
+min        0.400000         0.040000
+25%        1.510000         0.120000
+50%        2.800000         0.220000
+75%        3.760000         0.270000
+max        6.610000         0.550000
+
+2024-07-03 19:27:56,237 - INFO DataFrame Info Validate:
+       teor_carbono  teor_nitrogenio
+count   1786.000000      1786.000000
+mean       2.941948         0.231674
+std        1.681030         0.139882
+min        0.330000         0.050000
+25%        1.490000         0.100000
+50%        3.120000         0.240000
+75%        4.340000         0.370000
+max        6.620000         0.560000
+
+2024-07-03 19:27:56,237 - INFO Iniciando o treino
+2024-07-03 19:27:56,237 - INFO Modelo Selecionado: EfficientNetB7
+2024-07-03 19:28:08,434 - INFO Executando sem o GridSearch
+
+2024-07-03 19:28:10,062 - DEBUG 
+Usando batch_size=32
+
+2024-07-03 19:37:26,318 - ERROR Unable to serialize [2.0896919 2.1128857 2.1081853] to JSON. Unrecognized type <class 'tensorflow.python.framework.ops.EagerTensor'>.
+Traceback (most recent call last):
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/main.py", line 25, in main
+    execute_process(config)
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/main.py", line 77, in execute_process
+    execute.run()
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/core/ExecuteProcess.py", line 46, in run
+    _model.train(df_train)
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/model/abstract/ModelABCRegressor.py", line 162, in train
+    self.model_fit(self.models, fit_dto)
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/model/ModelTransferLearningRegressor.py", line 65, in model_fit
+    model.save(filepath=filepath_model, overwrite=True)
+  File "/home/users/jrinaldi/source-py3.10/lib/python3.10/site-packages/keras/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/usr/local/lib/python3.10/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+  File "/usr/local/lib/python3.10/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/local/lib/python3.10/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+TypeError: Unable to serialize [2.0896919 2.1128857 2.1081853] to JSON. Unrecognized type <class 'tensorflow.python.framework.ops.EagerTensor'>.

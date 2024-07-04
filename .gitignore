@@ -4,7 +4,6 @@ lib
 lib64
 share
 include
-*.log
 *.keras
-out/logs
+out/model
 model

@@ -1,0 +1,29 @@
+2024-07-02 00:30:05,487 - INFO Parâmetros:
+2024-07-02 00:30:05,487 - INFO Namespace(epochs=100, grid_search_trials=0, amount_image_train=8930, amount_image_test=3843, log_level=0, model=0, show_model=False, name='ResNet50_Normalize2_Epochs100_Patience10_Separed_Preprocess', normalize=2, preprocess=True, patience=10, separed=False, trainable=False, Test=False)
+2024-07-02 00:30:12,631 - DEBUG Quantidade de GPU disponíveis: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU'), PhysicalDevice(name='/physical_device:GPU:1', device_type='GPU')]
+2024-07-02 00:30:13,430 - INFO Modelo: ResNet50
+2024-07-02 00:30:13,439 - INFO Embaralhamento de dados->random_state: 47
+2024-07-02 00:30:13,444 - INFO Embaralhamento de dados->random_state: 51
+2024-07-02 00:30:13,445 - INFO Informações básicas do Dataset com normalização RobustScaler ...
+2024-07-02 00:30:13,455 - DEBUG Load df_train: 8930
+  amostra       arquivo  teor_carbono  teor_nitrogenio
+0      L3   L3A-106.png     -0.433180        -0.666667
+1     L10  L10B-123.png     -0.728111        -0.833333
+2     L18  L18B-164.png      0.239631         0.277778
+3     L35  L35A-153.png      0.341014         0.444444
+4     L19  L19A-115.png      0.732719         0.944444
+2024-07-02 00:30:13,458 - DEBUG Load df_test: 3843
+  amostra       arquivo  teor_carbono  teor_nitrogenio
+0     L26  L26A-152.png     -0.036866         0.111111
+1     L37  L37A-152.png      0.691244         0.777778
+2     C46   C46B-76.png     -0.248848         0.500000
+3     C12   C12A-92.png      0.087558        -0.055556
+4      C4    C4A-70.png      0.239631        -0.055556
+2024-07-02 00:30:13,459 - INFO Iniciando o Treinamento...
+
+2024-07-02 00:30:13,459 - INFO Separando Treino e Validação...
+
+2024-07-02 00:30:13,469 - INFO Quantidade de Imagens para Treino e Validação: 7115, 1786
+
+2024-07-02 00:30:13,469 - INFO Carregando imagens ...
+

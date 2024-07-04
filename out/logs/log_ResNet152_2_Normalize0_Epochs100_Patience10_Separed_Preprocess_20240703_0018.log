@@ -1,0 +1,17 @@
+2024-07-03 00:18:14,291 - INFO Parâmetros:
+2024-07-03 00:18:14,291 - INFO Namespace(epochs=100, grid_search_trials=0, amount_image_train=8930, amount_image_test=3843, log_level=0, model=2, show_model=False, name='ResNet152_2_Normalize0_Epochs100_Patience10_Separed_Preprocess', normalize=0, preprocess=False, patience=10, separed=False, trainable=False, Test=False)
+2024-07-03 00:18:14,678 - ERROR No module named '_ctypes'
+Traceback (most recent call last):
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/main.py", line 25, in main
+    execute_process(config)
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/main.py", line 75, in execute_process
+    from core.ExecuteProcess import ExecuteProcess
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/core/ExecuteProcess.py", line 2, in <module>
+    import tensorflow as tf  # Trabalhar com aprendizado de máquinas
+  File "/home/users/jrinaldi/.local/lib/python3.10/site-packages/tensorflow/__init__.py", line 37, in <module>
+    from tensorflow.python.tools import module_util as _module_util
+  File "/home/users/jrinaldi/.local/lib/python3.10/site-packages/tensorflow/python/__init__.py", line 24, in <module>
+    import ctypes
+  File "/home/users/jrinaldi/.pyenv/versions/3.10.14/lib/python3.10/ctypes/__init__.py", line 8, in <module>
+    from _ctypes import Union, Structure, Array
+ModuleNotFoundError: No module named '_ctypes'

@@ -1,0 +1,11 @@
+2024-07-02 20:39:20,142 - INFO Parâmetros:
+2024-07-02 20:39:20,142 - INFO Namespace(Test=False, amount_image_test=3843, amount_image_train=8930, epochs=100, grid_search_trials=0, log_level=0, model=2, name='ResNet152_2_Normalize4_Epochs100_Patience10_Separed_Preprocess', normalize=3, patience=10, preprocess=False, separed=False, show_model=False, trainable=False)
+2024-07-02 20:39:20,143 - ERROR No module named 'tensorflow'
+Traceback (most recent call last):
+  File "main.py", line 25, in main
+    execute_process(config)
+  File "main.py", line 75, in execute_process
+    from core.ExecuteProcess import ExecuteProcess
+  File "/home/users/jrinaldi/source-py3.10/UTFPR-article-soils-regression/core/ExecuteProcess.py", line 2, in <module>
+    import tensorflow as tf  # Trabalhar com aprendizado de máquinas
+ModuleNotFoundError: No module named 'tensorflow'

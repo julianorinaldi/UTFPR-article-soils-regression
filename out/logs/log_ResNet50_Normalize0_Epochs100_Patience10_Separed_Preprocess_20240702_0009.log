@@ -1,0 +1,165 @@
+2024-07-02 00:09:26,418 - INFO Parâmetros:
+2024-07-02 00:09:26,419 - INFO Namespace(epochs=100, grid_search_trials=0, amount_image_train=8930, amount_image_test=3843, log_level=0, model=0, show_model=False, name='ResNet50_Normalize0_Epochs100_Patience10_Separed_Preprocess', normalize=0, preprocess=True, patience=10, separed=False, trainable=False, Test=False)
+2024-07-02 00:09:33,204 - DEBUG Quantidade de GPU disponíveis: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU'), PhysicalDevice(name='/physical_device:GPU:1', device_type='GPU')]
+2024-07-02 00:09:34,006 - INFO Modelo: ResNet50
+2024-07-02 00:09:34,014 - INFO Embaralhamento de dados->random_state: 78
+2024-07-02 00:09:34,019 - INFO Embaralhamento de dados->random_state: 35
+2024-07-02 00:09:34,020 - INFO Informações básicas do Dataset com normalização NONE ...
+2024-07-02 00:09:34,028 - DEBUG Load df_train: 8930
+  amostra       arquivo  teor_carbono  teor_nitrogenio
+0     C43  C43A-120.png          3.16             0.19
+1     C36  C36B-124.png          0.40             0.04
+2      L8   L8A-125.png          2.52             0.13
+3     C11  C11A-105.png          3.58             0.25
+4     C25  C25B-125.png          4.09             0.39
+2024-07-02 00:09:34,031 - DEBUG Load df_test: 3843
+  amostra       arquivo  teor_carbono  teor_nitrogenio
+0      C3    C3B-70.png          4.95             0.34
+1     L23  L23A-118.png          4.27             0.35
+2     C41   C41B-58.png          1.78             0.15
+3     L17  L17A-135.png          3.98             0.32
+4     C37   C37B-85.png          1.09             0.09
+2024-07-02 00:09:34,032 - INFO Iniciando o Treinamento...
+
+2024-07-02 00:09:34,032 - INFO Separando Treino e Validação...
+
+2024-07-02 00:09:34,043 - INFO Quantidade de Imagens para Treino e Validação: 7115, 1786
+
+2024-07-02 00:09:34,043 - INFO Carregando imagens ...
+
+2024-07-02 00:09:59,236 - DEBUG Limitando Dados:
+
+2024-07-02 00:09:59,236 - DEBUG 
+Train X: 7115
+Validate X: 1786
+Train Y: (7115, 2)
+Validate Y: (1786, 2)
+2024-07-02 00:09:59,241 - INFO DataFrame Info Treino:
+       teor_carbono  teor_nitrogenio
+count   7115.000000      7115.000000
+mean       2.696204         0.207497
+std        1.321019         0.109656
+min        0.400000         0.040000
+25%        1.510000         0.120000
+50%        2.800000         0.220000
+75%        3.760000         0.270000
+max        6.610000         0.550000
+
+2024-07-02 00:09:59,245 - INFO DataFrame Info Validate:
+       teor_carbono  teor_nitrogenio
+count   1786.000000      1786.000000
+mean       2.949698         0.232268
+std        1.688820         0.140620
+min        0.330000         0.050000
+25%        1.490000         0.100000
+50%        3.120000         0.240000
+75%        4.340000         0.370000
+max        6.620000         0.560000
+
+2024-07-02 00:09:59,245 - INFO Iniciando o treino
+2024-07-02 00:09:59,245 - INFO Modelo Selecionado: ResNet50
+2024-07-02 00:10:02,088 - INFO Executando sem o GridSearch
+
+2024-07-02 00:13:17,272 - INFO Modelo Salvo!!!
+2024-07-02 00:13:17,284 - INFO Iniciando o Test...
+
+2024-07-02 00:16:30,434 - DEBUG 
+Test X: 3843
+Test Y: (3843, 2)
+2024-07-02 00:16:30,438 - INFO DataFrame Info:
+       teor_carbono  teor_nitrogenio
+count   3843.000000      3843.000000
+mean       2.924817         0.229568
+std        1.297112         0.108579
+min        0.310000         0.030000
+25%        1.780000         0.140000
+50%        3.190000         0.240000
+75%        4.160000         0.340000
+max        4.950000         0.390000
+
+2024-07-02 00:16:30,438 - INFO 
+Iniciando predição completa para o R2...
+
+2024-07-02 00:16:41,374 - INFO 
+2024-07-02 00:16:41,374 - INFO ====================================================
+2024-07-02 00:16:41,374 - INFO ********** R2 Modelo: -0.6441651359148108 **********
+2024-07-02 00:16:41,374 - INFO ********** MAE [mean]: 0.5524930200379835 **********
+2024-07-02 00:16:41,374 - INFO ********** MSE [mean]: 0.7286065099984044 **********
+2024-07-02 00:16:41,374 - INFO ====================================================
+2024-07-02 00:16:41,374 - INFO 
+
+2024-07-02 00:16:41,374 - INFO Alguns exemplos de predições ...
+2024-07-02 00:16:41,574 - INFO 
+Melhores resultados ...
+
+
+2024-07-02 00:16:41,581 - INFO 
+     amostra  teor_cabono_real  teor_cabono_predict  teor_cabono_diff  error_carbono(%)  teor_nitrogenio_real  teor_nitrogenio_predict  teor_nitrogenio_diff  error_nitrogenio(%) grupo
+845      C41              1.78             1.780081          0.000081          0.004546                  0.15                 0.187797              0.037797            25.198195   C41
+3509     C46              2.46             2.460663          0.000663          0.026945                  0.31                 0.247757              0.062243            20.078232   C46
+1802     L20              3.28             3.278962          0.001038          0.031635                  0.26                 0.242611              0.017389             6.688241   L20
+2615     C39              1.68             1.680619          0.000619          0.036874                  0.14                 0.172472              0.032472            23.194360   C39
+2943     L40              2.85             2.851767          0.001767          0.062011                  0.25                 0.196407              0.053593            21.437353   L40
+
+2024-07-02 00:16:41,581 - INFO 
+Piores resultados ...
+
+
+2024-07-02 00:16:41,587 - INFO 
+     amostra  teor_cabono_real  teor_cabono_predict  teor_cabono_diff  error_carbono(%)  teor_nitrogenio_real  teor_nitrogenio_predict  teor_nitrogenio_diff  error_nitrogenio(%) grupo
+2010     C51              0.31             3.210127          2.900127        935.524799                  0.03                 0.313060              0.283060           943.532391   C51
+515      C51              0.31             3.212689          2.902689        936.351419                  0.03                 0.198881              0.168881           562.937562   C51
+3139     C51              0.31             3.244102          2.934102        946.484517                  0.03                 0.174179              0.144179           480.597719   C51
+2489     C51              0.31             3.283821          2.973821        959.297131                  0.03                 0.220255              0.190255           634.184335   C51
+303      C51              0.31             3.367486          3.057486        986.285806                  0.03                 0.198577              0.168577           561.924630   C51
+
+
+2024-07-02 00:16:41,590 - INFO R2 [mean] conjunto de predição CARBONO:
+2024-07-02 00:16:41,590 - INFO ====================================================
+2024-07-02 00:16:41,590 - INFO ====>>>>> R2 [mean]: 0.2595295991500617 <<<<<====
+2024-07-02 00:16:41,590 - INFO ====>>>>> MAE [mean]: 0.917814439314383 <<<<<====
+2024-07-02 00:16:41,590 - INFO ====>>>>> MSE [mean]: 1.2655671136708249 <<<<<====
+2024-07-02 00:16:41,591 - INFO ====================================================
+2024-07-02 00:16:41,591 - INFO 
+
+2024-07-02 00:16:41,593 - INFO R2 [median] conjunto de predição CARBONO:
+2024-07-02 00:16:41,593 - INFO ====================================================
+2024-07-02 00:16:41,593 - INFO ====>>>>> R2 [median]: 0.22439360625318205 <<<<<====
+2024-07-02 00:16:41,593 - INFO ====>>>>> MAE [median]: 0.9384145727864017 <<<<<====
+2024-07-02 00:16:41,593 - INFO ====>>>>> MSE [median]: 1.325619422399738 <<<<<====
+2024-07-02 00:16:41,594 - INFO ====================================================
+2024-07-02 00:16:41,594 - INFO 
+
+2024-07-02 00:16:41,596 - INFO R2 [mean] conjunto de predição NITROGENIO:
+2024-07-02 00:16:41,596 - INFO ====================================================
+2024-07-02 00:16:41,596 - INFO ====>>>>> R2 [mean]: -0.8539923765523445 <<<<<====
+2024-07-02 00:16:41,596 - INFO ====>>>>> MAE [mean]: 0.12040489238721352 <<<<<====
+2024-07-02 00:16:41,596 - INFO ====>>>>> MSE [mean]: 0.021867954525408767 <<<<<====
+2024-07-02 00:16:41,596 - INFO ====================================================
+2024-07-02 00:16:41,597 - INFO 
+
+2024-07-02 00:16:41,599 - INFO R2 [median] conjunto de predição NITROGENIO:
+2024-07-02 00:16:41,599 - INFO ====================================================
+2024-07-02 00:16:41,599 - INFO ====>>>>> R2 [median]: -0.7442230681814834 <<<<<====
+2024-07-02 00:16:41,599 - INFO ====>>>>> MAE [median]: 0.11672091362652955 <<<<<====
+2024-07-02 00:16:41,599 - INFO ====>>>>> MSE [median]: 0.020573218757291227 <<<<<====
+2024-07-02 00:16:41,599 - INFO ====================================================
+2024-07-02 00:16:41,599 - INFO 
+
+2024-07-02 00:16:41,600 - INFO #######################
+2024-07-02 00:16:41,600 - INFO Info parameters: 
+2024-07-02 00:16:41,600 - INFO  -e (--epochs): 100
+2024-07-02 00:16:41,600 - INFO  -G (--grid_search_trials): 0
+2024-07-02 00:16:41,600 - INFO  -i (--amount_image_train): 8930
+2024-07-02 00:16:41,601 - INFO  -I (--amount_image_test): 3843
+2024-07-02 00:16:41,601 - INFO  -L (--log_level): 0
+2024-07-02 00:16:41,601 - INFO  -m (--model): 0 - ResNet50
+2024-07-02 00:16:41,601 - INFO  -M (--show_model): False
+2024-07-02 00:16:41,601 - INFO  -n (--name): ResNet50_Normalize0_Epochs100_Patience10_Separed_Preprocess
+2024-07-02 00:16:41,601 - INFO  -N (--normalize): NormalizeEnum.NONE
+2024-07-02 00:16:41,601 - INFO  -p (--preprocess): True
+2024-07-02 00:16:41,601 - INFO  -P (--patience): 10
+2024-07-02 00:16:41,601 - INFO  -S (--separed): False
+2024-07-02 00:16:41,601 - INFO  -t (--trainable): False
+2024-07-02 00:16:41,601 - INFO  -T (--Test): False
+2024-07-02 00:16:41,601 - INFO #######################

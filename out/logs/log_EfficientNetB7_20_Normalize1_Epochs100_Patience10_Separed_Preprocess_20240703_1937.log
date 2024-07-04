@@ -1,0 +1,2 @@
+2024-07-03 19:37:29,188 - INFO Parâmetros:
+2024-07-03 19:37:29,188 - INFO Namespace(epochs=100, grid_search_trials=0, amount_image_train=8930, amount_image_test=3843, log_level=0, model=20, show_model=False, name='EfficientNetB7_20_Normalize1_Epochs100_Patience10_Separed_Preprocess', normalize=1, preprocess=True, patience=10, separed=False, trainable=False, Test=False)
