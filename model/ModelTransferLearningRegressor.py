@@ -31,7 +31,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             optimizer = tf.keras.optimizers.RMSprop()
 
         _model = tf.keras.models.Model(inputs=pretrained_model.input, outputs=predictions)
-        _model.compile(optimizer=optimizer, loss='mse', metrics=['mae'])
+        _model.compile(optimizer=optimizer, loss='mse', metrics=['rmse'])
 
         if self.config.argsShowModel:
             self.config.logger.log_info(f"\n{_model.summary()}")
