@@ -1,3 +1,4 @@
+import keras
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -25,25 +26,6 @@ class ModelABCRegressor(ABC):
     def get_specialist_model(self, hp):
         pass
 
-    def __get_data_argumentation(self, x_train, y_train):
-        datagen = tf.keras.preprocessing.image.ImageDataGenerator(
-            rotation_range=20,
-            width_shift_range=0.2,
-            height_shift_range=0.2,
-            horizontal_flip=True,
-            fill_mode='nearest'
-        )
-
-        train_generator = datagen.flow(
-            x_train,  # Seu array de imagens de treinamento
-            y_train,  # Seus rótulos de treinamento (opcional, se tiver)
-            batch_size=32,  # Tamanho do batch
-            shuffle=True  # Embaralhar os dados a cada época
-        )
-
-        return train_generator
-
-
     # Implemente se não desejar converter em 2 dimensões
     # Padrão que vem: (qtdImage, 256,256,3)
     # Na implementação abaixo, fica: (qtdImage, 196608) usado para algoritmos padrões
@@ -63,10 +45,7 @@ class ModelABCRegressor(ABC):
                 # Juntando os dados de validação com treino no SUPER.
                 x_img_data = np.concatenate((fit_dto.x_img_train, fit_dto.x_img_validate), axis=0)
                 y_df_data = np.concatenate((fit_dto.y_df_train, fit_dto.y_df_validate), axis=0)
-
-                # Aplica DataArgumentation nas amostras de treinamento
-                train_generator = self.__get_data_argumentation(x_img_data, y_df_data)
-                model.fit(train_generator, epochs=self.config.argsEpochs, callbacks=[early_stopping])
+                model.fit(x_img_data, y_df_data, epochs=self.config.argsEpochs, callbacks=[early_stopping])
             else:
                 model.fit(fit_dto.x_img_train, fit_dto.y_df_train,
                           validation_data=(fit_dto.x_img_validate, fit_dto.y_df_validate),

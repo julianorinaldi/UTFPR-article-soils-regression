@@ -41,7 +41,31 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
     def reshape_two_dimensions(self, x_data):
         return x_data
 
+    def __get_data_argumentation_train(self, x_train, y_train):
+        datagen = tf.keras.preprocessing.image.ImageDataGenerator(
+            rotation_range=20,
+            width_shift_range=0.2,
+            height_shift_range=0.2,
+            horizontal_flip=True,
+            fill_mode='nearest'
+        )
+
+        train_generator = datagen.flow(
+            x_train,  # Seu array de imagens de treinamento
+            y_train,  # Seus rótulos de treinamento (opcional, se tiver)
+            batch_size=32,  # Tamanho do batch
+            shuffle=True  # Embaralhar os dados a cada época
+        )
+        self.config.logger.log_debug(f"\nAplicando Data Argumentation ...\n")
+        return train_generator
+
+    def __get_data_argumentation_train_with_validation(self, x_train, y_train, x_validation, y_validation):
+        train_generator = self.__get_data_argumentation_train(x_train, y_train)
+        validation_generator = self.__get_data_argumentation_train(x_validation, y_validation)
+        return  train_generator, validation_generator
+
     def model_fit(self, models, fit_dto: FitDTO):
+        self.config.logger.log_debug(f"\nIniciando o fit ...\n")
         early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_mae', patience=self.config.argsPatience,
             restore_best_weights=True)
@@ -49,15 +73,23 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         # Padrão sem separação entre validação e treino
         for model in models:
             if not self.config.argsSepared:
-                # Padrão sem separação entre validação e treino      
+                self.config.logger.log_debug(f"\nTreino e Validação em mesmo conjuto de dados ...\n")
+                # Juntando os dados de validação com treino no SUPER.
                 x_img_data = np.concatenate((fit_dto.x_img_train, fit_dto.x_img_validate), axis=0)
-                y_df_train = np.concatenate((fit_dto.y_df_train, fit_dto.y_df_validate), axis=0)
-                self.config.logger.log_debug(f"\nUsando batch_size=32\n")
-                model.fit(x_img_data, y_df_train, validation_split=0.2, epochs=self.config.argsEpochs,
-                          callbacks=[early_stopping], batch_size=32)
+                y_df_data = np.concatenate((fit_dto.y_df_train, fit_dto.y_df_validate), axis=0)
+
+                # Aplica DataArgumentation nas amostras de treinamento
+                train_generator = self.__get_data_argumentation_train(x_img_data, y_df_data)
+                model.fit(train_generator, steps_per_epoch = len(x_img_data), epochs=self.config.argsEpochs,
+                          callbacks=[early_stopping])
             else:
-                model.fit(fit_dto.x_img_train, fit_dto.y_df_train,
-                          validation_data=(fit_dto.x_img_validate, fit_dto.y_df_validate),
+                self.config.logger.log_debug(f"\nSeparação de Treino e Validação em diferentes conjutos de dados ...\n")
+                train_generator, validation_generator = self.__get_data_argumentation_train_with_validation(
+                    fit_dto.x_img_train, fit_dto.y_df_train, fit_dto.x_img_validate, fit_dto.y_df_validate)
+                model.fit(train_generator,
+                          steps_per_epoch = len(fit_dto.x_img_train),
+                          validation_data=validation_generator,
+                          validation_steps=len(fit_dto.x_img_validate),
                           epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
 
