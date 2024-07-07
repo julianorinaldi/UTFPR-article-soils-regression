@@ -78,6 +78,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                 # Juntando os dados de validação com treino no SUPER.
                 x_img_data = np.concatenate((fit_dto.x_img_train, fit_dto.x_img_validate), axis=0)
                 y_df_data = np.concatenate((fit_dto.y_df_train, fit_dto.y_df_validate), axis=0)
+                self.config.logger.log_debug(f"x_img_data Shape: {x_img_data.shape}, y_df_data Shape: {y_df_data.shape} ...\n")
 
                 # Aplica DataArgumentation nas amostras de treinamento
                 train_generator = self.__get_data_argumentation_train(x_img_data, y_df_data)
@@ -85,12 +86,18 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                           callbacks=[early_stopping])
             else:
                 self.config.logger.log_debug(f"\nSeparação de Treino e Validação em diferentes conjutos de dados ...\n")
+                x_img_train = np.array(fit_dto.x_img_train)
+                y_df_train = np.array(fit_dto.y_df_train)
+                x_img_validate = np.array(fit_dto.x_img_validate)
+                y_df_validate = np.array(fit_dto.y_df_validate)
+                self.config.logger.log_debug(
+                    f"x_img_train Shape: {x_img_train.shape}, y_df_train Shape: {y_df_train.shape}, x_img_validate Shape: {x_img_validate.shape}, y_df_validate Shape: {y_df_validate.shape} ...\n")
                 train_generator, validation_generator = self.__get_data_argumentation_train_with_validation(
-                    fit_dto.x_img_train, fit_dto.y_df_train, fit_dto.x_img_validate, fit_dto.y_df_validate)
+                    x_img_train, y_df_train, x_img_validate, y_df_validate)
                 model.fit(train_generator,
-                          steps_per_epoch = round(len(fit_dto.x_img_train) / batch_size),
+                          steps_per_epoch = round(len(x_img_train) / batch_size),
                           validation_data=validation_generator,
-                          validation_steps=round(len(fit_dto.x_img_validate) / batch_size),
+                          validation_steps=round(len(x_img_validate) / batch_size),
                           epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
 
