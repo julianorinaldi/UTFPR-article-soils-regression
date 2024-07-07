@@ -20,13 +20,13 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
 
         # Adicionando camadas personalizadas no topo do modelo
         layer = pretrained_model.output
-        #layer = tf.keras.layers.Dense(128, activation='relu')(layer)
-        #layer = tf.keras.layers.Dropout(0.5)(layer)
+        layer = tf.keras.layers.Dense(128, activation='relu')(layer)
+        layer = tf.keras.layers.Dropout(0.5)(layer)
 
         if self.config.argsGridSearch:
             predictions, optimizer = get_config_gridsearch_transfer_learning(hp, layer)
         else:
-            #layer = tf.keras.layers.Dense(64, activation='relu')(layer)
+            layer = tf.keras.layers.Dense(64, activation='relu')(layer)
             predictions = tf.keras.layers.Dense(2, activation='linear')(layer)
             optimizer = tf.keras.optimizers.RMSprop()
 
@@ -81,9 +81,10 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                 self.config.logger.log_debug(f"x_img_data Shape: {x_img_data.shape}, y_df_data Shape: {y_df_data.shape} ...\n")
 
                 # Aplica DataArgumentation nas amostras de treinamento
-                train_generator = self.__get_data_argumentation_train(x_img_data, y_df_data)
-                model.fit(train_generator, steps_per_epoch = round(len(x_img_data) / batch_size), epochs=self.config.argsEpochs,
-                          callbacks=[early_stopping])
+                #train_generator = self.__get_data_argumentation_train(x_img_data, y_df_data)
+                #model.fit(train_generator, steps_per_epoch = round(len(x_img_data) / batch_size), epochs=self.config.argsEpochs, callbacks=[early_stopping])
+
+                model.fit(x_img_data, y_df_data, epochs=self.config.argsEpochs, callbacks=[early_stopping])
             else:
                 self.config.logger.log_debug(f"\nSeparação de Treino e Validação em diferentes conjutos de dados ...\n")
                 x_img_train = np.array(fit_dto.x_img_train)
@@ -92,12 +93,19 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                 y_df_validate = np.array(fit_dto.y_df_validate)
                 self.config.logger.log_debug(
                     f"x_img_train Shape: {x_img_train.shape}, y_df_train Shape: {y_df_train.shape}, x_img_validate Shape: {x_img_validate.shape}, y_df_validate Shape: {y_df_validate.shape} ...\n")
-                train_generator, validation_generator = self.__get_data_argumentation_train_with_validation(
-                    x_img_train, y_df_train, x_img_validate, y_df_validate)
-                model.fit(train_generator,
-                          steps_per_epoch = round(len(x_img_train) / batch_size),
-                          validation_data=validation_generator,
-                          validation_steps=round(len(x_img_validate) / batch_size),
+
+                # Com Data Argumentation
+                # train_generator, validation_generator = self.__get_data_argumentation_train_with_validation(
+                #     x_img_train, y_df_train, x_img_validate, y_df_validate)
+                # model.fit(train_generator,
+                #           steps_per_epoch = round(len(x_img_train) / batch_size),
+                #           validation_data=validation_generator,
+                #           validation_steps=round(len(x_img_validate) / batch_size),
+                #           epochs=self.config.argsEpochs,
+                #           callbacks=[early_stopping])
+
+                model.fit(x_img_train, y_df_train,
+                          validation_data=(x_img_validate, y_df_validate),
                           epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
 
