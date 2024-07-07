@@ -56,8 +56,8 @@ class DatasetProcess:
     # Carrega o Dataset de Treino e Teste.
     # Centraliza aqui para juntar os DataFrames, normalizar e depois separar novamente.
     def load_train_test_data(self) -> (pd.DataFrame, pd.DataFrame):
-        df_train = self.__load_and_clean_data(ConfigModelDTO.PATH_CSV_TRAIN)
-        df_test = self.__load_and_clean_data(ConfigModelDTO.PATH_CSV_TEST)
+        df_train = self.__load_and_clean_data(ConfigModelDTO.PATH_CSV_TRAIN, 88)
+        df_test = self.__load_and_clean_data(ConfigModelDTO.PATH_CSV_TEST, 23)
 
         # Cria uma coluna temporária para identificar origem (treino ou teste)
         df_train['is_train'] = True
@@ -77,16 +77,18 @@ class DatasetProcess:
 
     # Faz o preparado do Dataset para trabalhar no modelo de regressão
     # Retorna dataset limpo e separado em treino e teste, e lista dos arquivos imagens
-    def __load_and_clean_data(self, path_csv: str) -> pd.DataFrame:
+    def __load_and_clean_data(self, path_csv: str,  random_state: int = 0) -> pd.DataFrame:
         # Carregamento do Dataset
         df_all: pd.DataFrame = self.__load_dataset_from_csv(path_csv)
 
         # Removendo colunas desnecessárias
         df_all = self.__prepare_dataset_remove_columns(df_all)
 
-        # Gerador de Random State
-        # Vai embaralhar os dados de forma diferentes
-        random_state = random.randint(0, 100)
+        if random_state > 0:
+            # Gerador de Random State
+            # Vai embaralhar os dados de forma diferentes
+            random_state = random.randint(0, 100)
+
         df_all = self.__random_dataset(df_all, random_state)
 
         return df_all
