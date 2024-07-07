@@ -70,7 +70,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
             monitor='val_mae', patience=self.config.argsPatience,
             restore_best_weights=True)
 
-        fator = 0.03
+        batch_size = 32
         # Padrão sem separação entre validação e treino
         for model in models:
             if not self.config.argsSepared:
@@ -81,16 +81,16 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
 
                 # Aplica DataArgumentation nas amostras de treinamento
                 train_generator = self.__get_data_argumentation_train(x_img_data, y_df_data)
-                model.fit(train_generator, steps_per_epoch = round(len(x_img_data) * fator), epochs=self.config.argsEpochs,
+                model.fit(train_generator, steps_per_epoch = round(len(x_img_data) / batch_size), epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
             else:
                 self.config.logger.log_debug(f"\nSeparação de Treino e Validação em diferentes conjutos de dados ...\n")
                 train_generator, validation_generator = self.__get_data_argumentation_train_with_validation(
                     fit_dto.x_img_train, fit_dto.y_df_train, fit_dto.x_img_validate, fit_dto.y_df_validate)
                 model.fit(train_generator,
-                          steps_per_epoch = round(len(fit_dto.x_img_train) * fator),
+                          steps_per_epoch = round(len(fit_dto.x_img_train) / batch_size),
                           validation_data=validation_generator,
-                          validation_steps=round(len(fit_dto.x_img_validate) * fator),
+                          validation_steps=round(len(fit_dto.x_img_validate) / batch_size),
                           epochs=self.config.argsEpochs,
                           callbacks=[early_stopping])
 
