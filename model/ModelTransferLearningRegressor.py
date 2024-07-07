@@ -20,13 +20,13 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
 
         # Adicionando camadas personalizadas no topo do modelo
         layer = pretrained_model.output
-        layer = tf.keras.layers.Dense(128, activation='relu')(layer)
-        layer = tf.keras.layers.Dropout(0.5)(layer)
+        #layer = tf.keras.layers.Dense(128, activation='relu')(layer)
+        #layer = tf.keras.layers.Dropout(0.5)(layer)
 
         if self.config.argsGridSearch:
             predictions, optimizer = get_config_gridsearch_transfer_learning(hp, layer)
         else:
-            layer = tf.keras.layers.Dense(64, activation='relu')(layer)
+            #layer = tf.keras.layers.Dense(64, activation='relu')(layer)
             predictions = tf.keras.layers.Dense(2, activation='linear')(layer)
             optimizer = tf.keras.optimizers.RMSprop()
 
