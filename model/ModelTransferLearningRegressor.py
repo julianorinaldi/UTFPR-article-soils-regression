@@ -84,7 +84,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                 #train_generator = self.__get_data_argumentation_train(x_img_data, y_df_data)
                 #model.fit(train_generator, steps_per_epoch = round(len(x_img_data) / batch_size), epochs=self.config.argsEpochs, callbacks=[early_stopping])
 
-                model.fit(x_img_data, y_df_data, epochs=self.config.argsEpochs, callbacks=[early_stopping])
+                model.fit(x_img_data, y_df_data, validation_split=0.3, epochs=self.config.argsEpochs, callbacks=[early_stopping])
             else:
                 self.config.logger.log_debug(f"\nSeparação de Treino e Validação em diferentes conjutos de dados ...\n")
                 x_img_train = np.array(fit_dto.x_img_train)
