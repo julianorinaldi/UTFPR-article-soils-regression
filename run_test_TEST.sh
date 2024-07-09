@@ -6,3 +6,4 @@ python3 test-model.py --name TF_EfficientNetV2S_21_Normalize0_Epochs300_Patience
                --amount_image_test 50 \
                --preprocess \
                --show_model
+
