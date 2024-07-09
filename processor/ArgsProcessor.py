@@ -31,7 +31,8 @@ def get_config_test_from_args(args, logger: LoggingPy = None) -> ConfigTestDTO:
     if not args.name:
         raise Exception("Há parâmetros faltantes. Utilize -h ou --help para ajuda!")
 
-    config = ConfigTestDTO(logger=logger,amount_images_test=args.amount_image_test, log_level=args.log_level,
+    model_set_enum = convert_model_set_enum(args.model)
+    config = ConfigTestDTO(logger=logger, model_set_enum=model_set_enum, amount_images_test=args.amount_image_test, log_level=args.log_level,
                                  args_name_model=args.name, args_preprocess=args.preprocess,
                                  args_show_model=args.show_model)
     return config

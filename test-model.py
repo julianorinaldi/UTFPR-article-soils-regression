@@ -63,6 +63,8 @@ def info_args(config):
     config.logger.log_resume(f"Info parameters: ")
     config.logger.log_resume(f" -I (--amount_image_test): {config.amountImagesTest}")
     config.logger.log_resume(f" -L (--log_level): {config.log_level}")
+    config.logger.log_resume(
+        f" -m (--model): {config.modelSetEnum.value} - {config.modelSetEnum.name}")
     config.logger.log_resume(f" -M (--show_model): {config.argsShowModel}")
     config.logger.log_resume(f" -n (--name): {config.argsNameModel}")
     config.logger.log_resume(f" -p (--preprocess): {config.argsPreprocess}")
