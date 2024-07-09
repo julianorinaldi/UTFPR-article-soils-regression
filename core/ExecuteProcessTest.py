@@ -28,10 +28,22 @@ class ExecuteProcessTest(ExecuteProcessBase):
             test_processor: TestProcessor = TestProcessor(self.config)
             test_processor.test(df_test, [_model])
 
+    def __find_file_in_subdirectories(self, filename: str, start_directory="."):
+        for root, dirs, files in os.walk(start_directory):
+            if filename in files:
+                filename_path = os.path.abspath(os.path.join(root, filename))
+                self.logger.log_debug(f"Modelo: {filename_path}")
+                return filename_path
+        return None
+
     def __get_model_instance(self) -> tf.keras.models.Model:
-        resnet_model = tf.keras.models.load_model(filepath = self.config.argsNameModel)
-        if self.config.argsShowModel:
-            self.logger.log_info(f"{resnet_model.summary()}")
+        file_path = self.__find_file_in_subdirectories(self.config.argsNameModel)
+        if file_path:
+            resnet_model = tf.keras.models.load_model(filepath = file_path)
+            if self.config.argsShowModel:
+                self.logger.log_info(f"{resnet_model.summary()}")
+            else:
+                self.logger.log_debug(f"{resnet_model.summary()}")
+            return resnet_model
         else:
-            self.logger.log_debug(f"{resnet_model.summary()}")
-        return resnet_model
+            raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
