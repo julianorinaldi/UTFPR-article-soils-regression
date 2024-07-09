@@ -12,8 +12,21 @@ class TestProcessor:
     def __init__(self, config: ConfigTestDTO) -> None:
         self.config = config
 
+    def __remove_amostras_ruins(self, df: pd.DataFrame) -> pd.DataFrame:
+        amostras_remove = ['C51']
+        self.config.logger.log_debug(f"Removendo colunas: {', '.join(map(str, amostras_remove))}")
+        df_amostra_remove = df[df['amostra'].isin(amostras_remove)]
+
+        df_result = (pd.merge(df, df_amostra_remove, how='outer', indicator=True)
+                    .query('_merge == "left_only"')
+                    .drop('_merge', axis=1))
+        return df_result
+
     def test(self, df_test: pd.DataFrame, models: list):
         self.config.logger.log_info("Iniciando o Test...\n")
+
+        # Objetiva remover amostrar ruins do conjunto de dados de Teste
+        df_test = self.__remove_amostras_ruins(df_test)
 
         dp = DataProcessTest(self.config)
         df_amostra = df_test["amostra"]
