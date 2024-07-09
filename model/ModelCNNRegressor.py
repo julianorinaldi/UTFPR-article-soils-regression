@@ -57,5 +57,5 @@ class ModelRegressorCNN(ModelABCRegressor):
                           epochs=self.config.argsEpochs, callbacks=[early_stopping])
 
             filepath_model = create_file_model(self.config.argsNameModel, "CNN")
-            model.save(filepath=filepath_model, overwrite=True)
+            model.save(filepath=filepath_model, save_format='keras', overwrite=True)
             self.config.logger.log_info(f"Modelo Salvo!!!")

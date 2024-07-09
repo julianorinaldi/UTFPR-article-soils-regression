@@ -109,7 +109,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
                           callbacks=[early_stopping])
 
             filepath_model = create_file_model(self.config.argsNameModel, "TF")
-            model.save(filepath=filepath_model, overwrite=True)
+            model.save(filepath=filepath_model, save_format='keras', overwrite=True)
             self.config.logger.log_info(f"Modelo Salvo!\nNome: {filepath_model}\n")
 
     # Modelos disponíveis para Transfer-Learning
