@@ -1,4 +1,4 @@
-from dto.ConfigModelDTO import ConfigModelDTO
+from dto.ConfigTrainModelDTO import ConfigTrainModelDTO
 from dto.FitDTO import FitDTO
 from model.abstract.ModelABCRegressor import ModelABCRegressor
 from sklearn.svm import SVR
@@ -6,7 +6,7 @@ from sklearn.svm import SVR
 
 class ModelSVMLinearRegressor(ModelABCRegressor):
 
-    def __init__(self, config: ConfigModelDTO):
+    def __init__(self, config: ConfigTrainModelDTO):
         super().__init__(config)
 
     def get_specialist_model(self, hp):

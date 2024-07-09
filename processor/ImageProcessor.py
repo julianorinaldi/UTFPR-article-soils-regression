@@ -5,12 +5,12 @@ import tensorflow as tf  # Trabalhar com aprendizado de máquinas
 import numpy as np
 from tqdm import tqdm  # Facilita visualmente a iteração usado no "for"
 
+from dto.ImageConfigDTO import ImageConfigDTO
 from dto.ModelSetEnum import ModelSetEnum
-from dto.ConfigModelDTO import ConfigModelDTO
 
 
-class ImageProcess:
-    def __init__(self, config: ConfigModelDTO):
+class ImageProcessor:
+    def __init__(self, config: ImageConfigDTO):
         self.config = config
 
     # Carregamento de imagem para objeto e tratamento de imagem
@@ -44,7 +44,12 @@ class ImageProcess:
         return image
 
     # Carregar imagens
-    def image_load(self, df: pd.DataFrame, path_img: str, qtd_imagens: int) -> list:
+    def image_load(self, df: pd.DataFrame, path_img: str, amount_img: int) -> list:
+
+        qtd_imagens = len(df)
+        if (qtd_imagens > amount_img) and (amount_img > 0):
+            qtd_imagens = amount_img
+
         if df["arquivo"] is None:
             raise Exception("O DataFrame deve conter a coluna 'arquivo'")
 

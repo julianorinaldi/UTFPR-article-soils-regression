@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from dto.ConfigModelDTO import ConfigModelDTO
+from dto.ConfigTrainModelDTO import ConfigTrainModelDTO
 from dto.FitDTO import FitDTO
 from dto.ModelSetEnum import ModelSetEnum
 from model.abstract.ModelABCRegressor import ModelABCRegressor
@@ -10,7 +10,7 @@ from shared.infrastructure.helper.FileHelper import create_file_model
 
 class ModelRegressorTransferLearning(ModelABCRegressor):
 
-    def __init__(self, config: ConfigModelDTO):
+    def __init__(self, config: ConfigTrainModelDTO):
         super().__init__(config)
 
     def get_specialist_model(self, hp):
@@ -65,7 +65,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         return  train_generator, validation_generator
 
     def model_fit(self, models, fit_dto: FitDTO):
-        self.config.logger.log_debug(f"\nIniciando o fit ...\n")
+        self.config.logger.log_debug(f"Iniciando o FIT (Treinamento) ...")
         early_stopping = tf.keras.callbacks.EarlyStopping(
             monitor='val_mae', patience=self.config.argsPatience,
             restore_best_weights=True)
@@ -74,11 +74,10 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         # Padrão sem separação entre validação e treino
         for model in models:
             if not self.config.argsSepared:
-                self.config.logger.log_debug(f"\nTreino e Validação em mesmo conjuto de dados ...\n")
+                self.config.logger.log_debug(f"Treino / Validação: configurado 70% / 30% ...")
                 # Juntando os dados de validação com treino no SUPER.
                 x_img_data = np.concatenate((fit_dto.x_img_train, fit_dto.x_img_validate), axis=0)
                 y_df_data = np.concatenate((fit_dto.y_df_train, fit_dto.y_df_validate), axis=0)
-                self.config.logger.log_debug(f"x_img_data Shape: {x_img_data.shape}, y_df_data Shape: {y_df_data.shape} ...\n")
 
                 # Aplica DataArgumentation nas amostras de treinamento
                 #train_generator = self.__get_data_argumentation_train(x_img_data, y_df_data)
@@ -111,7 +110,7 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
 
             filepath_model = create_file_model(self.config.argsNameModel, "TF")
             model.save(filepath=filepath_model, overwrite=True)
-            self.config.logger.log_info(f"Modelo Salvo!!!")
+            self.config.logger.log_info(f"Modelo Salvo!\nNome: {filepath_model}\n")
 
     # Modelos disponíveis para Transfer-Learning
     # https://keras.io/api/applications/
@@ -172,8 +171,3 @@ class ModelRegressorTransferLearning(ModelABCRegressor):
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
         return model
-
-# Carregando Modelo
-# resnet_model = tf.keras.models.load_model(filepath = self.config.argsNameModel)
-# if (self.config.argsDebug):
-#     self.config.logger.logInfo(f"{resnet_model.summary()}")
