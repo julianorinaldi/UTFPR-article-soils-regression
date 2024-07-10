@@ -64,6 +64,9 @@ class ResultLogger:
         self.logger.log_resume(f"====================================================")
         self.logger.log_resume(f"\n")
 
+        self.logger.log_resume(f"Melhores resultados CARBONO [mean]...\n{df_media_mean_carbono.head()}\n")
+        self.logger.log_resume(f"Piores resultados CARBONO [mean]...\n{df_media_mean_carbono.tail()}\n\n")
+
         df_media_median_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'median', 'teor_cabono_real': 'first'}).reset_index()
         r2_median = r2_score(df_media_median_carbono['teor_cabono_real'],
@@ -80,6 +83,10 @@ class ResultLogger:
         self.logger.log_resume(f"====>>>>> MSE [median]: {mse_median} <<<<<====")
         self.logger.log_resume(f"====================================================")
         self.logger.log_resume(f"\n")
+
+        self.logger.log_resume(f"Melhores resultados CARBONO [median]...\n{df_media_median_carbono.head()}\n")
+        self.logger.log_resume(f"Piores resultados CARBONO [median]...\n{df_media_median_carbono.tail()}\n\n")
+
 
         df_media_mean_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'mean', 'teor_nitrogenio_real': 'first'}).reset_index()
@@ -98,6 +105,9 @@ class ResultLogger:
         self.logger.log_resume(f"====================================================")
         self.logger.log_resume(f"\n")
 
+        self.logger.log_resume(f"Melhores resultados NITROGENIO [mean]...\n{df_media_mean_nitrogenio.head()}\n")
+        self.logger.log_resume(f"Piores resultados NITROGENIO [mean]...\n{df_media_mean_nitrogenio.tail()}\n\n")
+
         df_media_median_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'median', 'teor_nitrogenio_real': 'first'}).reset_index()
         r2_median = r2_score(df_media_median_nitrogenio['teor_nitrogenio_real'],
@@ -114,3 +124,6 @@ class ResultLogger:
         self.logger.log_resume(f"====>>>>> MSE [median]: {mse_median} <<<<<====")
         self.logger.log_resume(f"====================================================")
         self.logger.log_resume(f"\n")
+
+        self.logger.log_resume(f"Melhores resultados NITROGENIO [median]...\n{df_media_median_nitrogenio.head()}\n")
+        self.logger.log_resume(f"Piores resultados NITROGENIO [median]...\n{df_media_median_nitrogenio.tail()}\n\n")
