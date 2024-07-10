@@ -49,6 +49,7 @@ class ResultLogger:
 
         df_media_mean_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
+        df_media_mean_carbono["teor_cabono_predict"] = np.round(df_media_mean_carbono["teor_cabono_predict"],round_value)
         df_media_mean_carbono['error_carbono(%)'] = np.round((
                 abs(df_media_mean_carbono['teor_cabono_real'] - df_media_mean_carbono["teor_cabono_predict"]) /
                     abs(df_media_mean_carbono['teor_cabono_real'])),round_value)
@@ -73,6 +74,7 @@ class ResultLogger:
 
         df_media_median_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'median', 'teor_cabono_real': 'first'}).reset_index()
+        df_media_median_carbono["teor_cabono_predict"] = np.round(df_media_median_carbono["teor_cabono_predict"], round_value)
         df_media_median_carbono['error_carbono(%)'] = np.round((
                 abs(df_media_median_carbono['teor_cabono_real'] - df_media_median_carbono["teor_cabono_predict"]) /
                     abs(df_media_median_carbono['teor_cabono_real'])),round_value)
@@ -99,7 +101,8 @@ class ResultLogger:
 
         df_media_mean_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'mean', 'teor_nitrogenio_real': 'first'}).reset_index()
-
+        df_media_mean_nitrogenio["teor_nitrogenio_predict"] = np.round(df_media_mean_nitrogenio["teor_nitrogenio_predict"],
+                                                                  round_value)
         df_media_mean_nitrogenio['error_nitrogenio(%)'] = np.round((
                 abs(df_media_mean_nitrogenio['teor_nitrogenio_real'] - df_media_mean_nitrogenio["teor_nitrogenio_predict"]) /
                     abs(df_media_mean_nitrogenio['teor_nitrogenio_real'])),round_value)
@@ -125,6 +128,8 @@ class ResultLogger:
 
         df_media_median_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'median', 'teor_nitrogenio_real': 'first'}).reset_index()
+        df_media_median_nitrogenio["teor_nitrogenio_predict"] = np.round(df_media_median_nitrogenio["teor_nitrogenio_predict"],
+                                                                  round_value)
         df_media_median_nitrogenio['error_nitrogenio(%)'] = np.round((
                 abs(df_media_median_nitrogenio['teor_nitrogenio_real'] - df_media_median_nitrogenio["teor_nitrogenio_predict"]) /
                     abs(df_media_median_nitrogenio['teor_nitrogenio_real'])),round_value)
