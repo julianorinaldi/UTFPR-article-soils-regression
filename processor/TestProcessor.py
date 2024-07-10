@@ -13,7 +13,11 @@ class TestProcessor:
         self.config = config
 
     def __remove_amostras_ruins(self, df: pd.DataFrame) -> pd.DataFrame:
-        amostras_remove = ['C51']
+        #amostras_remove = ['C51']
+        amostras_remove = []
+        if amostras_remove is None:
+            return df
+
         self.config.logger.log_debug(f"Removendo amostras ruins: {', '.join(map(str, amostras_remove))}")
         df_amostra_remove = df[df['amostra'].isin(amostras_remove)]
 
