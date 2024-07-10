@@ -1,3 +1,4 @@
+import numpy as np
 from shared.infrastructure.log.LoggingPy import LoggingPy
 import pandas as pd
 from pandas import DataFrame
@@ -14,14 +15,14 @@ class ResultLogger:
         result = []
         for i in tqdm(range(len(df_amostra))):
             amostra = df_amostra[i]
-            carbono_predict = prediction[i][0]
-            nitrogenio_predict = prediction[i][1]
-            carbono_real = y_df_data.iloc[i]['teor_carbono']
-            nitrogenio_real = y_df_data.iloc[i]['teor_nitrogenio']
-            diff_carbono = abs(carbono_real - carbono_predict)
-            diff_nitrogenio = abs(nitrogenio_real - nitrogenio_predict)
-            erro_carbono = abs(diff_carbono) / abs(carbono_real) * 100
-            erro_nitrogenio = abs(diff_nitrogenio) / abs(nitrogenio_real) * 100
+            carbono_predict = np.round(prediction[i][0], 2)
+            nitrogenio_predict = np.round(prediction[i][1], 2)
+            carbono_real = np.round(y_df_data.iloc[i]['teor_carbono'], 2)
+            nitrogenio_real = np.round(y_df_data.iloc[i]['teor_nitrogenio'], 2)
+            diff_carbono = np.round(abs(carbono_real - carbono_predict), 2)
+            diff_nitrogenio = np.round(abs(nitrogenio_real - nitrogenio_predict), 2)
+            erro_carbono = np.round(abs(diff_carbono) / abs(carbono_real) * 100, 2)
+            erro_nitrogenio = np.round(abs(diff_nitrogenio) / abs(nitrogenio_real) * 100, 2)
 
             reg_line = {'amostra': amostra, 'teor_cabono_real': carbono_real, 'teor_cabono_predict': carbono_predict,
                         'teor_cabono_diff': diff_carbono, 'error_carbono(%)': erro_carbono,
@@ -33,8 +34,6 @@ class ResultLogger:
         df_sorted = pd.DataFrame(result)
         df_sorted['grupo'] = df_sorted['amostra'].str.extract(r'([A-Z]+\d+)')[0]
         df_sorted_carbono = df_sorted.sort_values(by='error_carbono(%)')
-        # df_sorted.to_csv('resultado.csv', index=False)
-        #  self.logger.logInfo(f"{df_sorted.to_string(index=False)}")
         columns_remove_nitrogenio = ["teor_nitrogenio_real", "teor_nitrogenio_predict", "teor_nitrogenio_diff",
                                      "error_nitrogenio(%)"]
         df_sorted_carbono = df_sorted_carbono.drop(columns=columns_remove_nitrogenio)
@@ -50,9 +49,9 @@ class ResultLogger:
 
         df_media_mean_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
-        df_media_mean_carbono['error_carbono(%)'] = (
+        df_media_mean_carbono['error_carbono(%)'] = np.round((
                 abs(df_media_mean_carbono['teor_cabono_real'] - df_media_mean_carbono["teor_cabono_predict"]) /
-                    abs(df_media_mean_carbono['teor_cabono_real']))
+                    abs(df_media_mean_carbono['teor_cabono_real'])), 2)
         df_media_mean_carbono = df_media_mean_carbono.sort_values(by='error_carbono(%)')
 
         r2_mean = r2_score(df_media_mean_carbono['teor_cabono_real'], df_media_mean_carbono['teor_cabono_predict'])
@@ -63,9 +62,9 @@ class ResultLogger:
 
         self.logger.log_resume(f"R2 [mean] conjunto de predição CARBONO:")
         self.logger.log_resume(f"====================================================")
-        self.logger.log_resume(f"====>>>>> R2 [mean]: {r2_mean} <<<<<====")
-        self.logger.log_resume(f"====>>>>> MAE [mean]: {mae_mean} <<<<<====")
-        self.logger.log_resume(f"====>>>>> MSE [mean]: {mse_mean} <<<<<====")
+        self.logger.log_resume(f"====>>>>> R2 [mean]: {np.round(r2_mean,2)} <<<<<====")
+        self.logger.log_resume(f"====>>>>> MAE [mean]: {np.round(mae_mean,2)} <<<<<====")
+        self.logger.log_resume(f"====>>>>> MSE [mean]: {np.round(mse_mean,2)} <<<<<====")
         self.logger.log_resume(f"====================================================")
         self.logger.log_resume(f"\n")
 
@@ -74,9 +73,9 @@ class ResultLogger:
 
         df_media_median_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'median', 'teor_cabono_real': 'first'}).reset_index()
-        df_media_median_carbono['error_carbono(%)'] = (
+        df_media_median_carbono['error_carbono(%)'] = np.round((
                 abs(df_media_median_carbono['teor_cabono_real'] - df_media_median_carbono["teor_cabono_predict"]) /
-                    abs(df_media_median_carbono['teor_cabono_real']))
+                    abs(df_media_median_carbono['teor_cabono_real'])),2)
         df_media_median_carbono = df_media_median_carbono.sort_values(by='error_carbono(%)')
 
         r2_median = r2_score(df_media_median_carbono['teor_cabono_real'],
@@ -88,9 +87,9 @@ class ResultLogger:
 
         self.logger.log_resume(f"R2 [median] conjunto de predição CARBONO:")
         self.logger.log_resume(f"====================================================")
-        self.logger.log_resume(f"====>>>>> R2 [median]: {r2_median} <<<<<====")
-        self.logger.log_resume(f"====>>>>> MAE [median]: {mae_median} <<<<<====")
-        self.logger.log_resume(f"====>>>>> MSE [median]: {mse_median} <<<<<====")
+        self.logger.log_resume(f"====>>>>> R2 [median]: {np.round(r2_median,2)} <<<<<====")
+        self.logger.log_resume(f"====>>>>> MAE [median]: {np.round(mae_median,2)} <<<<<====")
+        self.logger.log_resume(f"====>>>>> MSE [median]: {np.round(mse_median,2)} <<<<<====")
         self.logger.log_resume(f"====================================================")
         self.logger.log_resume(f"\n")
 
@@ -101,9 +100,9 @@ class ResultLogger:
         df_media_mean_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'mean', 'teor_nitrogenio_real': 'first'}).reset_index()
 
-        df_media_mean_nitrogenio['error_nitrogenio(%)'] = (
+        df_media_mean_nitrogenio['error_nitrogenio(%)'] = np.round((
                 abs(df_media_mean_nitrogenio['teor_nitrogenio_real'] - df_media_mean_nitrogenio["teor_nitrogenio_predict"]) /
-                    abs(df_media_mean_nitrogenio['teor_nitrogenio_real']))
+                    abs(df_media_mean_nitrogenio['teor_nitrogenio_real'])),2)
         df_media_mean_nitrogenio = df_media_mean_nitrogenio.sort_values(by='error_nitrogenio(%)')
 
         r2_mean = r2_score(df_media_mean_nitrogenio['teor_nitrogenio_real'],
@@ -115,9 +114,9 @@ class ResultLogger:
 
         self.logger.log_resume(f"R2 [mean] conjunto de predição NITROGENIO:")
         self.logger.log_resume(f"====================================================")
-        self.logger.log_resume(f"====>>>>> R2 [mean]: {r2_mean} <<<<<====")
-        self.logger.log_resume(f"====>>>>> MAE [mean]: {mae_mean} <<<<<====")
-        self.logger.log_resume(f"====>>>>> MSE [mean]: {mse_mean} <<<<<====")
+        self.logger.log_resume(f"====>>>>> R2 [mean]: {np.round(r2_mean,2)} <<<<<====")
+        self.logger.log_resume(f"====>>>>> MAE [mean]: {np.round(mae_mean,2)} <<<<<====")
+        self.logger.log_resume(f"====>>>>> MSE [mean]: {np.round(mse_mean,2)} <<<<<====")
         self.logger.log_resume(f"====================================================")
         self.logger.log_resume(f"\n")
 
@@ -126,9 +125,9 @@ class ResultLogger:
 
         df_media_median_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'median', 'teor_nitrogenio_real': 'first'}).reset_index()
-        df_media_median_nitrogenio['error_nitrogenio(%)'] = (
+        df_media_median_nitrogenio['error_nitrogenio(%)'] = np.round((
                 abs(df_media_median_nitrogenio['teor_nitrogenio_real'] - df_media_median_nitrogenio["teor_nitrogenio_predict"]) /
-                    abs(df_media_median_nitrogenio['teor_nitrogenio_real']))
+                    abs(df_media_median_nitrogenio['teor_nitrogenio_real'])),2)
         df_media_median_nitrogenio = df_media_median_nitrogenio.sort_values(by='error_nitrogenio(%)')
 
         r2_median = r2_score(df_media_median_nitrogenio['teor_nitrogenio_real'],
@@ -140,9 +139,9 @@ class ResultLogger:
 
         self.logger.log_resume(f"R2 [median] conjunto de predição NITROGENIO:")
         self.logger.log_resume(f"====================================================")
-        self.logger.log_resume(f"====>>>>> R2 [median]: {r2_median} <<<<<====")
-        self.logger.log_resume(f"====>>>>> MAE [median]: {mae_median} <<<<<====")
-        self.logger.log_resume(f"====>>>>> MSE [median]: {mse_median} <<<<<====")
+        self.logger.log_resume(f"====>>>>> R2 [median]: {np.round(r2_median,2)} <<<<<====")
+        self.logger.log_resume(f"====>>>>> MAE [median]: {np.round(mae_median,2)} <<<<<====")
+        self.logger.log_resume(f"====>>>>> MSE [median]: {np.round(mse_median,2)} <<<<<====")
         self.logger.log_resume(f"====================================================")
         self.logger.log_resume(f"\n")
 
