@@ -60,10 +60,12 @@ class TestProcessor:
         self.config.logger.log_info(f"Modelo: {self.config.modelSetEnum}")
         self.config.logger.log_info(f"Iniciando predição completa ...")
 
+        # Especificação de Número de casas Decimais
+        round_value = 4
         for index, model in enumerate(models):
             # Fazendo a predição sobre os dados de teste
             prediction = model.predict(x_img_test_array)
-            prediction = np.round(prediction, 2)
+            prediction = np.round(prediction,round_value)
             self.config.logger.log_debug(f"Shape do prediction: {prediction.shape}")
 
             # Avaliando com R2 Carbono
@@ -74,9 +76,9 @@ class TestProcessor:
             self.config.logger.log_debug(f"Resultado geral de Carbono ...")
             self.config.logger.log_resume(f"")
             self.config.logger.log_resume(f"====================================================")
-            self.config.logger.log_resume(f"********** R2 C.: {np.round(r2_c, 2)} **********")
-            self.config.logger.log_resume(f"********** MAE C: {np.round(mae_c, 2)} **********")
-            self.config.logger.log_resume(f"********** MSE C.: {np.round(mse_c, 2)} **********")
+            self.config.logger.log_resume(f"********** R2 C.: {np.round(r2_c,round_value)} **********")
+            self.config.logger.log_resume(f"********** MAE C: {np.round(mae_c,round_value)} **********")
+            self.config.logger.log_resume(f"********** MSE C.: {np.round(mse_c,round_value)} **********")
             self.config.logger.log_resume(f"====================================================")
             self.config.logger.log_resume(f"\n\n")
 
@@ -88,15 +90,15 @@ class TestProcessor:
             self.config.logger.log_debug(f"Resultado geral de Nitrogênio ...")
             self.config.logger.log_resume(f"")
             self.config.logger.log_resume(f"====================================================")
-            self.config.logger.log_resume(f"********** R2 N.: {np.round(r2_n, 2)} **********")
-            self.config.logger.log_resume(f"********** MAE N: {np.round(mae_n, 2)} **********")
-            self.config.logger.log_resume(f"********** MSE N.: {np.round(mse_n, 2)} **********")
+            self.config.logger.log_resume(f"********** R2 N.: {np.round(r2_n,round_value)} **********")
+            self.config.logger.log_resume(f"********** MAE N: {np.round(mae_n,round_value)} **********")
+            self.config.logger.log_resume(f"********** MSE N.: {np.round(mse_n,round_value)} **********")
             self.config.logger.log_resume(f"====================================================")
             self.config.logger.log_resume(f"\n\n\n")
 
             self.config.logger.log_resume(f"Exemplos de predições ...")
             result_logger = ResultLogger(self.config.logger)
-            result_logger.logger_predict_test(df_amostra, y_df_all_test, prediction)
+            result_logger.logger_predict_test(df_amostra, y_df_all_test, prediction, round_value)
 
             del model
         del models
