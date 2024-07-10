@@ -74,6 +74,11 @@ class ResultLogger:
 
         df_media_median_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'median', 'teor_cabono_real': 'first'}).reset_index()
+        df_media_median_carbono['error_carbono(%)'] = (
+                abs(df_media_median_carbono['teor_cabono_real'] - df_media_median_carbono["teor_cabono_predict"]) /
+                    abs(df_media_median_carbono['teor_cabono_real']))
+        df_media_median_carbono = df_media_median_carbono.sort_values(by='error_carbono(%)')
+
         r2_median = r2_score(df_media_median_carbono['teor_cabono_real'],
                              df_media_median_carbono['teor_cabono_predict'])
         mae_median = mean_absolute_error(df_media_median_carbono['teor_cabono_real'],
@@ -95,6 +100,12 @@ class ResultLogger:
 
         df_media_mean_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'mean', 'teor_nitrogenio_real': 'first'}).reset_index()
+
+        df_media_mean_nitrogenio['error_nitrogenio(%)'] = (
+                abs(df_media_mean_nitrogenio['teor_nitrogenio_real'] - df_media_mean_nitrogenio["teor_nitrogenio_predict"]) /
+                    abs(df_media_mean_nitrogenio['teor_nitrogenio_real']))
+        df_media_mean_nitrogenio = df_media_mean_nitrogenio.sort_values(by='error_nitrogenio(%)')
+
         r2_mean = r2_score(df_media_mean_nitrogenio['teor_nitrogenio_real'],
                            df_media_mean_nitrogenio['teor_nitrogenio_predict'])
         mae_mean = mean_absolute_error(df_media_mean_nitrogenio['teor_nitrogenio_real'],
@@ -115,6 +126,11 @@ class ResultLogger:
 
         df_media_median_nitrogenio = df_sorted.groupby('grupo').agg(
             {'teor_nitrogenio_predict': 'median', 'teor_nitrogenio_real': 'first'}).reset_index()
+        df_media_median_nitrogenio['error_nitrogenio(%)'] = (
+                abs(df_media_median_nitrogenio['teor_nitrogenio_real'] - df_media_median_nitrogenio["teor_nitrogenio_predict"]) /
+                    abs(df_media_median_nitrogenio['teor_nitrogenio_real']))
+        df_media_median_nitrogenio = df_media_median_nitrogenio.sort_values(by='error_nitrogenio(%)')
+
         r2_median = r2_score(df_media_median_nitrogenio['teor_nitrogenio_real'],
                              df_media_median_nitrogenio['teor_nitrogenio_predict'])
         mae_median = mean_absolute_error(df_media_median_nitrogenio['teor_nitrogenio_real'],
