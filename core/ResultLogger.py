@@ -50,6 +50,11 @@ class ResultLogger:
 
         df_media_mean_carbono = df_sorted.groupby('grupo').agg(
             {'teor_cabono_predict': 'mean', 'teor_cabono_real': 'first'}).reset_index()
+        df_media_mean_carbono['error_carbono(%)'] = (
+                abs(df_media_mean_carbono['teor_cabono_real'] - df_media_mean_carbono["teor_cabono_predict"]) /
+                    abs(df_media_mean_carbono['teor_cabono_real']))
+        df_media_mean_carbono = df_media_mean_carbono.sort_values(by='error_carbono(%)')
+
         r2_mean = r2_score(df_media_mean_carbono['teor_cabono_real'], df_media_mean_carbono['teor_cabono_predict'])
         mae_mean = mean_absolute_error(df_media_mean_carbono['teor_cabono_real'],
                                        df_media_mean_carbono['teor_cabono_predict'])
