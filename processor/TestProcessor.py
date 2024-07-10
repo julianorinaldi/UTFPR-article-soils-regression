@@ -1,3 +1,5 @@
+import numpy as np
+
 from core.ResultLogger import ResultLogger
 from dto.ConfigTestDTO import ConfigTestDTO
 import pandas as pd
@@ -61,6 +63,7 @@ class TestProcessor:
         for index, model in enumerate(models):
             # Fazendo a predição sobre os dados de teste
             prediction = model.predict(x_img_test_array)
+            prediction = np.round(prediction, 2)
             self.config.logger.log_debug(f"Shape do prediction: {prediction.shape}")
 
             # Avaliando com R2 Carbono
